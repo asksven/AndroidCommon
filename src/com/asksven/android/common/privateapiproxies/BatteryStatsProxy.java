@@ -276,28 +276,7 @@ public class BatteryStatsProxy
         	@SuppressWarnings("unchecked")
         	Method method = m_ClassDefinition.getMethod("getUidStats");
         	
-        	uidStats = (SparseArray<? extends BatteryStatsTypes.Uid>) method.invoke(m_Instance);
-        	final int which = BatteryStatsTypes.STATS_SINCE_CHARGED;
-        	long uSecTime = this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000, which);
-        	
-        	int NU = uidStats.size();
-            for (int iu = 0; iu < NU; iu++)
-            {
-            	BatteryStatsTypes.Uid u = uidStats.valueAt(iu);
-                long wakelockTime = 0;
-                Map<String, ? extends BatteryStatsTypes.Uid.Wakelock> wakelockStats = u.getWakelockStats();
-                for (Map.Entry<String, ? extends BatteryStatsTypes.Uid.Wakelock> wakelockEntry
-                        : wakelockStats.entrySet()) {
-                	BatteryStatsTypes.Uid.Wakelock wakelock = wakelockEntry.getValue();
-                    // Only care about partial wake locks since full wake locks
-                    // are canceled when the user turns the screen off.
-                	BatteryStatsTypes.Timer timer = wakelock.getWakeTime(BatteryStatsTypes.WAKE_TYPE_PARTIAL);
-                    if (timer != null) {
-                        wakelockTime += timer.getTotalTimeLocked(uSecTime, which);
-                    }
-                }
-
-            }    
+        	uidStats = (SparseArray<? extends BatteryStatsTypes.Uid>) method.invoke(m_Instance);	
         	
         }
         catch( IllegalArgumentException e )
