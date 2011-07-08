@@ -23,6 +23,9 @@ import android.util.SparseArray;
 
 
 /**
+ * This class copies the nested classes and constants from BatteryStats
+ * Copyright (C) 2008 The Android Open Source Project applies
+ * @see android.os.BatteryStats
  * @author sven
  *
  */
