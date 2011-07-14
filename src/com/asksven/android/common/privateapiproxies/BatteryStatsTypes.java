@@ -318,5 +318,7 @@ public class BatteryStatsTypes
         }
     }
 
-
+    public static abstract class Wakelock {
+        public abstract Timer getWakeTime(int type);
+    }
 }

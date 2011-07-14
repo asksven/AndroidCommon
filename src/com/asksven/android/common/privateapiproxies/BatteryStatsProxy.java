@@ -20,6 +20,8 @@ package com.asksven.android.common.privateapiproxies;
 import java.lang.reflect.Field;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import android.content.Context;
@@ -27,6 +29,7 @@ import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
+import android.util.Log;
 import android.util.Printer;
 import android.util.SparseArray;
 import com.asksven.android.common.privateapiproxies.BatteryStatsTypes;
@@ -46,6 +49,13 @@ public class BatteryStatsProxy
 	private Object m_Instance = null;
 	@SuppressWarnings("rawtypes")
 	private Class m_ClassDefinition = null;
+	
+	private static final String TAG = "BatteryStatsProxy";
+	/*
+	 * The UID stats are kept here as their methods / data can not be accessed
+	 * outside of this class due to non-public types (Uid, Proc, etc.)
+	 */
+	private SparseArray<? extends Object> m_uidStats = null;
 
     /**
 	 * Default cctor
@@ -278,6 +288,8 @@ public class BatteryStatsProxy
         	
         	uidStats = (SparseArray<? extends BatteryStatsTypes.Uid>) method.invoke(m_Instance);	
         	
+        	// store stats for further reference
+        	m_uidStats = uidStats;
         }
         catch( IllegalArgumentException e )
         {
@@ -290,5 +302,132 @@ public class BatteryStatsProxy
         
         return uidStats;
     }
+	
+	public void showStats(Context context) throws Exception
+	{
+		this.getUidStats();
+		if (m_uidStats != null)
+		{
+			long uSecTime = this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000, BatteryStatsTypes.STATS_SINCE_CHARGED);
+            try
+            {			
+				ClassLoader cl = context.getClassLoader();
+				Class iBatteryStatsUid = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid");
+				int NU = m_uidStats.size();
+		        for (int iu = 0; iu < NU; iu++)
+		        {
+		        	// Object is an instance of BatteryStats.Uid
+		            Object myUid = m_uidStats.valueAt(iu);
+	            
+	            
+					@SuppressWarnings("unchecked")
+					Method methodGetProcessStats = iBatteryStatsUid.getMethod("getProcessStats");
 
+	            
+					// Map of String, BatteryStats.Uid.Proc
+					Map<String, ? extends Object> processStats = (Map<String, ? extends Object>)  methodGetProcessStats.invoke(myUid);
+					if (processStats.size() > 0)
+					{
+//						Iterator it = processStats.entrySet().iterator();
+//					    while (it.hasNext()) 
+//					    {
+//					        Map.Entry pairs = (Map.Entry)it.next();
+//					        Log.d(TAG, pairs.getKey() + " = " + pairs.getValue());
+//					    }
+					    for (Map.Entry<String, ? extends Object> ent : processStats.entrySet())
+					    {
+					    	Log.d(TAG, "Process name = " + ent.getKey());
+						    // Object is a BatteryStatsTypes.Uid.Proc
+						    Object ps = ent.getValue();
+							Class batteryStatsUidProc = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid$Proc");
+
+							//Parameters Types
+							@SuppressWarnings("rawtypes")
+							Class[] paramTypes= new Class[1];
+							paramTypes[0]= int.class; 
+							
+							@SuppressWarnings("unchecked")
+							Method methodGetUserTime = batteryStatsUidProc.getMethod("getUserTime", paramTypes);
+							@SuppressWarnings("unchecked")
+							Method methodGetSystemTime = batteryStatsUidProc.getMethod("getSystemTime", paramTypes);
+	
+							//Parameters
+							Object[] params= new Object[1];
+							params[0]= new Integer(BatteryStatsTypes.STATS_SINCE_CHARGED);
+							
+							Long userTime = (Long) methodGetUserTime.invoke(ps, params);
+							Long systemTime = (Long) methodGetSystemTime.invoke(ps, params);
+							
+							Log.d(TAG, "UserTime = " + userTime);
+							Log.d(TAG, "SystemTime = " + systemTime);
+					    }		
+					}
+					// Process wake lock usage
+					@SuppressWarnings("unchecked")
+					Method methodGetWakelockStats = iBatteryStatsUid.getMethod("getWakelockStats");
+
+					// Map of String, BatteryStats.Uid.Wakelock
+					Map<String, ? extends Object> wakelockStats = (Map<String, ? extends Object>)  methodGetWakelockStats.invoke(myUid);
+					
+					long wakelockTime = 0;
+		            // Map of String, BatteryStats.Uid.Wakelock
+		            for (Map.Entry<String, ? extends Object> wakelockEntry : wakelockStats.entrySet())
+		            {
+		                // BatteryStats.Uid.Wakelock
+		            	Object wakelock = wakelockEntry.getValue();
+		                // Only care about partial wake locks since full wake locks
+		                // are canceled when the user turns the screen off.
+		            	Class batteryStatsUidWakelock = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid$Wakelock");
+
+						//Parameters Types
+						@SuppressWarnings("rawtypes")
+						Class[] paramTypes= new Class[1];
+						paramTypes[0]= int.class;    
+
+		            	@SuppressWarnings("unchecked")
+						Method methodGetWakeTime = batteryStatsUidWakelock.getMethod("getWakeTime", paramTypes);
+						
+						
+						//Parameters
+						Object[] params= new Object[1];
+						params[0]= new Integer(BatteryStatsTypes.STATS_SINCE_CHARGED);
+						
+						// BatteryStats.Timer
+						Object wakeTimer = methodGetWakeTime.invoke(wakelock, params);
+						if (wakeTimer != null)
+						{
+			            	Class iBatteryStatsTimer = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Timer");
+
+							//Parameters Types
+							@SuppressWarnings("rawtypes")
+							Class[] paramTypesGetTotalTimeLocked= new Class[2];
+							paramTypesGetTotalTimeLocked[0]= long.class;
+							paramTypesGetTotalTimeLocked[1]= int.class;    
+
+			            	@SuppressWarnings("unchecked")
+							Method methodGetTotalTimeLocked = iBatteryStatsTimer.getMethod("getTotalTimeLocked", paramTypesGetTotalTimeLocked);
+							
+							
+							//Parameters
+							Object[] paramsGetTotalTimeLocked= new Object[2];
+							paramsGetTotalTimeLocked[0]= new Long(uSecTime);
+							paramsGetTotalTimeLocked[1]= new Integer(BatteryStatsTypes.STATS_SINCE_CHARGED);
+							
+							Long wake = (Long) methodGetTotalTimeLocked.invoke(wakeTimer, paramsGetTotalTimeLocked);
+							Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wake);
+							wakelockTime += wake;
+		                }
+						// convert so seconds
+						wakelockTime /= 1000000;
+						Log.d(TAG, "Wakelocks: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wakelockTime);
+		            }
+		        }
+            }
+            catch( Exception e )
+            {
+                throw e;
+            }
+
+		}	
+	}
 }
