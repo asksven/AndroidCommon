@@ -18,11 +18,10 @@ package com.asksven.android.common.privateapiproxies;
 
 
 import java.lang.reflect.Field;
-
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import android.content.Context;
 import android.os.IBinder;
@@ -30,9 +29,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.util.Log;
-import android.util.Printer;
 import android.util.SparseArray;
-import com.asksven.android.common.privateapiproxies.BatteryStatsTypes;
+
 
 
 /**
@@ -179,9 +177,9 @@ public class BatteryStatsProxy
      * Returns the total, last, or current battery realtime in microseconds.
      *
      * @param curTime the current elapsed realtime in microseconds.
-     * @param which one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long computeBatteryRealtime(long curTime, int which)
+    public Long computeBatteryRealtime(long curTime, int iStatsType)
 	{
     	Long ret = new Long(0);
 
@@ -199,7 +197,7 @@ public class BatteryStatsProxy
           //Parameters
           Object[] params= new Object[2];
           params[0]= new Long(curTime);
-          params[1]= new Integer(which);
+          params[1]= new Integer(iStatsType);
 
           ret= (Long) method.invoke(m_Instance, params);
 
@@ -277,19 +275,18 @@ public class BatteryStatsProxy
     }
 	
     
-	public SparseArray<? extends BatteryStatsTypes.Uid> getUidStats()
+	/**
+	 * Collect the UidStats using reflection and store them  
+	 */
+    @SuppressWarnings("unchecked")
+	private void collectUidStats()
     {
-    	SparseArray<? extends BatteryStatsTypes.Uid> uidStats = null;
-    	// <? extends Uid> uidStats = mStats.getUidStats();
         try
         {
-        	@SuppressWarnings("unchecked")
         	Method method = m_ClassDefinition.getMethod("getUidStats");
         	
-        	uidStats = (SparseArray<? extends BatteryStatsTypes.Uid>) method.invoke(m_Instance);	
+        	m_uidStats = (SparseArray<? extends Object>) method.invoke(m_Instance);	
         	
-        	// store stats for further reference
-        	m_uidStats = uidStats;
         }
         catch( IllegalArgumentException e )
         {
@@ -297,21 +294,40 @@ public class BatteryStatsProxy
         }
         catch( Exception e )
         {
-        	uidStats = null;
+        	m_uidStats = null;
         }    
-        
-        return uidStats;
+
     }
 	
-	public void showStats(Context context) throws Exception
+	/**
+	 * Obtain the wakelock stats as a list of Wakelocks (@see com.asksven.android.common.privateapiproxies.Wakelock}
+	 * @param context a Context
+	 * @param iWakeType a type of wakelock @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes 
+	 * @param iStatType a type of stat @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes
+	 * @return a List of Wakelock s
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Wakelock> getWakelockStats(Context context, int iWakeType, int iStatType) throws Exception
 	{
-		this.getUidStats();
+		// type checks
+		boolean validTypes = (BatteryStatsTypes.assertValidWakeType(iWakeType)
+				&& BatteryStatsTypes.assertValidStatType(iStatType));
+		if (!validTypes)
+		{
+			throw new Exception("Invalid WakeType of StatType");
+		}
+		
+		List<Wakelock> myStats = new Vector<Wakelock>();
+		
+		this.collectUidStats();
 		if (m_uidStats != null)
 		{
-			long uSecTime = this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000, BatteryStatsTypes.STATS_SINCE_CHARGED);
+			long uSecTime = this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000, iStatType);
             try
             {			
 				ClassLoader cl = context.getClassLoader();
+				@SuppressWarnings("rawtypes")
 				Class iBatteryStatsUid = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid");
 				int NU = m_uidStats.size();
 		        for (int iu = 0; iu < NU; iu++)
@@ -319,51 +335,7 @@ public class BatteryStatsProxy
 		        	// Object is an instance of BatteryStats.Uid
 		            Object myUid = m_uidStats.valueAt(iu);
 	            
-	            
-					@SuppressWarnings("unchecked")
-					Method methodGetProcessStats = iBatteryStatsUid.getMethod("getProcessStats");
-
-	            
-					// Map of String, BatteryStats.Uid.Proc
-					Map<String, ? extends Object> processStats = (Map<String, ? extends Object>)  methodGetProcessStats.invoke(myUid);
-					if (processStats.size() > 0)
-					{
-//						Iterator it = processStats.entrySet().iterator();
-//					    while (it.hasNext()) 
-//					    {
-//					        Map.Entry pairs = (Map.Entry)it.next();
-//					        Log.d(TAG, pairs.getKey() + " = " + pairs.getValue());
-//					    }
-					    for (Map.Entry<String, ? extends Object> ent : processStats.entrySet())
-					    {
-					    	Log.d(TAG, "Process name = " + ent.getKey());
-						    // Object is a BatteryStatsTypes.Uid.Proc
-						    Object ps = ent.getValue();
-							Class batteryStatsUidProc = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid$Proc");
-
-							//Parameters Types
-							@SuppressWarnings("rawtypes")
-							Class[] paramTypes= new Class[1];
-							paramTypes[0]= int.class; 
-							
-							@SuppressWarnings("unchecked")
-							Method methodGetUserTime = batteryStatsUidProc.getMethod("getUserTime", paramTypes);
-							@SuppressWarnings("unchecked")
-							Method methodGetSystemTime = batteryStatsUidProc.getMethod("getSystemTime", paramTypes);
-	
-							//Parameters
-							Object[] params= new Object[1];
-							params[0]= new Integer(BatteryStatsTypes.STATS_SINCE_CHARGED);
-							
-							Long userTime = (Long) methodGetUserTime.invoke(ps, params);
-							Long systemTime = (Long) methodGetSystemTime.invoke(ps, params);
-							
-							Log.d(TAG, "UserTime = " + userTime);
-							Log.d(TAG, "SystemTime = " + systemTime);
-					    }		
-					}
 					// Process wake lock usage
-					@SuppressWarnings("unchecked")
 					Method methodGetWakelockStats = iBatteryStatsUid.getMethod("getWakelockStats");
 
 					// Map of String, BatteryStats.Uid.Wakelock
@@ -375,28 +347,33 @@ public class BatteryStatsProxy
 		            {
 		                // BatteryStats.Uid.Wakelock
 		            	Object wakelock = wakelockEntry.getValue();
-		                // Only care about partial wake locks since full wake locks
-		                // are canceled when the user turns the screen off.
-		            	Class batteryStatsUidWakelock = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid$Wakelock");
+
+		            	@SuppressWarnings("rawtypes")
+						Class batteryStatsUidWakelock = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid$Wakelock");
 
 						//Parameters Types
 						@SuppressWarnings("rawtypes")
-						Class[] paramTypes= new Class[1];
-						paramTypes[0]= int.class;    
+						Class[] paramTypesGetWakeTime= new Class[1];
+						paramTypesGetWakeTime[0]= int.class;    
 
-		            	@SuppressWarnings("unchecked")
-						Method methodGetWakeTime = batteryStatsUidWakelock.getMethod("getWakeTime", paramTypes);
+						Method methodGetWakeTime = batteryStatsUidWakelock.getMethod("getWakeTime", paramTypesGetWakeTime);
 						
 						
 						//Parameters
-						Object[] params= new Object[1];
-						params[0]= new Integer(BatteryStatsTypes.STATS_SINCE_CHARGED);
+						Object[] paramsGetWakeTime= new Object[1];
+
+						// Partial wake locks BatteryStatsTypes.WAKE_TYPE_PARTIAL 
+						// are the ones that should normally be of interest but
+						// WAKE_TYPE_PARTIAL, WAKE_TYPE_FULL, WAKE_TYPE_WINDOW
+		                // are possible
+						paramsGetWakeTime[0]= new Integer(BatteryStatsTypes.WAKE_TYPE_PARTIAL);
 						
 						// BatteryStats.Timer
-						Object wakeTimer = methodGetWakeTime.invoke(wakelock, params);
+						Object wakeTimer = methodGetWakeTime.invoke(wakelock, paramsGetWakeTime);
 						if (wakeTimer != null)
 						{
-			            	Class iBatteryStatsTimer = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Timer");
+			            	@SuppressWarnings("rawtypes")
+							Class iBatteryStatsTimer = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Timer");
 
 							//Parameters Types
 							@SuppressWarnings("rawtypes")
@@ -404,10 +381,8 @@ public class BatteryStatsProxy
 							paramTypesGetTotalTimeLocked[0]= long.class;
 							paramTypesGetTotalTimeLocked[1]= int.class;    
 
-			            	@SuppressWarnings("unchecked")
 							Method methodGetTotalTimeLocked = iBatteryStatsTimer.getMethod("getTotalTimeLocked", paramTypesGetTotalTimeLocked);
-							
-							
+														
 							//Parameters
 							Object[] paramsGetTotalTimeLocked= new Object[2];
 							paramsGetTotalTimeLocked[0]= new Long(uSecTime);
@@ -417,8 +392,12 @@ public class BatteryStatsProxy
 							Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wake);
 							wakelockTime += wake;
 		                }
-						// convert so seconds
-						wakelockTime /= 1000000;
+						// convert so milliseconds
+						wakelockTime /= 1000;
+						
+						Wakelock wl = new Wakelock(iWakeType, wakelockEntry.getKey(), wakelockTime);
+						myStats.add(wl);
+						
 						Log.d(TAG, "Wakelocks: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wakelockTime);
 		            }
 		        }
@@ -427,7 +406,86 @@ public class BatteryStatsProxy
             {
                 throw e;
             }
-
 		}	
+		return myStats;
 	}
+	/**
+	 * Obtain the wakelock stats as a list of Wakelocks (@see com.asksven.android.common.privateapiproxies.Wakelock}
+	 * @param context a Context
+	 * @param iWakeType a type of wakelock @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes 
+	 * @param iStatType a type of stat @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes
+	 * @return a List of Wakelock s
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Process> getProcessStats(Context context, int iStatType) throws Exception
+	{
+		// type checks
+		boolean validTypes = BatteryStatsTypes.assertValidStatType(iStatType);
+		if (!validTypes)
+		{
+			throw new Exception("Invalid StatType");
+		}
+		
+		List<Process> myStats = new Vector<Process>();
+		
+		this.collectUidStats();
+		if (m_uidStats != null)
+		{
+            try
+            {			
+				ClassLoader cl = context.getClassLoader();
+				@SuppressWarnings("rawtypes")
+				Class iBatteryStatsUid = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid");
+				int NU = m_uidStats.size();
+		        for (int iu = 0; iu < NU; iu++)
+		        {
+		        	// Object is an instance of BatteryStats.Uid
+		            Object myUid = m_uidStats.valueAt(iu);
+	            
+	            	Method methodGetProcessStats = iBatteryStatsUid.getMethod("getProcessStats");
+	            
+					// Map of String, BatteryStats.Uid.Proc
+					Map<String, ? extends Object> processStats = (Map<String, ? extends Object>)  methodGetProcessStats.invoke(myUid);
+					if (processStats.size() > 0)
+					{
+					    for (Map.Entry<String, ? extends Object> ent : processStats.entrySet())
+					    {
+					    	Log.d(TAG, "Process name = " + ent.getKey());
+						    // Object is a BatteryStatsTypes.Uid.Proc
+						    Object ps = ent.getValue();
+							@SuppressWarnings("rawtypes")
+							Class batteryStatsUidProc = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid$Proc");
+
+							//Parameters Types
+							@SuppressWarnings("rawtypes")
+							Class[] paramTypesGetXxxTime= new Class[1];
+							paramTypesGetXxxTime[0]= int.class; 
+							
+							Method methodGetUserTime = batteryStatsUidProc.getMethod("getUserTime", paramTypesGetXxxTime);
+							Method methodGetSystemTime = batteryStatsUidProc.getMethod("getSystemTime", paramTypesGetXxxTime);
+	
+							//Parameters
+							Object[] paramsGetXxxTime= new Object[1];
+							paramsGetXxxTime[0]= new Integer(BatteryStatsTypes.STATS_SINCE_CHARGED);
+							
+							Long userTime = (Long) methodGetUserTime.invoke(ps, paramsGetXxxTime);
+							Long systemTime = (Long) methodGetSystemTime.invoke(ps, paramsGetXxxTime);
+							
+							Log.d(TAG, "UserTime = " + userTime);
+							Log.d(TAG, "SystemTime = " + systemTime);
+							Process myPs = new Process(ent.getKey(), userTime, systemTime);
+							myStats.add(myPs);
+					    }		
+		            }
+		        }
+            }
+            catch( Exception e )
+            {
+                throw e;
+            }
+		}	
+		return myStats;
+	}
+
 }
