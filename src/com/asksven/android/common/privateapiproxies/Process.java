@@ -19,7 +19,7 @@ package com.asksven.android.common.privateapiproxies;
  * @author sven
  *
  */
-public class Process
+public class Process implements Comparable<Process>
 {
 	/**
 	 * the name of the process
@@ -78,6 +78,18 @@ public class Process
 	public String toString() {
 		return "Process [m_name=" + m_name + ", m_systemTime=" + m_systemTime
 				+ ", m_userTime=" + m_userTime + "]";
+	}
+	
+	/**
+     * Compare a given Wakelock with this object.
+     * If the duration of this object is 
+     * greater than the received object,
+     * then this object is greater than the other.
+     */
+	public int compareTo(Process o)
+	{
+		// we want to sort in descending order
+		return ((int)( (o.getSystemTime() + o.getUserTime()) - (this.getSystemTime() + this.getUserTime())));
 	}
 
 

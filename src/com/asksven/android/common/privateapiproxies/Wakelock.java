@@ -20,7 +20,7 @@ package com.asksven.android.common.privateapiproxies;
  * @author sven
  *
  */
-public class Wakelock
+public class Wakelock implements Comparable<Wakelock>
 {
 	/**
 	 * the wakelock type
@@ -78,5 +78,17 @@ public class Wakelock
 	public String toString() {
 		return "Wakelock [m_wakeType=" + m_wakeType + ", m_name=" + m_name
 				+ ", m_duration=" + m_duration + "]";
+	}
+	
+	 /**
+     * Compare a given Wakelock with this object.
+     * If the duration of this object is 
+     * greater than the received object,
+     * then this object is greater than the other.
+     */
+	public int compareTo(Wakelock o)
+	{
+		// we want to sort in descending order
+		return ((int)(o.getDuration() - this.getDuration()));
 	}
 }
