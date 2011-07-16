@@ -386,7 +386,7 @@ public class BatteryStatsProxy
 							//Parameters
 							Object[] paramsGetTotalTimeLocked= new Object[2];
 							paramsGetTotalTimeLocked[0]= new Long(uSecTime);
-							paramsGetTotalTimeLocked[1]= new Integer(BatteryStatsTypes.STATS_SINCE_CHARGED);
+							paramsGetTotalTimeLocked[1]= new Integer(iStatType);
 							
 							Long wake = (Long) methodGetTotalTimeLocked.invoke(wakeTimer, paramsGetTotalTimeLocked);
 							Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wake);
@@ -467,7 +467,7 @@ public class BatteryStatsProxy
 	
 							//Parameters
 							Object[] paramsGetXxxTime= new Object[1];
-							paramsGetXxxTime[0]= new Integer(BatteryStatsTypes.STATS_SINCE_CHARGED);
+							paramsGetXxxTime[0]= new Integer(iStatType);
 							
 							Long userTime = (Long) methodGetUserTime.invoke(ps, paramsGetXxxTime);
 							Long systemTime = (Long) methodGetSystemTime.invoke(ps, paramsGetXxxTime);
