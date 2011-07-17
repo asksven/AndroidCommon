@@ -38,22 +38,28 @@ public class Wakelock implements Comparable<Wakelock>
 	private long m_duration;
 	
 	/**
+	 * the count
+	 */
+	private int m_count;
+	
+	/**
 	 * 
 	 * @param wakeType
 	 * @param name
 	 * @param duration
 	 */
-	public Wakelock(int wakeType, String name, long duration)
+	public Wakelock(int wakeType, String name, long duration, int count)
 	{
 		m_wakeType	= wakeType;
 		m_name		= name;
 		m_duration	= duration;
+		m_count		= count;
 	}
 
 	/**
 	 * @return the wakeType
 	 */
-	public int getWwakeType() {
+	public int getWakeType() {
 		return m_wakeType;
 	}
 
@@ -71,6 +77,12 @@ public class Wakelock implements Comparable<Wakelock>
 		return m_duration;
 	}
 
+	/**
+	 * @return the count
+	 */
+	public long getCount() {
+		return m_count;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

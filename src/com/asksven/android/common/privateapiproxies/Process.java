@@ -37,47 +37,56 @@ public class Process implements Comparable<Process>
 	private long m_userTime;
 
 	/**
-	 * 
-	 * @param wakeType
-	 * @param name
-	 * @param duration
+	 * the number of starts
 	 */
-	public Process(String name, long userTime, long systemTime)
+	private int m_starts;
+
+	/**
+	 * Constructor
+	 * @param name
+	 * @param userTime
+	 * @param systemTime
+	 * @param starts
+	 */
+	public Process(String name, long userTime, long systemTime, int starts)
 	{
 
 		m_name			= name;
 		m_userTime		= userTime;
 		m_systemTime	= systemTime;
+		m_starts		= starts;
 	}
 
 	/**
 	 * @return the name
 	 */
-	public String getName() {
+	public String getName()
+	{
 		return m_name;
 	}
 
 	/**
 	 * @return the system time
 	 */
-	public long getSystemTime() {
+	public long getSystemTime()
+	{
 		return m_systemTime;
 	}
 
 	/**
 	 * @return the user time
 	 */
-	public long getUserTime() {
+	public long getUserTime()
+	{
 		return m_userTime;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * @return the number of starts
 	 */
-	@Override
-	public String toString() {
-		return "Process [m_name=" + m_name + ", m_systemTime=" + m_systemTime
-				+ ", m_userTime=" + m_userTime + "]";
+	public int getStarts()
+	{
+		return m_starts;
 	}
 	
 	/**
@@ -92,6 +101,17 @@ public class Process implements Comparable<Process>
 		return ((int)( (o.getSystemTime() + o.getUserTime()) - (this.getSystemTime() + this.getUserTime())));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "Process [m_name=" + m_name + ", m_systemTime=" + m_systemTime
+				+ ", m_userTime=" + m_userTime + ", m_starts=" + m_starts + "]";
+	}
+
+	
 
 }
 

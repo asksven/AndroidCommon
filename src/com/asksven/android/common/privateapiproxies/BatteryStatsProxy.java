@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -342,6 +343,7 @@ public class BatteryStatsProxy
 					Map<String, ? extends Object> wakelockStats = (Map<String, ? extends Object>)  methodGetWakelockStats.invoke(myUid);
 					
 					long wakelockTime = 0;
+					int wakelockCount = 0;
 		            // Map of String, BatteryStats.Uid.Wakelock
 		            for (Map.Entry<String, ? extends Object> wakelockEntry : wakelockStats.entrySet())
 		            {
@@ -391,6 +393,22 @@ public class BatteryStatsProxy
 							Long wake = (Long) methodGetTotalTimeLocked.invoke(wakeTimer, paramsGetTotalTimeLocked);
 							Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wake);
 							wakelockTime += wake;
+
+							//Parameters Types
+							@SuppressWarnings("rawtypes")
+							Class[] paramTypesGetCountLocked= new Class[1];
+							paramTypesGetCountLocked[0]= int.class;    
+
+							Method methodGetCountLocked = iBatteryStatsTimer.getMethod("getCountLocked", paramTypesGetCountLocked);
+														
+							//Parameters
+							Object[] paramsGetCountLocked= new Object[1];
+							paramsGetCountLocked[0]= new Integer(iStatType);
+
+							Integer count = (Integer) methodGetCountLocked.invoke(wakeTimer, paramsGetCountLocked);
+							Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " count " + count);
+							wakelockCount += count;
+
 		                }
 						else
 						{
@@ -399,10 +417,10 @@ public class BatteryStatsProxy
 						// convert so milliseconds
 						wakelockTime /= 1000;
 						
-						Wakelock wl = new Wakelock(iWakeType, wakelockEntry.getKey(), wakelockTime);
+						Wakelock wl = new Wakelock(iWakeType, wakelockEntry.getKey(), wakelockTime, wakelockCount);
 						myStats.add(wl);
 						
-						Log.d(TAG, "Wakelocks: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wakelockTime);
+						Log.d(TAG, "Wakelocks: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wakelockTime + ", count " + wakelockCount);
 		            }
 		        }
             }
@@ -414,11 +432,10 @@ public class BatteryStatsProxy
 		return myStats;
 	}
 	/**
-	 * Obtain the wakelock stats as a list of Wakelocks (@see com.asksven.android.common.privateapiproxies.Wakelock}
+	 * Obtain the process stats as a list of Processes (@see com.asksven.android.common.privateapiproxies.Process}
 	 * @param context a Context
-	 * @param iWakeType a type of wakelock @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes 
 	 * @param iStatType a type of stat @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes
-	 * @return a List of Wakelock s
+	 * @return a List of Process es
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
@@ -466,8 +483,9 @@ public class BatteryStatsProxy
 							Class[] paramTypesGetXxxTime= new Class[1];
 							paramTypesGetXxxTime[0]= int.class; 
 							
-							Method methodGetUserTime = batteryStatsUidProc.getMethod("getUserTime", paramTypesGetXxxTime);
-							Method methodGetSystemTime = batteryStatsUidProc.getMethod("getSystemTime", paramTypesGetXxxTime);
+							Method methodGetUserTime 	= batteryStatsUidProc.getMethod("getUserTime", paramTypesGetXxxTime);
+							Method methodGetSystemTime 	= batteryStatsUidProc.getMethod("getSystemTime", paramTypesGetXxxTime);
+							Method methodGetStarts 		= batteryStatsUidProc.getMethod("getStarts", paramTypesGetXxxTime);
 	
 							//Parameters
 							Object[] paramsGetXxxTime= new Object[1];
@@ -475,10 +493,12 @@ public class BatteryStatsProxy
 							
 							Long userTime = (Long) methodGetUserTime.invoke(ps, paramsGetXxxTime);
 							Long systemTime = (Long) methodGetSystemTime.invoke(ps, paramsGetXxxTime);
+							Integer starts = (Integer) methodGetStarts.invoke(ps, paramsGetXxxTime);
 							
 							Log.d(TAG, "UserTime = " + userTime);
 							Log.d(TAG, "SystemTime = " + systemTime);
-							Process myPs = new Process(ent.getKey(), userTime, systemTime);
+							Log.d(TAG, "Starts = " + starts);
+							Process myPs = new Process(ent.getKey(), userTime, systemTime, starts);
 							myStats.add(myPs);
 					    }		
 		            }
@@ -492,4 +512,68 @@ public class BatteryStatsProxy
 		return myStats;
 	}
 
+	/**
+	 * Obtain the network usage stats as a list of NetworkUsages (@see com.asksven.android.common.privateapiproxies.NetworkUsage}
+	 * @param context a Context
+	 * @param iStatType a type of stat @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes
+	 * @return a List of NetworkUsage s
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	public List<NetworkUsage> getNetworkUsageStats(Context context, int iStatType) throws Exception
+	{
+		// type checks
+		boolean validTypes = BatteryStatsTypes.assertValidStatType(iStatType);
+		if (!validTypes)
+		{
+			throw new Exception("Invalid StatType");
+		}
+		
+		List<NetworkUsage> myStats = new Vector<NetworkUsage>();
+		
+		this.collectUidStats();
+		if (m_uidStats != null)
+		{
+            try
+            {			
+				ClassLoader cl = context.getClassLoader();
+				@SuppressWarnings("rawtypes")
+				Class iBatteryStatsUid = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid");
+				int NU = m_uidStats.size();
+		        for (int iu = 0; iu < NU; iu++)
+		        {
+		        	// Object is an instance of BatteryStats.Uid
+		            Object myUid = m_uidStats.valueAt(iu);
+
+					//Parameters Types
+					@SuppressWarnings("rawtypes")
+					Class[] paramTypesGetTcpBytesXxx= new Class[1];
+					paramTypesGetTcpBytesXxx[0]= int.class; 
+
+	            	Method methodGetTcpBytesReceived 	= iBatteryStatsUid.getMethod("getTcpBytesReceived", paramTypesGetTcpBytesXxx);
+	            	Method methodGetTcpBytesSent 		= iBatteryStatsUid.getMethod("getTcpBytesSent", paramTypesGetTcpBytesXxx);
+
+					//Parameters
+					Object[] paramGetTcpBytesXxx = new Object[1];
+					paramGetTcpBytesXxx[0]= new Integer(iStatType);
+					
+					Long tcpBytesReceived 	= (Long) methodGetTcpBytesReceived.invoke(myUid, paramGetTcpBytesXxx);
+					Long tcpBytesSent		= (Long) methodGetTcpBytesSent.invoke(myUid, paramGetTcpBytesXxx);
+
+					Method methodGetUid	= iBatteryStatsUid.getMethod("getUid");
+					Integer uid 		= (Integer) methodGetUid.invoke(myUid);
+					
+					Log.d(TAG, "Uid = " + uid + ": received:" + tcpBytesReceived + ", sent: " + tcpBytesSent);
+
+					NetworkUsage myData = new NetworkUsage(uid, tcpBytesReceived, tcpBytesSent);
+					myStats.add(myData);
+		        }
+            }
+            catch( Exception e )
+            {
+                throw e;
+            }
+		}	
+		return myStats;
+	}
 }
