@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import com.android.asksven.common.nameutils.UidInfo;
+import com.android.asksven.common.nameutils.UidNameResolver;
+
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
@@ -55,6 +58,11 @@ public class BatteryStatsProxy
 	 * outside of this class due to non-public types (Uid, Proc, etc.)
 	 */
 	private SparseArray<? extends Object> m_uidStats = null;
+	
+	/** 
+	 * An instance to the UidNameResolver 
+	 */
+	private UidNameResolver m_nameResolver;
 
     /**
 	 * Default cctor
@@ -65,7 +73,7 @@ public class BatteryStatsProxy
 		 * As BatteryStats is a service we need to get a binding using the IBatteryStats.Stub.getStatistics()
 		 * method (using reflection).
 		 * If we would be using a public API the code would look like:
-		 * @see com.android.settings.fuelgauge.PowerUsageSummary.java 
+	<	 * @see com.android.settings.fuelgauge.PowerUsageSummary.java 
 		 * protected void onCreate(Bundle icicle) {
          *  super.onCreate(icicle);
 		 *	
@@ -93,6 +101,8 @@ public class BatteryStatsProxy
          *  }
          * }
 		 */
+		
+		m_nameResolver = new UidNameResolver();
 		
 		try
 		{
@@ -342,6 +352,9 @@ public class BatteryStatsProxy
 					// Map of String, BatteryStats.Uid.Wakelock
 					Map<String, ? extends Object> wakelockStats = (Map<String, ? extends Object>)  methodGetWakelockStats.invoke(myUid);
 					
+					Method methodGetUid	= iBatteryStatsUid.getMethod("getUid");
+					Integer uid 		= (Integer) methodGetUid.invoke(myUid);
+					
 					long wakelockTime = 0;
 					int wakelockCount = 0;
 		            // Map of String, BatteryStats.Uid.Wakelock
@@ -417,8 +430,12 @@ public class BatteryStatsProxy
 						// convert so milliseconds
 						wakelockTime /= 1000;
 						
-						Wakelock wl = new Wakelock(iWakeType, wakelockEntry.getKey(), wakelockTime, wakelockCount);
-						myStats.add(wl);
+						Wakelock myWl = new Wakelock(iWakeType, wakelockEntry.getKey(), wakelockTime, wakelockCount);
+						
+						// try resolving names
+						UidInfo myInfo = m_nameResolver.getNameForUid(context, uid);
+						myWl.setUidInfo(myInfo);
+						myStats.add(myWl);
 						
 						Log.d(TAG, "Wakelocks: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wakelockTime + ", count " + wakelockCount);
 		            }
@@ -465,9 +482,13 @@ public class BatteryStatsProxy
 		            Object myUid = m_uidStats.valueAt(iu);
 	            
 	            	Method methodGetProcessStats = iBatteryStatsUid.getMethod("getProcessStats");
-	            
+	            	
+	            	Method methodGetUid	= iBatteryStatsUid.getMethod("getUid");
+					Integer uid 		= (Integer) methodGetUid.invoke(myUid);
+					
 					// Map of String, BatteryStats.Uid.Proc
 					Map<String, ? extends Object> processStats = (Map<String, ? extends Object>)  methodGetProcessStats.invoke(myUid);
+					
 					if (processStats.size() > 0)
 					{
 					    for (Map.Entry<String, ? extends Object> ent : processStats.entrySet())
@@ -499,6 +520,12 @@ public class BatteryStatsProxy
 							Log.d(TAG, "SystemTime = " + systemTime);
 							Log.d(TAG, "Starts = " + starts);
 							Process myPs = new Process(ent.getKey(), userTime, systemTime, starts);
+							
+							// try resolving names
+							UidInfo myInfo = m_nameResolver.getNameForUid(context, uid);
+							String myName = m_nameResolver.getLabel(context, ent.getKey());
+							myPs.setUidInfo(myInfo);
+							
 							myStats.add(myPs);
 					    }		
 		            }
@@ -566,6 +593,9 @@ public class BatteryStatsProxy
 					Log.d(TAG, "Uid = " + uid + ": received:" + tcpBytesReceived + ", sent: " + tcpBytesSent);
 
 					NetworkUsage myData = new NetworkUsage(uid, tcpBytesReceived, tcpBytesSent);
+					// try resolving names
+					UidInfo myInfo = m_nameResolver.getNameForUid(context, uid);
+					myData.setUidInfo(myInfo);
 					myStats.add(myData);
 		        }
             }

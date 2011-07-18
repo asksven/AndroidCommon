@@ -19,7 +19,7 @@ package com.asksven.android.common.privateapiproxies;
  * @author sven
  *
  */
-public class Process implements Comparable<Process>
+public class Process extends StatElement implements Comparable<Process>
 {
 	/**
 	 * the name of the process

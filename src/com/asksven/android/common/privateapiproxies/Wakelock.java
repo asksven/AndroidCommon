@@ -16,12 +16,14 @@
 
 package com.asksven.android.common.privateapiproxies;
 
+import com.android.asksven.common.nameutils.UidInfo;
+
 /**
  * @author sven
  *
  */
-public class Wakelock implements Comparable<Wakelock>
-{
+public class Wakelock extends StatElement implements Comparable<Wakelock>
+{	
 	/**
 	 * the wakelock type
 	 */
@@ -83,6 +85,7 @@ public class Wakelock implements Comparable<Wakelock>
 	public long getCount() {
 		return m_count;
 	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

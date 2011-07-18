@@ -16,7 +16,7 @@
 
 package com.asksven.android.common.privateapiproxies;
 
-public class NetworkUsage implements Comparable<NetworkUsage>
+public class NetworkUsage extends StatElement implements Comparable<NetworkUsage>
 {
 	/**
 	 * the uid
