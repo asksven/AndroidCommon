@@ -110,6 +110,17 @@ public class Process extends StatElement implements Comparable<Process>
 		return "Process [m_name=" + m_name + ", m_systemTime=" + m_systemTime
 				+ ", m_userTime=" + m_userTime + ", m_starts=" + m_starts + "]";
 	}
+	
+	/**
+	 * returns a string representation of the data
+	 */
+	public String getData()
+	{
+		
+		return "Sys: " + this.formatDuration(getSystemTime()) + " (" + getSystemTime() + " s)"
+		+ " Us: " + this.formatDuration(getUserTime()) + " (" + getUserTime() + " s)"
+		+ " Starts: " + String.valueOf(getStarts());
+	}
 
 	
 

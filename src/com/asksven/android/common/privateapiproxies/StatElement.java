@@ -42,6 +42,17 @@ public abstract class StatElement
 		return ret;
 			
 	}
+	
+	/**
+	 * Returns the full qualified name (default, can be overwritten)
+	 * @return the full qualified name
+	 */
+	public String getFqn()
+	{
+		return getFullQualifiedName();
+	}
+	
+	
 
 	/**
 	 * Returns the associated UidInfo
@@ -60,6 +71,63 @@ public abstract class StatElement
 		return m_uidInfo.toString();
 	}
 	
+	/**
+	 * Returns a speaking name
+	 * @return the name
+	 */
+	public abstract String getName();
 	
+	/**
+	 * Returns data as displayable string
+	 * @return the data
+	 */
+	public abstract String getData();
+	
+	/**
+	 * Formats milliseconds to a friendly form 
+	 * @param millis
+	 * @return the formated string
+	 */
+	protected String formatDuration(double millis)
+	{
+		String ret = "";
+		
+        int seconds = (int) Math.floor(millis / 1000);
+        
+        int days = 0, hours = 0, minutes = 0;
+        if (seconds > (60*60*24)) {
+            days = seconds / (60*60*24);
+            seconds -= days * (60*60*24);
+        }
+        if (seconds > (60 * 60)) {
+            hours = seconds / (60 * 60);
+            seconds -= hours * (60 * 60);
+        }
+        if (seconds > 60) {
+            minutes = seconds / 60;
+            seconds -= minutes * 60;
+        }
+        ret = "";
+        if (days > 0)
+        {
+            ret += days + " d ";
+        }
+        
+        if (hours > 0)
+        {
+        	ret += hours + " h ";
+        }
+        
+        if (minutes > 0)
+        { 
+        	ret += minutes + " m ";
+        }
+        if (seconds > 0)
+        {
+        	ret += seconds + " s ";
+        }
+        
+        return ret;
+    }
 	
 }

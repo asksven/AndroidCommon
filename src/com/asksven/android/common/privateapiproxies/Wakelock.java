@@ -106,4 +106,12 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>
 		// we want to sort in descending order
 		return ((int)(o.getDuration() - this.getDuration()));
 	}
+	
+	/**
+	 * returns a string representation of the data
+	 */
+	public String getData()
+	{
+		return this.formatDuration(getDuration()) + " (" + getDuration()/1000 + " s)";
+	}
 }

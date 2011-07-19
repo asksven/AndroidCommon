@@ -90,4 +90,20 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 		return "NetworkUsage [m_uid=" + m_uid + ", m_bytesReceived="
 				+ m_bytesReceived + ", m_bytesSent=" + m_bytesSent + "]";
 	}
+	
+	/**
+	 * Network Stats do not have a speaking name, just the UID
+	 */
+	public String getName()
+	{
+		return String.valueOf(m_uid);
+	}
+	
+	/**
+	 * returns a string representation of the data
+	 */
+	public String getData()
+	{
+		return "Rec. Byes: " + String.valueOf(m_bytesReceived) + ", Sent Bytes: " + String.valueOf(m_bytesSent);
+	}
 }
