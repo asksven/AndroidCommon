@@ -14,7 +14,7 @@
  * limitations under the License.
  */
  
-package com.android.asksven.common.nameutils;
+package com.asksven.android.common.nameutils;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;

@@ -19,17 +19,17 @@ package com.asksven.android.common.privateapiproxies;
 public class NetworkUsage extends StatElement implements Comparable<NetworkUsage>
 {
 	/**
-	 * the uid
+	 * the uid of the program
 	 */
 	private int m_uid;
 	
 	/**
-	 * tcpBytes reived
+	 * tcpBytes received by the program
 	 */
 	private long m_bytesReceived;
 	
 	/**
-	 * tcpBytes sent
+	 * tcpBytes sent by the program
 	 */
 	private long m_bytesSent;
 	

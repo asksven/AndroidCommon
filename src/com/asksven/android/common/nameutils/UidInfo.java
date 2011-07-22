@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.asksven.common.nameutils;
+package com.asksven.android.common.nameutils;
 
 /**
  * @author sven

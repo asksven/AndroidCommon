@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import com.android.asksven.common.nameutils.UidInfo;
-import com.android.asksven.common.nameutils.UidNameResolver;
+import com.asksven.android.common.nameutils.UidInfo;
+import com.asksven.android.common.nameutils.UidNameResolver;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -73,7 +73,7 @@ public class BatteryStatsProxy
 		 * As BatteryStats is a service we need to get a binding using the IBatteryStats.Stub.getStatistics()
 		 * method (using reflection).
 		 * If we would be using a public API the code would look like:
-	<	 * @see com.android.settings.fuelgauge.PowerUsageSummary.java 
+		 * @see com.android.settings.fuelgauge.PowerUsageSummary.java 
 		 * protected void onCreate(Bundle icicle) {
          *  super.onCreate(icicle);
 		 *	

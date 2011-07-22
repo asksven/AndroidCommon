@@ -3,7 +3,7 @@
  */
 package com.asksven.android.common.privateapiproxies;
 
-import com.android.asksven.common.nameutils.UidInfo;
+import com.asksven.android.common.nameutils.UidInfo;
 
 /**
  * @author sven
