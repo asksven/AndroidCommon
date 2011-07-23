@@ -226,11 +226,309 @@ public class BatteryStatsProxy
 
 	
 	}
-    
+
+	/**
+     * Returns the total, last, or current battery realtime in microseconds.
+     *
+     * @param curTime the current elapsed realtime in microseconds.
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getBatteryRealtime(long curTime)
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[1];
+          paramTypes[0]= long.class;
+         
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getBatteryRealtime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[1];
+          params[0]= new Long(curTime);
+
+
+          ret= (Long) method.invoke(m_Instance, params);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+        }
+
+        return ret;
+
+	
+	}
+
+	/**
+     * Returns the total, last, or current battery uptime in microseconds.
+     *
+     * @param curTime the current elapsed realtime in microseconds.
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long computeBatteryUptime(long curTime, int iStatsType)
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[2];
+          paramTypes[0]= long.class;
+          paramTypes[1]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("computeBatteryUptime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[2];
+          params[0]= new Long(curTime);
+          params[1]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+        }
+
+        return ret;
+
+	
+	}
+
+	/**
+     * Returns the total, last, or current screen on time in microseconds.
+     *
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getScreenOnTime(long batteryRealtime, int iStatsType)
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[2];
+          paramTypes[0]= long.class;
+          paramTypes[1]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getScreenOnTime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[2];
+          params[0]= new Long(batteryRealtime);
+          params[1]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+        }
+
+        return ret;
+
+	
+	}
+
+	/**
+     * Returns the total, last, or current phone on time in microseconds.
+     *
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getPhoneOnTime(long batteryRealtime, int iStatsType)
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[2];
+          paramTypes[0]= long.class;
+          paramTypes[1]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getPhoneOnTime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[2];
+          params[0]= new Long(batteryRealtime);
+          params[1]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+        }
+
+        return ret;
+
+	
+	}
+
+	/**
+     * Returns the total, last, or current wifi on time in microseconds.
+     *
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getWifiOnTime(long batteryRealtime, int iStatsType)
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[2];
+          paramTypes[0]= long.class;
+          paramTypes[1]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getWifiOnTime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[2];
+          params[0]= new Long(batteryRealtime);
+          params[1]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+        }
+
+        return ret;
+
+	
+	}
+
+	/**
+     * Returns the total, last, or current wifi running time in microseconds.
+     *
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getWifiRunningTime(long batteryRealtime, int iStatsType)
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[2];
+          paramTypes[0]= long.class;
+          paramTypes[1]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getWifiRunningTime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[2];
+          params[0]= new Long(batteryRealtime);
+          params[1]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+        }
+
+        return ret;
+	}
+
+	/**
+     * Returns the total, last, or current bluetooth on time in microseconds.
+     *
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getBluetoothOnTime(long batteryRealtime, int iStatsType)
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[2];
+          paramTypes[0]= long.class;
+          paramTypes[1]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getBluetoothOnTime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[2];
+          params[0]= new Long(batteryRealtime);
+          params[1]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+        }
+
+        return ret;
+
+	
+	}
+
     /**
      * Return whether we are currently running on battery.
-     */	
-    
+     */	    
 	public boolean getIsOnBattery(Context context)
 	{
     	boolean ret = false;

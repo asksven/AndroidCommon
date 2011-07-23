@@ -3,6 +3,7 @@
  */
 package com.asksven.android.common.privateapiproxies;
 
+import java.util.Formatter;
 import com.asksven.android.common.nameutils.UidInfo;
 
 /**
@@ -33,6 +34,12 @@ public abstract class StatElement
 	public String getFullQualifiedName()
 	{
 		String ret = "";
+		
+		if (m_uidInfo == null)
+		{
+			return ret;
+		}
+		
 		if (!m_uidInfo.getNamePackage().equals(""))
 		{
 			ret = m_uidInfo.getNamePackage() + ".";
@@ -128,6 +135,21 @@ public abstract class StatElement
         }
         
         return ret;
+    }
+	
+	public final String formatRatio(long num, long den)
+	{
+		StringBuilder mFormatBuilder = new StringBuilder(8);
+	    Formatter mFormatter = new Formatter(mFormatBuilder);
+        if (den == 0L)
+        {
+            return "---%";
+        }
+        
+        float perc = ((float)num) / ((float)den) * 100;
+        mFormatBuilder.setLength(0);
+        mFormatter.format("%.1f%%", perc);
+        return mFormatBuilder.toString();
     }
 	
 }
