@@ -4,7 +4,11 @@
 package com.asksven.android.common.privateapiproxies;
 
 import java.util.Formatter;
+
+import android.content.Context;
+
 import com.asksven.android.common.nameutils.UidInfo;
+import com.asksven.android.common.nameutils.UidNameResolver;
 
 /**
  * @author sven
@@ -13,10 +17,32 @@ import com.asksven.android.common.nameutils.UidInfo;
 public abstract class StatElement
 {
 	/**
-	 * The resolved name
+	 * The process uid
+	 */
+	private int m_uid = -1;
+	/**
+	 * The resolved name info
 	 */
 	protected UidInfo m_uidInfo;
 
+	
+	/**
+	 * Set the uid
+	 * @param uid a process uid
+	 */
+	public void setUid(int uid)
+	{
+		m_uid = uid;
+	}
+	
+	/**
+	 * Get the uid
+	 * @return the process uid
+	 */
+	public int getuid()
+	{
+		return m_uid;
+	}
 	
 	/**
 	 * Store the name info
@@ -31,13 +57,22 @@ public abstract class StatElement
 	 * Returns the full qualified name
 	 * @return the full qualified name
 	 */
-	public String getFullQualifiedName()
+	public String getFullQualifiedName(Context context)
 	{
 		String ret = "";
 		
 		if (m_uidInfo == null)
 		{
-			return ret;
+			// may have been left out for lazy loading
+			if (m_uid != -1)
+			{
+				UidNameResolver m_nameResolver = new UidNameResolver();
+				m_uidInfo = m_nameResolver.getNameForUid(context, m_uid);
+			}
+			else
+			{
+				return ret;
+			}
 		}
 		
 		if (!m_uidInfo.getNamePackage().equals(""))
@@ -54,9 +89,9 @@ public abstract class StatElement
 	 * Returns the full qualified name (default, can be overwritten)
 	 * @return the full qualified name
 	 */
-	public String getFqn()
+	public String getFqn(Context context)
 	{
-		return getFullQualifiedName();
+		return getFullQualifiedName(context);
 	}
 	
 	

@@ -34,6 +34,7 @@ public class UidNameResolver
     
 	public String getLabel(Context context, String packageName)
 	{
+		String ret = packageName;
 		PackageManager pm = context.getPackageManager();
         try
         {
@@ -41,15 +42,15 @@ public class UidNameResolver
             CharSequence label = ai.loadLabel(pm);
             if (label != null)
             {
-                return label.toString();
+                ret = label.toString();
             }
         }
         catch (NameNotFoundException e)
         {
-            return packageName;
+            ret = packageName;
         }
         
-        return "";
+        return ret;
     }
 	
 	// Side effects: sets mName and mUniqueName

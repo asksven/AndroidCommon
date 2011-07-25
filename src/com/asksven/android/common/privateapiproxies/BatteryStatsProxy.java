@@ -730,11 +730,10 @@ public class BatteryStatsProxy
 						
 						Wakelock myWl = new Wakelock(iWakeType, wakelockEntry.getKey(), wakelockTime, wakelockCount);
 						
-						// try resolving names
-						UidInfo myInfo = m_nameResolver.getNameForUid(context, uid);
-						myWl.setUidInfo(myInfo);
+						// opt for lazy loading: do no populate UidInfo, just uid. UidInfo will be fetched on demand
+						myWl.setUid(uid);
 						myStats.add(myWl);
-						
+
 						Log.d(TAG, "Wakelocks: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wakelockTime + ", count " + wakelockCount);
 		            }
 		        }
@@ -817,14 +816,22 @@ public class BatteryStatsProxy
 							Log.d(TAG, "UserTime = " + userTime);
 							Log.d(TAG, "SystemTime = " + systemTime);
 							Log.d(TAG, "Starts = " + starts);
-							Process myPs = new Process(ent.getKey(), userTime, systemTime, starts);
 							
-							// try resolving names
-							UidInfo myInfo = m_nameResolver.getNameForUid(context, uid);
-							String myName = m_nameResolver.getLabel(context, ent.getKey());
-							myPs.setUidInfo(myInfo);
-							
-							myStats.add(myPs);
+							// take only the processes with CPU time
+							if ((userTime + systemTime) > 1000)
+							{
+								Process myPs = new Process(ent.getKey(), userTime, systemTime, starts);
+								// opt for lazy loading: do no populate UidInfo, just uid. UidInfo will be fetched on demand
+								myPs.setUid(uid);
+								// try resolving names
+								String myName = m_nameResolver.getLabel(context, ent.getKey());
+								
+								myStats.add(myPs);
+							}
+							else
+							{
+								Log.d(TAG, "Process " + ent.getKey() + " was discarded (CPU time =0)");
+							}
 					    }		
 		            }
 		        }
