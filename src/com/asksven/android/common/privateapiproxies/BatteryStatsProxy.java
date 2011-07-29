@@ -19,6 +19,7 @@ package com.asksven.android.common.privateapiproxies;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -617,7 +618,7 @@ public class BatteryStatsProxy
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Wakelock> getWakelockStats(Context context, int iWakeType, int iStatType) throws Exception
+	public ArrayList<Wakelock> getWakelockStats(Context context, int iWakeType, int iStatType) throws Exception
 	{
 		// type checks
 		boolean validTypes = (BatteryStatsTypes.assertValidWakeType(iWakeType)
@@ -627,7 +628,7 @@ public class BatteryStatsProxy
 			throw new Exception("Invalid WakeType of StatType");
 		}
 		
-		List<Wakelock> myStats = new Vector<Wakelock>();
+		ArrayList<Wakelock> myStats = new ArrayList<Wakelock>();
 		
 		this.collectUidStats();
 		if (m_uidStats != null)
@@ -655,7 +656,8 @@ public class BatteryStatsProxy
 					
 					long wakelockTime = 0;
 					int wakelockCount = 0;
-		            // Map of String, BatteryStats.Uid.Wakelock
+							            
+			        // Map of String, BatteryStats.Uid.Wakelock
 		            for (Map.Entry<String, ? extends Object> wakelockEntry : wakelockStats.entrySet())
 		            {
 		                // BatteryStats.Uid.Wakelock
@@ -728,7 +730,7 @@ public class BatteryStatsProxy
 						// convert so milliseconds
 						wakelockTime /= 1000;
 						
-						Wakelock myWl = new Wakelock(iWakeType, wakelockEntry.getKey(), wakelockTime, wakelockCount);
+						Wakelock myWl = new Wakelock(iWakeType, wakelockEntry.getKey(), wakelockTime, uSecTime / 1000, wakelockCount);
 						
 						// opt for lazy loading: do no populate UidInfo, just uid. UidInfo will be fetched on demand
 						myWl.setUid(uid);
@@ -753,7 +755,7 @@ public class BatteryStatsProxy
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Process> getProcessStats(Context context, int iStatType) throws Exception
+	public ArrayList<Process> getProcessStats(Context context, int iStatType) throws Exception
 	{
 		// type checks
 		boolean validTypes = BatteryStatsTypes.assertValidStatType(iStatType);
@@ -762,7 +764,7 @@ public class BatteryStatsProxy
 			throw new Exception("Invalid StatType");
 		}
 		
-		List<Process> myStats = new Vector<Process>();
+		ArrayList<Process> myStats = new ArrayList<Process>();
 		
 		this.collectUidStats();
 		if (m_uidStats != null)
@@ -852,7 +854,7 @@ public class BatteryStatsProxy
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public List<NetworkUsage> getNetworkUsageStats(Context context, int iStatType) throws Exception
+	public ArrayList<NetworkUsage> getNetworkUsageStats(Context context, int iStatType) throws Exception
 	{
 		// type checks
 		boolean validTypes = BatteryStatsTypes.assertValidStatType(iStatType);
@@ -861,7 +863,7 @@ public class BatteryStatsProxy
 			throw new Exception("Invalid StatType");
 		}
 		
-		List<NetworkUsage> myStats = new Vector<NetworkUsage>();
+		ArrayList<NetworkUsage> myStats = new ArrayList<NetworkUsage>();
 		
 		this.collectUidStats();
 		if (m_uidStats != null)
