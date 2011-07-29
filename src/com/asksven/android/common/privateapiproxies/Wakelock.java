@@ -92,9 +92,10 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>
 					if ( (this.getName().equals(myRef.getName())) && (this.getuid() == myRef.getuid()) )
 					{
 						this.m_duration	-= myRef.getDuration();
+						this.m_totalTime -= myRef.getTotalTime();
 						this.m_count	-= myRef.getCount();
 
-						if ((m_count < 0) || (m_duration < 0))
+						if ((m_count < 0) || (m_duration < 0) || (m_totalTime < 0))
 						{
 							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
 						}
