@@ -16,6 +16,11 @@
 
 package com.asksven.android.common.privateapiproxies;
 
+import java.util.List;
+
+import android.content.Context;
+import android.util.Log;
+
 import com.asksven.android.common.nameutils.UidInfo;
 
 /**
@@ -24,6 +29,11 @@ import com.asksven.android.common.nameutils.UidInfo;
  */
 public class Wakelock extends StatElement implements Comparable<Wakelock>
 {	
+	/** 
+	 * the tag for logging
+	 */
+	private static final String TAG = "Process";
+
 	/**
 	 * the wakelock type
 	 */
@@ -40,6 +50,11 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>
 	private long m_duration;
 	
 	/**
+	 * the total time
+	 */
+	private long m_totalTime;
+
+	/**
 	 * the count
 	 */
 	private int m_count;
@@ -50,12 +65,50 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>
 	 * @param name
 	 * @param duration
 	 */
-	public Wakelock(int wakeType, String name, long duration, int count)
+	public Wakelock(int wakeType, String name, long duration, long time, int count)
 	{
 		m_wakeType	= wakeType;
 		m_name		= name;
 		m_duration	= duration;
+		m_totalTime = time;
 		m_count		= count;
+	}
+
+	/**
+	 * Substracts the values from a previous object
+	 * found in myList from the current Process
+	 * in order to obtain an object containing only the data since a referenc
+	 * @param myList
+	 */
+	public void substractFromRef(List<StatElement> myList )
+	{
+		if (myList != null)
+		{
+			for (int i = 0; i < myList.size(); i++)
+			{
+				try
+				{
+					Wakelock myRef = (Wakelock) myList.get(i);
+					if ( (this.getName().equals(myRef.getName())) && (this.getuid() == myRef.getuid()) )
+					{
+						this.m_duration	-= myRef.getDuration();
+						this.m_count	-= myRef.getCount();
+
+						if ((m_count < 0) || (m_duration < 0))
+						{
+							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
+						}
+					}
+				}
+				catch (ClassCastException e)
+				{
+					// just log as it is no error not to change the process
+					// being substracted from to do nothing
+					Log.e(TAG, "substractFromRef was called with a wrong list type");
+				}
+				
+			}
+		}
 	}
 
 	/**
@@ -80,9 +133,16 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>
 	}
 
 	/**
+	 * @return the total time
+	 */
+	public long getTotalTime() {
+		return m_totalTime;
+	}
+
+	/**
 	 * @return the count
 	 */
-	public long getCount() {
+	public int getCount() {
 		return m_count;
 	}
 	
@@ -112,6 +172,9 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>
 	 */
 	public String getData()
 	{
-		return this.formatDuration(getDuration()) + " (" + getDuration()/1000 + " s)";
+		return this.formatDuration(getDuration()) 
+			+ " (" + getDuration()/1000 + " s)"
+			+ " " + this.formatRatio(getDuration(), getTotalTime());
 	}
+	
 }

@@ -187,4 +187,12 @@ public abstract class StatElement
         return mFormatBuilder.toString();
     }
 	
+	/** 
+	 * returns the representation of the data for file dimp
+	 */	
+	public String getDumpData(Context context)
+	{
+		return this.getName() + " (" + this.getFqn(context) + "): " + this.getData();
+	}
+
 }

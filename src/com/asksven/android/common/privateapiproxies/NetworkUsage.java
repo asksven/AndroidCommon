@@ -16,8 +16,17 @@
 
 package com.asksven.android.common.privateapiproxies;
 
+import java.util.List;
+
+import android.util.Log;
+
 public class NetworkUsage extends StatElement implements Comparable<NetworkUsage>
 {
+	/** 
+	 * the tag for logging
+	 */
+	private static final String TAG = "Misc";
+	
 	/**
 	 * the uid of the program
 	 */
@@ -44,6 +53,43 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 		m_uid		= uid;
 		m_bytesReceived	= bytesReceived;
 		m_bytesSent		= bytesSent;
+	}
+
+	/**
+	 * Substracts the values from a previous object
+	 * found in myList from the current Process
+	 * in order to obtain an object containing only the data since a referenc
+	 * @param myList
+	 */
+	public void substractFromRef(List<StatElement> myList )
+	{
+		if (myList != null)
+		{
+			for (int i = 0; i < myList.size(); i++)
+			{
+				try
+				{
+					NetworkUsage myRef = (NetworkUsage) myList.get(i);
+					if ( (this.getName().equals(myRef.getName())) && (this.getuid() == myRef.getuid()) )
+					{
+						this.m_bytesReceived	= getBytesReceived();
+						this.m_bytesSent		= getBytesSent();
+					
+						if ((m_bytesReceived < 0) || (m_bytesSent < 0))
+						{
+							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
+						}
+					}
+				}
+				catch (ClassCastException e)
+				{
+					// just log as it is no error not to change the process
+					// being substracted from to do nothing
+					Log.e(TAG, "substractFromRef was called with a wrong list type");
+				}
+				
+			}
+		}
 	}
 
 	/**

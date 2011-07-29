@@ -15,14 +15,23 @@
  */
 package com.asksven.android.common.privateapiproxies;
 
+import java.util.List;
+
+import android.util.Log;
+
 /**
  * @author sven
  *
  */
 public class Misc extends StatElement implements Comparable<Misc>
 {
+	/** 
+	 * the tag for logging
+	 */
+	private static final String TAG = "Misc";
+	
 	/**
-	 * the name of the process
+	 * the name of the object
 	 */
 	private String m_name;
 	
@@ -48,6 +57,43 @@ public class Misc extends StatElement implements Comparable<Misc>
 		m_name			= name;
 		m_timeOn		= timeOn;
 		m_timeRunning	= timeRunning;
+	}
+
+	/**
+	 * Substracts the values from a previous object
+	 * found in myList from the current Process
+	 * in order to obtain an object containing only the data since a referenc
+	 * @param myList
+	 */
+	public void substractFromRef(List<StatElement> myList )
+	{
+		if (myList != null)
+		{
+			for (int i = 0; i < myList.size(); i++)
+			{
+				try
+				{
+					Misc myRef = (Misc) myList.get(i);
+					if ( (this.getName().equals(myRef.getName())) && (this.getuid() == myRef.getuid()) )
+					{
+						this.m_timeOn		-= myRef.getTimeOn();
+						this.m_timeRunning	-= myRef.getTimeRunning();
+
+						if ((m_timeOn < 0) || (m_timeRunning < 0))
+						{
+							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
+						}
+					}
+				}
+				catch (ClassCastException e)
+				{
+					// just log as it is no error not to change the process
+					// being substracted from to do nothing
+					Log.e(TAG, "substractFromRef was called with a wrong list type");
+				}
+				
+			}
+		}
 	}
 
 	/**
