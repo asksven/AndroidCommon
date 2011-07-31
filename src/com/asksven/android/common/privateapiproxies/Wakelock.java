@@ -50,7 +50,7 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>
 	private long m_duration;
 	
 	/**
-	 * the total time
+	 * the battery realtime time
 	 */
 	private long m_totalTime;
 
@@ -60,10 +60,12 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>
 	private int m_count;
 	
 	/**
-	 * 
-	 * @param wakeType
-	 * @param name
-	 * @param duration
+	 * Creates a wakelock instance
+	 * @param wakeType the type of wakelock (partial or full)
+	 * @param name the speaking name
+	 * @param duration the duration the wakelock was held
+	 * @param time the battery realtime 
+	 * @param count the number of time the wakelock was active
 	 */
 	public Wakelock(int wakeType, String name, long duration, long time, int count)
 	{
