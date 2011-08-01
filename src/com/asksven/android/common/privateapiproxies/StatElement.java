@@ -3,6 +3,7 @@
  */
 package com.asksven.android.common.privateapiproxies;
 
+import java.io.Serializable;
 import java.util.Formatter;
 
 import android.content.Context;
@@ -14,7 +15,7 @@ import com.asksven.android.common.nameutils.UidNameResolver;
  * @author sven
  *
  */
-public abstract class StatElement
+public abstract class StatElement implements Serializable
 {
 	/**
 	 * The process uid
@@ -23,7 +24,7 @@ public abstract class StatElement
 	/**
 	 * The resolved name info
 	 */
-	protected UidInfo m_uidInfo;
+	protected transient UidInfo m_uidInfo;
 
 	
 	/**

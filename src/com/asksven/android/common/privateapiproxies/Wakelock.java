@@ -16,6 +16,7 @@
 
 package com.asksven.android.common.privateapiproxies;
 
+import java.io.Serializable;
 import java.util.List;
 
 import android.content.Context;
@@ -27,12 +28,12 @@ import com.asksven.android.common.nameutils.UidInfo;
  * @author sven
  *
  */
-public class Wakelock extends StatElement implements Comparable<Wakelock>
+public class Wakelock extends StatElement implements Comparable<Wakelock>, Serializable
 {	
 	/** 
 	 * the tag for logging
 	 */
-	private static final String TAG = "Process";
+	private static transient final String TAG = "Wakelock";
 
 	/**
 	 * the wakelock type

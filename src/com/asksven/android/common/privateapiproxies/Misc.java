@@ -15,6 +15,7 @@
  */
 package com.asksven.android.common.privateapiproxies;
 
+import java.io.Serializable;
 import java.util.List;
 
 import android.util.Log;
@@ -23,12 +24,12 @@ import android.util.Log;
  * @author sven
  *
  */
-public class Misc extends StatElement implements Comparable<Misc>
+public class Misc extends StatElement implements Comparable<Misc>, Serializable
 {
 	/** 
 	 * the tag for logging
 	 */
-	private static final String TAG = "Misc";
+	private static transient final String TAG = "Misc";
 	
 	/**
 	 * the name of the object

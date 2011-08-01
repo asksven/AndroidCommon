@@ -15,6 +15,7 @@
  */
 package com.asksven.android.common.privateapiproxies;
 
+import java.io.Serializable;
 import java.util.List;
 
 import android.util.Log;
@@ -23,12 +24,12 @@ import android.util.Log;
  * @author sven
  *
  */
-public class Process extends StatElement implements Comparable<Process>
+public class Process extends StatElement implements Comparable<Process>, Serializable
 {
 	/** 
 	 * the tag for logging
 	 */
-	private static final String TAG = "Process";
+	private transient static final String TAG = "Process";
 	
 	/**
 	 * the name of the process

@@ -16,16 +16,17 @@
 
 package com.asksven.android.common.privateapiproxies;
 
+import java.io.Serializable;
 import java.util.List;
 
 import android.util.Log;
 
-public class NetworkUsage extends StatElement implements Comparable<NetworkUsage>
+public class NetworkUsage extends StatElement implements Comparable<NetworkUsage>, Serializable
 {
 	/** 
 	 * the tag for logging
 	 */
-	private static final String TAG = "Misc";
+	private static transient final String TAG = "Misc";
 	
 	/**
 	 * the uid of the program
