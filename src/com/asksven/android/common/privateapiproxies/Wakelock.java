@@ -177,6 +177,7 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>
 	{
 		return this.formatDuration(getDuration()) 
 			+ " (" + getDuration()/1000 + " s)"
+			+ " Count:" + getCount()
 			+ " " + this.formatRatio(getDuration(), getTotalTime());
 	}
 	
