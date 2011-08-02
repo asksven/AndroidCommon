@@ -50,10 +50,7 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 	 */
 	private long m_duration;
 	
-	/**
-	 * the battery realtime time
-	 */
-	private long m_totalTime;
+
 
 	/**
 	 * the count
@@ -182,4 +179,14 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 			+ " " + this.formatRatio(getDuration(), getTotalTime());
 	}
 	
+	/** 
+	 * returns the values of the data
+	 */	
+	public double[] getValues()
+	{
+		double[] retVal = new double[2];
+		retVal[0] = getDuration();
+		return retVal;
+	}
+
 }

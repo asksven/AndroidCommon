@@ -169,6 +169,17 @@ public class Process extends StatElement implements Comparable<Process>, Seriali
 		+ " Starts: " + String.valueOf(getStarts());
 	}
 
+	/** 
+	 * returns the values of the data
+	 */	
+	public double[] getValues()
+	{
+		double[] retVal = new double[2];
+		retVal[0] = getUserTime();
+		retVal[1] = getUserTime() + getSystemTime();
+		return retVal;
+	}
+	
 	
 
 }

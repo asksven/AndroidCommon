@@ -26,7 +26,10 @@ public abstract class StatElement implements Serializable
 	 */
 	protected transient UidInfo m_uidInfo;
 
-	
+	/**
+	 * the battery realtime time
+	 */
+	protected long m_totalTime;	
 	/**
 	 * Set the uid
 	 * @param uid a process uid
@@ -196,4 +199,17 @@ public abstract class StatElement implements Serializable
 		return this.getName() + " (" + this.getFqn(context) + "): " + this.getData();
 	}
 
+	/** 
+	 * returns the values of the data
+	 */	
+	public abstract double[] getValues();
+
+
+	/** 
+	 * returns the max of the data
+	 */	
+	public double getMaxValue()
+	{
+		return m_totalTime;
+	}
 }

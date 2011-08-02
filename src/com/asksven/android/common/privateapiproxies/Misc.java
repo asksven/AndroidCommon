@@ -152,8 +152,21 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 		return "Sys: " + this.formatDuration(getTimeOn()) + " (" + getTimeOn()/1000 + " s)"
 		+ " Ratio: " + formatRatio(getTimeOn(), getTimeRunning());
 	}
-
 	
-
+	/** 
+	 * returns the values of the data
+	 */	
+	public double[] getValues()
+	{
+		double[] retVal = new double[2];
+		retVal[0] = getTimeOn();
+		return retVal;
+	}
+	
+	public double getMaxValue()
+	{
+		return getTimeRunning();            
+    }
+	
 }
 

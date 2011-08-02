@@ -153,4 +153,16 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	{
 		return "Rec. Byes: " + String.valueOf(m_bytesReceived) + ", Sent Bytes: " + String.valueOf(m_bytesSent);
 	}
+
+	/** 
+	 * returns the values of the data
+	 */	
+	public double[] getValues()
+	{
+		double[] retVal = new double[2];
+		retVal[0] = getBytesReceived();
+		retVal[1] = getBytesReceived() + getBytesSent();
+		return retVal;
+	}
+
 }
