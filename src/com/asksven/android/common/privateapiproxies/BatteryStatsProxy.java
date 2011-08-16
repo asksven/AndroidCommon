@@ -618,11 +618,12 @@ public class BatteryStatsProxy
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public ArrayList<Wakelock> getWakelockStats(Context context, int iWakeType, int iStatType) throws Exception
+	public ArrayList<Wakelock> getWakelockStats(Context context, int iWakeType, int iStatType, int iWlPctRef) throws Exception
 	{
 		// type checks
 		boolean validTypes = (BatteryStatsTypes.assertValidWakeType(iWakeType)
-				&& BatteryStatsTypes.assertValidStatType(iStatType));
+				&& BatteryStatsTypes.assertValidStatType(iStatType)
+				&& BatteryStatsTypes.assertValidWakelockPctRef(iWlPctRef));
 		if (!validTypes)
 		{
 			throw new Exception("Invalid WakeType of StatType");
@@ -633,7 +634,10 @@ public class BatteryStatsProxy
 		this.collectUidStats();
 		if (m_uidStats != null)
 		{
-			long uSecTime = this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000, iStatType);
+			long uSecBatteryTime = this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000, iStatType);
+			long uSecAwakeTime = this.computeBatteryUptime(SystemClock.elapsedRealtime() * 1000, iStatType);
+			long uSecScreenOnTime =this.getScreenOnTime(uSecBatteryTime, iStatType);
+			 
             try
             {			
 				ClassLoader cl = context.getClassLoader();
@@ -700,7 +704,7 @@ public class BatteryStatsProxy
 														
 							//Parameters
 							Object[] paramsGetTotalTimeLocked= new Object[2];
-							paramsGetTotalTimeLocked[0]= new Long(uSecTime);
+							paramsGetTotalTimeLocked[0]= new Long(uSecBatteryTime);
 							paramsGetTotalTimeLocked[1]= new Integer(iStatType);
 							
 							Long wake = (Long) methodGetTotalTimeLocked.invoke(wakeTimer, paramsGetTotalTimeLocked);
@@ -730,7 +734,21 @@ public class BatteryStatsProxy
 						// convert so milliseconds
 						wakelockTime /= 1000;
 						
-						Wakelock myWl = new Wakelock(iWakeType, wakelockEntry.getKey(), wakelockTime, uSecTime / 1000, wakelockCount);
+						long uSec = 0;
+						switch (iWlPctRef)
+						{
+							case 0:
+								uSec = uSecBatteryTime;
+								break;
+							case 1:
+								uSec = uSecAwakeTime;
+								break;
+							case 2:
+								uSec = (uSecAwakeTime - uSecScreenOnTime);
+								break;
+						}
+						
+						Wakelock myWl = new Wakelock(iWakeType, wakelockEntry.getKey(), wakelockTime, uSec / 1000, wakelockCount);
 						
 						// opt for lazy loading: do no populate UidInfo, just uid. UidInfo will be fetched on demand
 						myWl.setUid(uid);

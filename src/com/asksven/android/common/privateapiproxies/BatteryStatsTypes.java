@@ -115,4 +115,29 @@ public class BatteryStatsTypes
     	}
     	return ret;
     }
+    
+    /**
+     * Enum of valid stat types
+     */
+    public static final boolean assertValidWakelockPctRef(int iPctType)
+    {
+    	boolean ret = false;
+    	switch (iPctType)
+    	{
+    		case 0: 	// % of battery time
+    			ret = true;
+    			break;
+    		case 1: 	// % of awake time
+    			ret = true;
+    			break;
+    		case 2:		// % of time awake - time with screen on
+    			ret = true;
+    			break;
+    		default: 
+    			ret = false;
+    			break;
+    			
+    	}
+    	return ret;
+    }
 }
