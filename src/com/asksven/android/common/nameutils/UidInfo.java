@@ -27,7 +27,7 @@ public class UidInfo
 	private String m_uidNamePackage = "";
 	private boolean m_uidUniqueName = false;
 	
-	public void UidInfo()
+	public UidInfo()
 	{
 		
 	}

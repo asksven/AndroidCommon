@@ -20,21 +20,18 @@ package com.asksven.android.common.privateapiproxies;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Vector;
-
-import com.asksven.android.common.nameutils.UidInfo;
-import com.asksven.android.common.nameutils.UidNameResolver;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.SparseArray;
+
+import com.asksven.android.common.nameutils.UidInfo;
+import com.asksven.android.common.nameutils.UidNameResolver;
 
 
 

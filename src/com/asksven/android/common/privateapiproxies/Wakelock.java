@@ -19,10 +19,7 @@ package com.asksven.android.common.privateapiproxies;
 import java.io.Serializable;
 import java.util.List;
 
-import android.content.Context;
 import android.util.Log;
-
-import com.asksven.android.common.nameutils.UidInfo;
 
 /**
  * @author sven
