@@ -11,32 +11,31 @@ import com.asksven.android.common.utils.DataStorage;
  * @author sven
  *
  */
-public class GenericLogger
+public abstract class GenericLogger
 {
 
-	/** The application's own logfile */
-	public static String LOGFILE = "androidcommon.log";
-
-	public static void d(String strTag, String strMessage)
+	
+	
+	public static void d(String strLogfile, String strTag, String strMessage)
 	{
 		Log.d(strTag, strMessage);
-		DataStorage.LogToFile(LOGFILE, strMessage);
+		DataStorage.LogToFile(strLogfile, strMessage);
 	}
 	
-	public static void e(String strTag, String strMessage)
+	public static void e(String strLogfile, String strTag, String strMessage)
 	{
 		Log.e(strTag, strMessage);
-		DataStorage.LogToFile(LOGFILE, strMessage);
+		DataStorage.LogToFile(strLogfile, strMessage);
 	}
 
-	public static void i(String strTag, String strMessage)
+	public static void i(String strLogFile, String strTag, String strMessage)
 	{
 		Log.i(strTag, strMessage);
-		DataStorage.LogToFile(LOGFILE, strMessage);
+		DataStorage.LogToFile(strLogFile, strMessage);
 	}
 
-	private static void writeLog(String strTag, String strMessage)
+	private static void writeLog(String strLogFile, String strTag, String strMessage)
 	{
-		DataStorage.LogToFile(LOGFILE, strMessage);
+		DataStorage.LogToFile(strLogFile, strMessage);
 	}
 }
