@@ -58,7 +58,7 @@ public class DateUtils
 	 * @param millis
 	 * @return the formated string
 	 */
-	public static String formatDuration(double millis)
+	public static String formatDuration(long millis)
 	{
 		String ret = "";
 		
