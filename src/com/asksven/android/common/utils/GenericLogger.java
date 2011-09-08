@@ -34,8 +34,19 @@ public abstract class GenericLogger
 		DataStorage.LogToFile(strLogFile, strMessage);
 	}
 
+	public static void e(String strLogFile, String strTag, StackTraceElement[] stack)
+	{
+		Log.e(strTag, "An Exception occured. Stacktrace:");
+		for (int i=0; i < stack.length; i++)
+		{
+			Log.e(strTag, stack[i].toString());
+		}
+		DataStorage.LogToFile(strLogFile, stack);
+	}
+	
 	private static void writeLog(String strLogFile, String strTag, String strMessage)
 	{
 		DataStorage.LogToFile(strLogFile, strMessage);
 	}
+	
 }
