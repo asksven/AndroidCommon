@@ -16,6 +16,7 @@
 package com.asksven.android.common.privateapiproxies;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 
 import android.util.Log;
@@ -180,6 +181,22 @@ public class Process extends StatElement implements Comparable<Process>, Seriali
 		return retVal;
 	}
 	
+	public static class ProcessCountComparator implements Comparator<Process>
+	{
+		public int compare(Process a, Process b)
+		{
+			return ((int)(b.getStarts() - a.getStarts()));
+		}
+	}
+	
+	public static class ProcessTimeComparator implements Comparator<Process>
+	{
+		public int compare(Process a, Process b)
+		{
+			return ((int)((b.getSystemTime() + b.getUserTime())
+					- (a.getSystemTime() + a.getUserTime())));
+		}
+	}
 	
 
 }

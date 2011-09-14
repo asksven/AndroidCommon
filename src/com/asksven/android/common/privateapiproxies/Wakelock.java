@@ -17,6 +17,7 @@
 package com.asksven.android.common.privateapiproxies;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 
 import android.util.Log;
@@ -184,6 +185,22 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 		double[] retVal = new double[2];
 		retVal[0] = getDuration();
 		return retVal;
+	}
+	
+	public static class WakelockCountComparator implements Comparator<Wakelock>
+	{
+		public int compare(Wakelock a, Wakelock b)
+		{
+			return ((int)(b.getCount() - a.getCount()));
+		}
+	}
+	
+	public static class WakelockTimeComparator implements Comparator<Wakelock>
+	{
+		public int compare(Wakelock a, Wakelock b)
+		{
+			return ((int)(b.getDuration() - a.getDuration()));
+		}
 	}
 
 }
