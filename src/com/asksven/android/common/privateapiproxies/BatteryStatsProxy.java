@@ -17,6 +17,7 @@
 package com.asksven.android.common.privateapiproxies;
 
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import android.util.SparseArray;
 
 import com.asksven.android.common.nameutils.UidInfo;
 import com.asksven.android.common.nameutils.UidNameResolver;
+import com.asksven.android.common.utils.DateUtils;
 
 
 
@@ -581,6 +583,34 @@ public class BatteryStatsProxy
         return ret;
     }
 	
+	/**
+     * Initalizes the collection of history items
+     */
+    public boolean startIteratingHistoryLocked()
+	{
+    	Boolean ret = false;
+
+        try
+        {
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("startIteratingHistoryLocked");
+
+          ret= (Boolean) method.invoke(m_Instance);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = false;
+        }
+
+        return ret;
+
+	
+	}
     
 	/**
 	 * Collect the UidStats using reflection and store them  
@@ -928,4 +958,136 @@ public class BatteryStatsProxy
 		}	
 		return myStats;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public ArrayList<HistoryItem> getHistory(Context context) throws Exception
+	{
+		
+		ArrayList<HistoryItem> myStats = new ArrayList<HistoryItem>();
+	        	 
+        try
+        {			
+			ClassLoader cl = context.getClassLoader();
+			@SuppressWarnings("rawtypes")
+			Class classHistoryItem = cl.loadClass("android.os.BatteryStats$HistoryItem");
+												   
+			
+			// get constructor
+			Constructor cctor = classHistoryItem.getConstructor();
+			
+			Object myHistoryItem = cctor.newInstance();
+
+			// prepare the method call for getNextHistoryItem
+			//Parameters Types
+			@SuppressWarnings("rawtypes")
+			Class[] paramTypes= new Class[1];
+			paramTypes[0]= classHistoryItem;
+
+
+			@SuppressWarnings("unchecked")
+			Method methodNext = m_ClassDefinition.getMethod("getNextHistoryLocked", paramTypes);
+
+			//Parameters
+			Object[] params= new Object[1];
+
+			// initalize hist and iterate like this
+			// if (stats.startIteratingHistoryLocked()) {
+            // final HistoryItem rec = new HistoryItem();
+            // while (stats.getNextHistoryLocked(rec)) {
+			
+			// read the time of query for history
+	        Long statTimeRef = Long.valueOf(this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000,
+	                BatteryStatsTypes.STATS_SINCE_CHARGED));
+	        statTimeRef = System.currentTimeMillis(); 
+	        
+	        Log.d(TAG, "Reference time (" + statTimeRef + ": " + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeRef));
+	        // statTimeLast stores the timestamp of the last sample
+	        Long statTimeLast = Long.valueOf(0);
+	        
+			if (this.startIteratingHistoryLocked())
+			{
+				params[0]= myHistoryItem;
+				Boolean bNext = (Boolean) methodNext.invoke(m_Instance, params);
+				while (bNext)
+				{
+					// process stats: create HistoryItems from params
+					Field timeField 				= classHistoryItem.getField("time"); 			// long
+					
+					
+					Field cmdField 					= classHistoryItem.getField("cmd"); 			// byte
+					Byte cmdValue = (Byte) cmdField.get(params[0]);
+					
+					// process only valid items
+					if (cmdValue == HistoryItem.CMD_UPDATE)
+					{
+				        Field batteryLevelField 		= classHistoryItem.getField("batteryLevel"); 	// byte
+				        Field batteryStatusField 		= classHistoryItem.getField("batteryStatus"); 	// byte
+				        Field batteryHealthField 		= classHistoryItem.getField("batteryHealth"); 	// byte
+				        Field batteryPlugTypeField 		= classHistoryItem.getField("batteryPlugType"); // byte
+				        
+				        Field batteryTemperatureField 	= classHistoryItem.getField("batteryTemperature"); // char
+				        Field batteryVoltageField 		= classHistoryItem.getField("batteryVoltage"); 	// char
+				        
+				        Field statesField 				= classHistoryItem.getField("states"); 			// int
+				        
+				        // retrieve all values
+				        @SuppressWarnings("rawtypes")
+				        Long timeValue = (Long) timeField.get(params[0]);
+				        
+				        // store values only once
+				        if (!statTimeLast.equals(timeValue))
+				        {
+					        Byte batteryLevelValue = (Byte) batteryLevelField.get(params[0]);
+					        Byte batteryStatusValue = (Byte) batteryStatusField.get(params[0]);
+					        Byte batteryHealthValue = (Byte) batteryHealthField.get(params[0]);
+					        Byte batteryPlugTypeValue = (Byte) batteryPlugTypeField.get(params[0]);
+					        
+					        String batteryTemperatureValue = String.valueOf(batteryTemperatureField.get(params[0]));
+					        String batteryVoltageValue = String.valueOf(batteryVoltageField.get(params[0]));
+					        
+					        Integer statesValue = (Integer) statesField.get(params[0]);
+					        
+					        HistoryItem myItem = new HistoryItem(timeValue, cmdValue, batteryLevelValue,
+					        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
+					        		batteryTemperatureValue, batteryVoltageValue, statesValue);
+					        myStats.add(myItem);
+					        Log.d(TAG, "Added HistoryItem " + myItem.toString());
+
+				        }
+					    // overwrite the time of the last sample
+				        statTimeLast = timeValue;
+
+					}
+					else
+					{
+						Log.d(TAG, "Skipped item");
+					}
+					
+					bNext = (Boolean) methodNext.invoke(m_Instance, params);
+				}
+				
+				// norm the time of each sample
+				// stat time last is the number of millis since
+				// the stats is being collected
+				// the ref time is a full plain time (with date)
+				Long offset = statTimeRef - statTimeLast;
+				Log.d(TAG, "Reference time (" + statTimeRef + ")" + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeRef));
+				
+				Log.d(TAG, "Last sample (" + statTimeLast + ")" + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeLast));
+				
+				Log.d(TAG, "Correcting all HistoryItem times by an offset of (" + offset + ")" + DateUtils.formatDuration(offset * 1000));
+				for (int i=0; i < myStats.size(); i++)
+				{
+					myStats.get(i).setOffset(offset);
+				}
+			}
+        }
+        catch( Exception e )
+        {
+            throw e;
+        }
+			
+		return myStats;
+	}
+
 }
