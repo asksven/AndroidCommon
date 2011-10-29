@@ -36,7 +36,7 @@ public class DateUtils
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
 		return sdf.format(cal.getTime());
 	}
-
+	
 	/**
 	 * Returns the current date in a given format.
 	 * DateUtils.now("dd MMMMM yyyy")
@@ -51,6 +51,13 @@ public class DateUtils
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
 		return sdf.format(cal.getTime());
+	}
+	
+	public static String format(String dateFormat, Long time)
+	{
+
+		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+		return sdf.format(time);
 	}
 	
 	/**
