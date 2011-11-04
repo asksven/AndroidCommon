@@ -448,42 +448,331 @@ public class BatteryStatsProxy
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getWifiRunningTime(long batteryRealtime, int iStatsType)
+    public Long getWifiRunningTime(Context context, long batteryRealtime, int iStatsType)
 	{
     	Long ret = new Long(0);
 
-        try
-        {
-          //Parameters Types
-          @SuppressWarnings("rawtypes")
-          Class[] paramTypes= new Class[2];
-          paramTypes[0]= long.class;
-          paramTypes[1]= int.class;          
+    	this.collectUidStats();
+		if (m_uidStats != null)
+		{
+	        try
+	        {
+				
+				ClassLoader cl = context.getClassLoader();
+				@SuppressWarnings("rawtypes")
+				Class iBatteryStatsUid = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid");
 
-          @SuppressWarnings("unchecked")
-		  Method method = m_ClassDefinition.getMethod("getWifiRunningTime", paramTypes);
-
-          //Parameters
-          Object[] params= new Object[2];
-          params[0]= new Long(batteryRealtime);
-          params[1]= new Integer(iStatsType);
-
-          ret= (Long) method.invoke(m_Instance, params);
-
-        }
-        catch( IllegalArgumentException e )
-        {
-            throw e;
-        }
-        catch( Exception e )
-        {
-            ret = new Long(0);
-        }
-
+				int NU = m_uidStats.size();
+		        for (int iu = 0; iu < NU; iu++)
+		        {
+		        	// Object is an instance of BatteryStats.Uid
+		            Object myUid = m_uidStats.valueAt(iu);
+	            
+					@SuppressWarnings("rawtypes")
+		        	Class[] paramTypes= new Class[2];
+		        	paramTypes[0]= long.class;
+		        	paramTypes[1]= int.class;          
+	
+		        	@SuppressWarnings("unchecked")
+		        	Method method = iBatteryStatsUid.getMethod("getWifiRunningTime", paramTypes);
+	
+		        	//Parameters
+		        	Object[] params= new Object[2];
+		        	params[0]= new Long(batteryRealtime);
+		        	params[1]= new Integer(iStatsType);
+	
+		        	ret += (Long) method.invoke(myUid, params);
+	    	
+		        }
+	        }
+	        catch( IllegalArgumentException e )
+	        {
+	            throw e;
+	        }
+	        catch( Exception e )
+	        {
+	            ret = new Long(0);
+	        }
+		}
         return ret;
 	}
 
 	/**
+     * Returns the total, last, or current wifi lock time in microseconds.
+     *
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getFullWifiLockTime(Context context, long batteryRealtime, int iStatsType)
+	{
+    	Long ret = new Long(0);
+
+    	this.collectUidStats();
+		if (m_uidStats != null)
+		{
+	        try
+	        {
+				
+				ClassLoader cl = context.getClassLoader();
+				@SuppressWarnings("rawtypes")
+				Class iBatteryStatsUid = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid");
+
+				int NU = m_uidStats.size();
+		        for (int iu = 0; iu < NU; iu++)
+		        {
+		        	// Object is an instance of BatteryStats.Uid
+		            Object myUid = m_uidStats.valueAt(iu);
+	            
+					@SuppressWarnings("rawtypes")
+		        	Class[] paramTypes= new Class[2];
+		        	paramTypes[0]= long.class;
+		        	paramTypes[1]= int.class;          
+	
+		        	@SuppressWarnings("unchecked")
+		        	Method method = iBatteryStatsUid.getMethod("getFullWifiLockTime", paramTypes);
+	
+		        	//Parameters
+		        	Object[] params= new Object[2];
+		        	params[0]= new Long(batteryRealtime);
+		        	params[1]= new Integer(iStatsType);
+	
+		        	ret += (Long) method.invoke(myUid, params);
+	    	
+		        }
+	        }
+	        catch( IllegalArgumentException e )
+	        {
+	            throw e;
+	        }
+	        catch( Exception e )
+	        {
+	            ret = new Long(0);
+	        }
+		}
+        return ret;
+	}
+
+	/**
+     * Returns the total, last, or current wifi scanning time in microseconds.
+     *
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getScanWifiLockTime(Context context, long batteryRealtime, int iStatsType)
+	{
+    	Long ret = new Long(0);
+
+    	this.collectUidStats();
+		if (m_uidStats != null)
+		{
+	        try
+	        {
+				
+				ClassLoader cl = context.getClassLoader();
+				@SuppressWarnings("rawtypes")
+				Class iBatteryStatsUid = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid");
+
+				int NU = m_uidStats.size();
+		        for (int iu = 0; iu < NU; iu++)
+		        {
+		        	// Object is an instance of BatteryStats.Uid
+		            Object myUid = m_uidStats.valueAt(iu);
+	            
+					@SuppressWarnings("rawtypes")
+		        	Class[] paramTypes= new Class[2];
+		        	paramTypes[0]= long.class;
+		        	paramTypes[1]= int.class;          
+	
+		        	@SuppressWarnings("unchecked")
+		        	Method method = iBatteryStatsUid.getMethod("getScanWifiLockTime", paramTypes);
+	
+		        	//Parameters
+		        	Object[] params= new Object[2];
+		        	params[0]= new Long(batteryRealtime);
+		        	params[1]= new Integer(iStatsType);
+	
+		        	ret += (Long) method.invoke(myUid, params);
+	    	
+		        }
+	        }
+	        catch( IllegalArgumentException e )
+	        {
+	            throw e;
+	        }
+	        catch( Exception e )
+	        {
+	            ret = new Long(0);
+	        }
+		}
+        return ret;
+	}
+
+	/**
+     * Returns the total, last, or current wifi multicast time in microseconds.
+     *
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getWifiMulticastTime(Context context, long batteryRealtime, int iStatsType)
+	{
+    	Long ret = new Long(0);
+
+    	this.collectUidStats();
+		if (m_uidStats != null)
+		{
+	        try
+	        {
+				
+				ClassLoader cl = context.getClassLoader();
+				@SuppressWarnings("rawtypes")
+				Class iBatteryStatsUid = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid");
+
+				int NU = m_uidStats.size();
+		        for (int iu = 0; iu < NU; iu++)
+		        {
+		        	// Object is an instance of BatteryStats.Uid
+		            Object myUid = m_uidStats.valueAt(iu);
+	            
+					@SuppressWarnings("rawtypes")
+		        	Class[] paramTypes= new Class[2];
+		        	paramTypes[0]= long.class;
+		        	paramTypes[1]= int.class;          
+	
+		        	@SuppressWarnings("unchecked")
+		        	Method method = iBatteryStatsUid.getMethod("getWifiMulticastTime", paramTypes);
+	
+		        	//Parameters
+		        	Object[] params= new Object[2];
+		        	params[0]= new Long(batteryRealtime);
+		        	params[1]= new Integer(iStatsType);
+	
+		        	ret += (Long) method.invoke(myUid, params);
+	    	
+		        }
+	        }
+	        catch( IllegalArgumentException e )
+	        {
+	            throw e;
+	        }
+	        catch( Exception e )
+	        {
+	            ret = new Long(0);
+	        }
+		}
+        return ret;
+	}
+
+	/**
+     * Returns the total, last, or current audio on time in microseconds.
+     *
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getAudioTurnedOnTime(Context context, long batteryRealtime, int iStatsType)
+	{
+    	Long ret = new Long(0);
+
+    	this.collectUidStats();
+		if (m_uidStats != null)
+		{
+	        try
+	        {
+				
+				ClassLoader cl = context.getClassLoader();
+				@SuppressWarnings("rawtypes")
+				Class iBatteryStatsUid = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid");
+
+				int NU = m_uidStats.size();
+		        for (int iu = 0; iu < NU; iu++)
+		        {
+		        	// Object is an instance of BatteryStats.Uid
+		            Object myUid = m_uidStats.valueAt(iu);
+	            
+					@SuppressWarnings("rawtypes")
+		        	Class[] paramTypes= new Class[2];
+		        	paramTypes[0]= long.class;
+		        	paramTypes[1]= int.class;          
+	
+		        	@SuppressWarnings("unchecked")
+		        	Method method = iBatteryStatsUid.getMethod("getAudioTurnedOnTime", paramTypes);
+	
+		        	//Parameters
+		        	Object[] params= new Object[2];
+		        	params[0]= new Long(batteryRealtime);
+		        	params[1]= new Integer(iStatsType);
+	
+		        	ret += (Long) method.invoke(myUid, params);
+	    	
+		        }
+	        }
+	        catch( IllegalArgumentException e )
+	        {
+	            throw e;
+	        }
+	        catch( Exception e )
+	        {
+	            ret = new Long(0);
+	        }
+		}
+        return ret;
+	}
+
+	/**
+     * Returns the total, last, or current video on time in microseconds.
+     *
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getVideoTurnedOnTime(Context context, long batteryRealtime, int iStatsType)
+	{
+    	Long ret = new Long(0);
+
+    	this.collectUidStats();
+		if (m_uidStats != null)
+		{
+	        try
+	        {
+				
+				ClassLoader cl = context.getClassLoader();
+				@SuppressWarnings("rawtypes")
+				Class iBatteryStatsUid = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid");
+
+				int NU = m_uidStats.size();
+		        for (int iu = 0; iu < NU; iu++)
+		        {
+		        	// Object is an instance of BatteryStats.Uid
+		            Object myUid = m_uidStats.valueAt(iu);
+	            
+					@SuppressWarnings("rawtypes")
+		        	Class[] paramTypes= new Class[2];
+		        	paramTypes[0]= long.class;
+		        	paramTypes[1]= int.class;          
+	
+		        	@SuppressWarnings("unchecked")
+		        	Method method = iBatteryStatsUid.getMethod("getVideoTurnedTime", paramTypes);
+	
+		        	//Parameters
+		        	Object[] params= new Object[2];
+		        	params[0]= new Long(batteryRealtime);
+		        	params[1]= new Integer(iStatsType);
+	
+		        	ret += (Long) method.invoke(myUid, params);
+	    	
+		        }
+	        }
+	        catch( IllegalArgumentException e )
+	        {
+	            throw e;
+	        }
+	        catch( Exception e )
+	        {
+	            ret = new Long(0);
+	        }
+		}
+        return ret;
+	}
+
+    /**
      * Returns the total, last, or current bluetooth on time in microseconds.
      *
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
