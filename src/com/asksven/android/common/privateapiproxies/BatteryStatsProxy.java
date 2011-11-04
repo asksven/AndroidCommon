@@ -210,7 +210,7 @@ public class BatteryStatsProxy
           params[0]= new Long(curTime);
           params[1]= new Integer(iStatsType);
 
-          ret= (Long) method.invoke(m_Instance, params);
+			ret = (Long) method.invoke(m_Instance, params);
 
         }
         catch( IllegalArgumentException e )
@@ -792,6 +792,102 @@ public class BatteryStatsProxy
 		}	
 		return myStats;
 	}
+
+	/**
+	 * Obtain the wakelock stats as a list of Wakelocks (@see com.asksven.android.common.privateapiproxies.Wakelock}
+	 * @param context a Context
+	 * @param iWakeType a type of wakelock @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes 
+	 * @param iStatType a type of stat @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes
+	 * @return a List of Wakelock s
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	public ArrayList<KernelWakelock> getKernelWakelockStats(Context context, int iWakeType, int iStatType, int iWlPctRef) throws Exception
+	{
+		// type checks
+		boolean validTypes = (BatteryStatsTypes.assertValidWakeType(iWakeType)
+				&& BatteryStatsTypes.assertValidStatType(iStatType)
+				&& BatteryStatsTypes.assertValidWakelockPctRef(iWlPctRef));
+		if (!validTypes)
+		{
+			throw new Exception("Invalid WakeType of StatType");
+		}
+		
+		ArrayList<KernelWakelock> myStats = new ArrayList<KernelWakelock>();
+		
+		long uSecBatteryTime = this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000, iStatType);
+		 
+        try
+        {			
+			ClassLoader cl = context.getClassLoader();
+			@SuppressWarnings("rawtypes")
+			Class iBatteryStats = cl.loadClass("com.android.internal.os.BatteryStatsImpl");
+
+			// Process wake lock usage
+			Method methodGetKernelWakelockStats = iBatteryStats.getMethod("getKernelWakelockStats");
+
+			// Map of String, BatteryStatsImpl.SamplingTimer
+			Map<String, ? extends Object> kernelWakelockStats = (Map<String, ? extends Object>)  methodGetKernelWakelockStats.invoke(m_Instance);
+
+					            
+	        // Map of String, BatteryStats.Uid.Wakelock
+            for (Map.Entry<String, ? extends Object> wakelockEntry : kernelWakelockStats.entrySet())
+            {
+                // BatteryStats.SamplingTimer
+            	String wakelockName = wakelockEntry.getKey();
+            	Object samplingTimer = wakelockEntry.getValue();
+
+            	@SuppressWarnings("rawtypes")
+				Class batteryStatsSamplingTimerClass = cl.loadClass("com.android.internal.os.BatteryStatsImpl$SamplingTimer");
+
+				//Parameters Types
+				@SuppressWarnings("rawtypes")
+				Class[] paramTypesGetTotalTimeLocked= new Class[2];
+				paramTypesGetTotalTimeLocked[0]= long.class;
+				paramTypesGetTotalTimeLocked[1]= int.class;
+
+				//Parameters
+				Object[] paramGetTotalTimeLocked= new Object[2];
+				paramGetTotalTimeLocked[0]= new Long(uSecBatteryTime);
+				paramGetTotalTimeLocked[1]= new Integer(iStatType);
+				
+
+				Method methodGetTotalTimeLocked = batteryStatsSamplingTimerClass
+						.getMethod("getTotalTimeLocked", paramTypesGetTotalTimeLocked);
+
+				//Parameters Types
+				@SuppressWarnings("rawtypes")
+				Class[] paramTypesGetCountLocked= new Class[1];
+				paramTypesGetCountLocked[0]= int.class;
+
+				//Parameters
+				Object[] paramGetCountLocked= new Object[1];
+				paramGetCountLocked[0]= new Integer(iStatType);
+
+				Method methodGetCountLocked = batteryStatsSamplingTimerClass
+						.getMethod("getCountLocked", paramTypesGetCountLocked);
+					
+				
+				Long wake = (Long) methodGetTotalTimeLocked.invoke(samplingTimer, paramGetTotalTimeLocked);
+				
+				Integer count = (Integer) methodGetCountLocked.invoke(samplingTimer, paramGetCountLocked);
+				
+				Log.d(TAG, "Kernel wakelock: " + wakelockEntry.getKey() + " wakelock [s] " + wake
+						+ " count" + count);
+
+				
+				KernelWakelock myWl = new KernelWakelock(wakelockEntry.getKey(), wake / 1000, uSecBatteryTime / 1000, count);
+				myStats.add(myWl);				
+            }
+        }
+        catch( Exception e )
+        {
+            throw e;
+        }
+
+        return myStats;
+	}
+
 	/**
 	 * Obtain the process stats as a list of Processes (@see com.asksven.android.common.privateapiproxies.Process}
 	 * @param context a Context
