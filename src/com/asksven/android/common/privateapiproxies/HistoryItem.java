@@ -15,6 +15,11 @@
  */
 package com.asksven.android.common.privateapiproxies;
 
+import java.io.Serializable;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.asksven.android.common.utils.DateUtils;
 
 /**
@@ -22,8 +27,9 @@ import com.asksven.android.common.utils.DateUtils;
  * @author sven
  *
  */
-public class HistoryItem
+public class HistoryItem implements Serializable, Parcelable
 {
+	static final long serialVersionUID = 1L;
     static final byte CMD_UPDATE = 0;
     static final byte CMD_START = 1;
     static final byte CMD_OVERFLOW = 2;
@@ -283,13 +289,24 @@ public class HistoryItem
 	/**
 	 * @return the m_bBluetoothOn as "0" or "1"
 	 */
-	public String getBLuetoothOn()
+	public String getBluetoothOn()
 	{
 		boolean bBluetoothOn = (m_statesValue & STATE_BLUETOOTH_ON_FLAG) != 0;
 
 		return getBooleanAsString(bBluetoothOn);
 	}
 
+	/**
+	 * @return the m_bBluetoothInt as intener
+	 */
+	public int getBluetoothOnInt()
+	{
+		boolean bBluetoothOn = (m_statesValue & STATE_BLUETOOTH_ON_FLAG) != 0;
+
+		return getBooleanAsInt(bBluetoothOn);
+	}
+
+	
 	/**
 	 * @return the m_bCharging as "0" or "1"
 	 */
@@ -360,5 +377,34 @@ public class HistoryItem
 	public void setOffset(Long offset)
 	{
 		m_offset = offset;
+	}
+
+	/* (non-Javadoc)
+	 * @see android.os.Parcelable#describeContents()
+	 */
+	@Override
+	public int describeContents()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
+	 */
+	@Override
+	public void writeToParcel(Parcel dest, int flags)
+	{
+		// TODO Auto-generated method stub
+	    dest.writeLong(m_time);
+	    dest.writeLong(m_offset);
+	    dest.writeByte(m_cmd);
+	    dest.writeByte(m_batteryLevel);
+	    dest.writeByte(m_batteryStatusValue);
+	    dest.writeByte(m_batteryHealthValue);
+	    dest.writeByte(m_batteryPlugTypeValue);
+	    dest.writeString(m_batteryTemperatureValue);
+	    dest.writeString(m_batteryVoltageValue);
+	    dest.writeInt(m_statesValue);
 	}
 }
