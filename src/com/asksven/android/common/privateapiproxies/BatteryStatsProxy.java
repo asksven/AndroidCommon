@@ -170,16 +170,9 @@ public class BatteryStatsProxy
 	          
 	          m_Instance = batteryStatsImpl_CREATOR.createFromParcel(parcel);        
 	    }
-		catch( IllegalArgumentException e )
-		{
-	        m_Instance = null;
-	    }
-		catch (ClassNotFoundException e)
-		{
-	    	m_Instance = null;
-	    }
 		catch( Exception e )
 		{
+			Log.e("TAG", "An exception occured in BatteryStatsProxy(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
 	    	m_Instance = null;
 	    }    
 	}
@@ -889,6 +882,7 @@ public class BatteryStatsProxy
         }
         catch( IllegalArgumentException e )
         {
+        	Log.e("TAG", "An exception occured in startIteratingHistoryLocked(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
             throw e;
         }
         catch( Exception e )
@@ -916,6 +910,7 @@ public class BatteryStatsProxy
         }
         catch( IllegalArgumentException e )
         {
+        	Log.e("TAG", "An exception occured in collectUidStats(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
             throw e;
         }
         catch( Exception e )
@@ -942,6 +937,7 @@ public class BatteryStatsProxy
 				&& BatteryStatsTypes.assertValidWakelockPctRef(iWlPctRef));
 		if (!validTypes)
 		{
+			Log.e("TAG", "Invalid WakeType or StatType");
 			throw new Exception("Invalid WakeType of StatType");
 		}
 		
@@ -1076,6 +1072,7 @@ public class BatteryStatsProxy
             }
             catch( Exception e )
             {
+            	Log.e("TAG", "An exception occured in getWakelockStats(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
                 throw e;
             }
 		}	
@@ -1099,7 +1096,8 @@ public class BatteryStatsProxy
 				&& BatteryStatsTypes.assertValidWakelockPctRef(iWlPctRef));
 		if (!validTypes)
 		{
-			throw new Exception("Invalid WakeType of StatType");
+			Log.e("TAG", "Invalid WakeType or StatType");
+			throw new Exception("Invalid WakeType or StatType");
 		}
 		
 		ArrayList<KernelWakelock> myStats = new ArrayList<KernelWakelock>();
@@ -1162,7 +1160,7 @@ public class BatteryStatsProxy
 				Integer count = (Integer) methodGetCountLocked.invoke(samplingTimer, paramGetCountLocked);
 				
 				Log.d(TAG, "Kernel wakelock: " + wakelockEntry.getKey() + " wakelock [s] " + wake
-						+ " count" + count);
+						+ " count " + count);
 
 				
 				KernelWakelock myWl = new KernelWakelock(wakelockEntry.getKey(), wake / 1000, uSecBatteryTime / 1000, count);
@@ -1171,6 +1169,7 @@ public class BatteryStatsProxy
         }
         catch( Exception e )
         {
+        	Log.e("TAG", "An exception occured in getKernelWakelockStats(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
             throw e;
         }
 
@@ -1191,6 +1190,7 @@ public class BatteryStatsProxy
 		boolean validTypes = BatteryStatsTypes.assertValidStatType(iStatType);
 		if (!validTypes)
 		{
+			Log.e("TAG", "Invalid WakeType or StatType");
 			throw new Exception("Invalid StatType");
 		}
 		
@@ -1270,6 +1270,7 @@ public class BatteryStatsProxy
             }
             catch( Exception e )
             {
+            	Log.e("TAG", "An exception occured in getProcessStats(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
                 throw e;
             }
 		}	
@@ -1290,6 +1291,7 @@ public class BatteryStatsProxy
 		boolean validTypes = BatteryStatsTypes.assertValidStatType(iStatType);
 		if (!validTypes)
 		{
+			Log.e("TAG", "Invalid WakeType or StatType");
 			throw new Exception("Invalid StatType");
 		}
 		
@@ -1469,6 +1471,7 @@ public class BatteryStatsProxy
         }
         catch( Exception e )
         {
+        	Log.e("TAG", "An exception occured in getHistory(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
             throw e;
         }
 			
