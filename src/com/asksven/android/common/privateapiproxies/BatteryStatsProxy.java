@@ -1088,17 +1088,20 @@ public class BatteryStatsProxy
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public ArrayList<KernelWakelock> getKernelWakelockStats(Context context, int iWakeType, int iStatType, int iWlPctRef) throws Exception
+	public ArrayList<KernelWakelock> getKernelWakelockStats(Context context, int iStatType, int iWlPctRef) throws Exception
 	{
 		// type checks
-		boolean validTypes = (BatteryStatsTypes.assertValidWakeType(iWakeType)
-				&& BatteryStatsTypes.assertValidStatType(iStatType)
+		boolean validTypes = (BatteryStatsTypes.assertValidStatType(iStatType)
 				&& BatteryStatsTypes.assertValidWakelockPctRef(iWlPctRef));
 		if (!validTypes)
 		{
 			Log.e("TAG", "Invalid WakeType or StatType");
 			throw new Exception("Invalid WakeType or StatType");
 		}
+		
+		Log.d(TAG, "getWakelockStats was called with params "
+				+"[iStatType] = " + iStatType
+				+ "[iWlPctRef] = " + iWlPctRef);
 		
 		ArrayList<KernelWakelock> myStats = new ArrayList<KernelWakelock>();
 		
@@ -1112,6 +1115,22 @@ public class BatteryStatsProxy
 
 			// Process wake lock usage
 			Method methodGetKernelWakelockStats = iBatteryStats.getMethod("getKernelWakelockStats");
+			
+			Class classSamplingTimer = cl.loadClass("com.android.internal.os.BatteryStatsImpl$SamplingTimer");
+
+			Field currentReportedCount  		= classSamplingTimer.getDeclaredField("mCurrentReportedCount");
+			Field currentReportedTotalTime  	= classSamplingTimer.getDeclaredField("mCurrentReportedTotalTime");
+			Field unpluggedReportedCount  		= classSamplingTimer.getDeclaredField("mUnpluggedReportedCount");
+			Field unpluggedReportedTotalTime  	= classSamplingTimer.getDeclaredField("mUnpluggedReportedTotalTime");
+			
+			currentReportedCount.setAccessible(true);
+			currentReportedTotalTime.setAccessible(true);
+			unpluggedReportedCount.setAccessible(true);
+			unpluggedReportedTotalTime.setAccessible(true);
+			
+			//Parameters
+			Object[] params= new Object[1];
+
 
 			// Map of String, BatteryStatsImpl.SamplingTimer
 			Map<String, ? extends Object> kernelWakelockStats = (Map<String, ? extends Object>)  methodGetKernelWakelockStats.invoke(m_Instance);
@@ -1123,9 +1142,26 @@ public class BatteryStatsProxy
                 // BatteryStats.SamplingTimer
             	String wakelockName = wakelockEntry.getKey();
             	Object samplingTimer = wakelockEntry.getValue();
-
-            	@SuppressWarnings("rawtypes")
-				Class batteryStatsSamplingTimerClass = cl.loadClass("com.android.internal.os.BatteryStatsImpl$SamplingTimer");
+            	
+            	params[0]= samplingTimer;
+            	
+            	// read private fields
+            	Integer currentReportedCountVal 	= (Integer) currentReportedCount.get(params[0]);
+            	Long currentReportedTotalTimeVal 	= (Long) currentReportedTotalTime.get(params[0]);
+            	
+            	Integer unpluggedReportedCountVal 	= (Integer) unpluggedReportedCount.get(params[0]);
+            	Long mUnpluggedReportedTotalTimeVal = (Long) unpluggedReportedTotalTime.get(params[0]);
+            	
+            	Log.d(TAG, "Kernel wakelock '" + wakelockEntry.getKey() + "'"
+            			+ " : reading fields from SampleTimer: " 
+            			+ "[currentReportedCountVal] = " + currentReportedCountVal
+            			+ "[currentReportedTotalTimeVal] = " + currentReportedTotalTimeVal
+            			+ "[unpluggedReportedCountVal] = " + unpluggedReportedCountVal
+            			+ "[mUnpluggedReportedTotalTimeVal] = " + mUnpluggedReportedTotalTimeVal);
+            	
+//            	
+//            	@SuppressWarnings("rawtypes")
+//				Class batteryStatsSamplingTimerClass = cl.loadClass("com.android.internal.os.BatteryStatsImpl$SamplingTimer");
 
 				//Parameters Types
 				@SuppressWarnings("rawtypes")
@@ -1139,7 +1175,7 @@ public class BatteryStatsProxy
 				paramGetTotalTimeLocked[1]= new Integer(iStatType);
 				
 
-				Method methodGetTotalTimeLocked = batteryStatsSamplingTimerClass
+				Method methodGetTotalTimeLocked = classSamplingTimer
 						.getMethod("getTotalTimeLocked", paramTypesGetTotalTimeLocked);
 
 				//Parameters Types
@@ -1151,7 +1187,7 @@ public class BatteryStatsProxy
 				Object[] paramGetCountLocked= new Object[1];
 				paramGetCountLocked[0]= new Integer(iStatType);
 
-				Method methodGetCountLocked = batteryStatsSamplingTimerClass
+				Method methodGetCountLocked = classSamplingTimer
 						.getMethod("getCountLocked", paramTypesGetCountLocked);
 					
 				
@@ -1159,7 +1195,7 @@ public class BatteryStatsProxy
 				
 				Integer count = (Integer) methodGetCountLocked.invoke(samplingTimer, paramGetCountLocked);
 				
-				Log.d(TAG, "Kernel wakelock: " + wakelockEntry.getKey() + " wakelock [s] " + wake
+				Log.d(TAG, "Kernel wakelock: " + wakelockEntry.getKey() + " wakelock [s] " + wake / 1000
 						+ " count " + count);
 
 				
