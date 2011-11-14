@@ -1106,6 +1106,7 @@ public class BatteryStatsProxy
 		ArrayList<KernelWakelock> myStats = new ArrayList<KernelWakelock>();
 		
 		long uSecBatteryTime = this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000, iStatType);
+		long msSinceBoot = SystemClock.elapsedRealtime();
 		 
         try
         {			
@@ -1218,7 +1219,7 @@ public class BatteryStatsProxy
 					KernelWakelock myWl = new KernelWakelock(
 							wakelockEntry.getKey(),
 							unpluggedReportedTotalTimeVal / 1000,
-							uSecBatteryTime / 1000,
+							msSinceBoot,
 							unpluggedReportedCountVal);
 					myStats.add(myWl);
 				}	
