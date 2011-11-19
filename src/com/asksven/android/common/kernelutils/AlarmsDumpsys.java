@@ -27,7 +27,7 @@ public class AlarmsDumpsys
 	 * @return
 	 * @throws Exception
 	 */
-	public static ArrayList<Alarm> getAlarms() throws Exception
+	public static ArrayList<Alarm> getAlarms()
 	{
 		ArrayList<Alarm> myAlarms = null;
 		// ExecResult res = Exec.execPrint(new String[]{"/system/bin/su", "-c", "/system/bin/dumpsys alarm"});
@@ -35,11 +35,7 @@ public class AlarmsDumpsys
 		if (res.getSuccess())
 		{
 			String strRes = res.getResultLine(); 
-			if (strRes.contains("Permission Denial"))
-			{
-				Exception e = new RuntimeException("Permission Denied");
-			}
-			else
+			if (!strRes.contains("Permission Denial"))
 			{
 				Pattern begin = Pattern.compile("Alarm Stats");
 				boolean bParsing = false;
