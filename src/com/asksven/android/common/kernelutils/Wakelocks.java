@@ -20,27 +20,6 @@ import android.os.SystemClock;
  */
 public class Wakelocks
 {
-
-    static final int PROC_TERM_MASK = 0xff;
-    static final int PROC_ZERO_TERM = 0;
-    static final int PROC_SPACE_TERM = (int)' ';
-    static final int PROC_TAB_TERM = (int)'\t';
-    static final int PROC_COMBINE = 0x100;
-    static final int PROC_PARENS = 0x200;
-    static final int PROC_OUT_STRING = 0x1000;
-    static final int PROC_OUT_LONG = 0x2000;
-    static final int PROC_OUT_FLOAT = 0x4000;
-
-    private static int sKernelWakelockUpdateVersion = 0;
-    
-    private static final int[] PROC_WAKELOCKS_FORMAT = new int[] {
-        PROC_TAB_TERM|PROC_OUT_STRING,                // 0: name
-        PROC_TAB_TERM|PROC_OUT_LONG,                  // 1: count
-        PROC_TAB_TERM,PROC_OUT_LONG,
-        PROC_TAB_TERM,PROC_OUT_LONG,
-        PROC_TAB_TERM,PROC_OUT_LONG,
-        PROC_TAB_TERM|PROC_OUT_LONG			          // 5: totalTime
-    };
     
     public static ArrayList<NativeKernelWakelock> parseProcWakelocks()
     {
@@ -81,7 +60,7 @@ public class Wakelocks
     	}
     	return myRet;
     }
-    private static ArrayList<String[]> parseDelimitedFile(String filePath, String delimiter) // throws Exception
+    private static ArrayList<String[]> parseDelimitedFile(String filePath, String delimiter)
     {
 		ArrayList<String[]> rows = new ArrayList<String[]>();
     	try
