@@ -5,6 +5,8 @@ package com.asksven.android.common.location;
 
 import java.util.List;
 
+import com.asksven.android.common.networkutils.DataNetwork;
+
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
@@ -12,6 +14,9 @@ import android.location.Location;
 import android.util.Log;
 
 /**
+ * Helper class for retrieing geo data for a given location
+ * As geo data requires data connection the call is only made
+ * if proper data connectivity exists
  * @author sven
  *
  */
@@ -21,6 +26,11 @@ public class GeoUtils
 
 	public static String getNearestAddress(Context ctx, Location loc)
 	{
+		if (!DataNetwork.hasDataConnection(ctx))
+		{
+			return "";
+		}
+		
 		Address address = getGeoData(ctx, loc);
 		String strRet = "";
 		if (address != null)
@@ -45,6 +55,11 @@ public class GeoUtils
 	}
 	public static String getNearestCity(Context ctx, Location loc)
 	{
+		if (!DataNetwork.hasDataConnection(ctx))
+		{
+			return "";
+		}
+
 		Address address = getGeoData(ctx, loc);
 		String strRet = "";
 		if (address != null)
@@ -56,6 +71,11 @@ public class GeoUtils
 
 	public static Address getGeoData(Context ctx, Location loc)
 	{
+		if (!DataNetwork.hasDataConnection(ctx))
+		{
+			return null;
+		}
+
 		Geocoder myGeocoder = new Geocoder(ctx);
 		Address address = null;
 		try
