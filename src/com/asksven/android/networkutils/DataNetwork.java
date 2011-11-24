@@ -20,6 +20,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 
 /**
+ * Helper class for data connectivity
  * @author sven
  *
  */
