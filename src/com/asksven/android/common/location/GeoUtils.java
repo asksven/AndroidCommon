@@ -19,6 +19,30 @@ public class GeoUtils
 {
 	private static final String TAG = "GeoUtils";
 
+	public static String getNearestAddress(Context ctx, Location loc)
+	{
+		Address address = getGeoData(ctx, loc);
+		String strRet = "";
+		if (address != null)
+		{	
+			String addr0 = address.getAddressLine(0);
+			String addr1 = address.getAddressLine(1);
+			if (!addr0.equals(""))
+			{
+				strRet = addr0;
+			}
+			if (!addr1.equals(""))
+			{
+				if (!strRet.equals(""))
+				{
+					strRet = strRet + ", ";
+				}
+				strRet = strRet + addr1;
+			}
+	    }
+	    return strRet;
+
+	}
 	public static String getNearestCity(Context ctx, Location loc)
 	{
 		Address address = getGeoData(ctx, loc);
