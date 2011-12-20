@@ -45,7 +45,7 @@ public class AlarmsDumpsys
 				// ' <package name>
 				// '  <time> ms running, <number> wakeups
 				// '  <number> alarms: act=<intent name> flg=<flag> (repeating 1..n times)
-				Pattern packagePattern 	= Pattern.compile("\\s\\s([a-z\\.]+)");
+				Pattern packagePattern 	= Pattern.compile("\\s\\s([a-zA-Z0-9\\.]+)");
 				Pattern timePattern 	= Pattern.compile("\\s\\s(\\d+)ms running, (\\d+) wakeups");
 				Pattern numberPattern	= Pattern.compile("\\s\\s(\\d+) alarms: act=([A-Za-z0-9\\-\\_\\.]+)");
 				
