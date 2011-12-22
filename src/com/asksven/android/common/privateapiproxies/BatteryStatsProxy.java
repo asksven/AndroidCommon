@@ -34,6 +34,7 @@ import android.util.SparseArray;
 import com.asksven.android.common.nameutils.UidInfo;
 import com.asksven.android.common.nameutils.UidNameResolver;
 import com.asksven.android.common.utils.DateUtils;
+import com.asksven.android.system.AndroidVersion;
 
 
 
@@ -1463,7 +1464,19 @@ public class BatteryStatsProxy
 					Byte cmdValue = (Byte) cmdField.get(params[0]);
 					
 					// process only valid items
-					if (cmdValue == HistoryItem.CMD_UPDATE)
+					byte updateCmd = 0;
+					
+					// ICS has a different implementation of HistoryItems constants
+					if (AndroidVersion.isIcs())
+					{
+						updateCmd = HistoryItemIcs.CMD_UPDATE;
+					}
+					else
+					{
+						updateCmd = HistoryItem.CMD_UPDATE;
+					}
+					
+					if (cmdValue == updateCmd)
 					{
 				        Field batteryLevelField 		= classHistoryItem.getField("batteryLevel"); 	// byte
 				        Field batteryStatusField 		= classHistoryItem.getField("batteryStatus"); 	// byte
@@ -1491,10 +1504,23 @@ public class BatteryStatsProxy
 					        String batteryVoltageValue = String.valueOf(batteryVoltageField.get(params[0]));
 					        
 					        Integer statesValue = (Integer) statesField.get(params[0]);
+
+					        HistoryItem myItem = null;
 					        
-					        HistoryItem myItem = new HistoryItem(timeValue, cmdValue, batteryLevelValue,
-					        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
-					        		batteryTemperatureValue, batteryVoltageValue, statesValue);
+					        // ICS has a different implementation of HistoryItems constants
+							if (AndroidVersion.isIcs())
+							{
+								myItem = new HistoryItemIcs(timeValue, cmdValue, batteryLevelValue,
+						        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
+						        		batteryTemperatureValue, batteryVoltageValue, statesValue);
+							}
+							else
+							{
+								myItem = new HistoryItem(timeValue, cmdValue, batteryLevelValue,
+						        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
+						        		batteryTemperatureValue, batteryVoltageValue, statesValue);
+							}
+							
 					        myStats.add(myItem);
 					        Log.d(TAG, "Added HistoryItem " + myItem.toString());
 
