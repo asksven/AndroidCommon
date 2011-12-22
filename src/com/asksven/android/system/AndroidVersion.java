@@ -45,5 +45,15 @@ public class AndroidVersion
 		return bRet;
 	}
 
+	public static boolean isIcs()
+	{
+		boolean bRet = false;
+		if (Build.VERSION.SDK_INT == 14) // Build.VERSION_ICE_CREAM_SANDWICH
+		{
+			bRet = true;
+		}
+		
+		return bRet;
+	}
 	
 }
