@@ -17,8 +17,16 @@ package com.asksven.android.common.utils;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
@@ -91,6 +99,61 @@ public class DataStorage
     	{
     		Log.e(TAG, "Exception: " + e.getMessage());
     	}		
+	}
+	
+	public static boolean objectToFile(Context context, String fileName, Object serializableObject)
+	{
+		boolean bRet = true;
+		
+		 if (!(serializableObject instanceof java.io.Serializable))
+		 {
+		     return false;
+		 }
+		try
+		{
+			FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+			ObjectOutputStream os = new ObjectOutputStream(fos);
+			os.writeObject(serializableObject);
+			os.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			bRet = false;
+		}
+		catch (IOException e)
+		{
+			bRet = false;
+		}
+
+		return bRet;
+	}
+	
+	public static Object fileToObject(Context context, String fileName)
+	{
+		FileInputStream fis;
+		Object myRet = null;
+		try
+		{
+			fis = context.openFileInput(fileName);
+			ObjectInputStream is = new ObjectInputStream(fis);
+			myRet = is.readObject();
+			is.close();
+
+		}
+		catch (FileNotFoundException e)
+		{
+			myRet = null;
+		}
+		catch (IOException e)
+		{
+			myRet = null;
+		}
+		catch (ClassNotFoundException e)
+		{
+			myRet = null;
+		}
+
+		return myRet;
 	}
 	
 }
