@@ -19,6 +19,7 @@ package com.asksven.android.common.kernelutils;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
+import java.lang.Math;
 
 import com.asksven.android.common.privateapiproxies.StatElement;
 
@@ -123,9 +124,18 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 					NativeKernelWakelock myRef = (NativeKernelWakelock) myList.get(i);
 					if ( (this.getName().equals(myRef.getName())) && (this.getuid() == myRef.getuid()) )
 					{
-						this.m_sleepTime	-= myRef.getDuration();
-						this.m_totalTime -= myRef.getTotalTime();
-						this.m_count	-= myRef.getCount();
+						Log.i(TAG, "Substracting " + myRef.toString() + " from " + this.toString());
+						this.m_count		-= myRef.m_count;
+						this.m_expireCount	-= myRef.m_expireCount;
+						this.m_wakeCount	-= myRef.m_wakeCount;
+						this.m_activeSince	-= myRef.m_activeSince;
+						this.m_ttlTime		-= myRef.m_ttlTime;
+						this.m_sleepTime	-= myRef.m_sleepTime;
+						this.m_maxTime		-= myRef.m_maxTime;
+						this.m_lastChange	= Math.max(this.m_lastChange, myRef.m_lastChange);
+						this.m_totalTime	-= myRef.m_totalTime;
+						
+						Log.i(TAG, "Result: " + this.toString());
 
 						if ((m_count < 0) || (m_sleepTime < 0) || (m_totalTime < 0))
 						{
@@ -183,9 +193,19 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 	@Override
 	public String toString() 
 	{
-		return "Kernel Wakelock [m_name=" + m_name
-				+ ", m_sleepTime=" + m_sleepTime
-				+ ", m_count=" + m_count+ "]";
+		return getName() + " ["
+//				+ "m_name=" + m_name + ", "
+//				+ "m_count=" + m_count + ", "
+//				+ "m_expire_count=" + m_expireCount + ", "
+//				+ "m_wake_count=" + m_wakeCount + ", "
+//				+ "m_active_since="+ m_activeSince + ", "
+//				+ "m_total_time="+ m_ttlTime + ", "
+//				+ "m_sleep_time=" + m_sleepTime + ", "
+//				+ "m_max_time=" + m_maxTime + ", "
+//				+ "m_last_change=" + m_lastChange + ", "
+//				+ "m_total_time=" + m_totalTime
+				+ getData()
+				+ "]";
 	}
 	
 	 /**
