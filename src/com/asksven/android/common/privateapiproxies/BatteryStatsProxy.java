@@ -179,6 +179,15 @@ public class BatteryStatsProxy
 	}
 	
 	/**
+	 * Returns true if the proxy could not be initialized properly
+	 * @return true if the proxy wasn't initialized
+	 */
+	public boolean initFailed()
+	{
+		return m_Instance == null;
+	}
+	
+	/**
      * Returns the total, last, or current battery realtime in microseconds.
      *
      * @param curTime the current elapsed realtime in microseconds.
