@@ -46,6 +46,7 @@ import com.asksven.android.system.AndroidVersion;
  */
 public class BatteryStatsProxy
 {
+
 	/*
 	 * Instance of the BatteryStatsImpl
 	 */
@@ -54,6 +55,17 @@ public class BatteryStatsProxy
 	private Class m_ClassDefinition = null;
 	
 	private static final String TAG = "BatteryStatsProxy";
+
+    private static final int EXPECTED_FIRST_HISTORY_SIZE = 300;
+    private static final int HISTORY_SIZE_GROWTH = 20;
+    /**
+     * User to create the history ArrayList.
+     * Reason to use is to aviod extensive copying and garbage collection. When created with a default constuctor,
+     * ArrayList allocates memory for 5 elements. Once you add 6th, new ArrayList for 10 elements is allocated, 5 
+     * old elements are copied and then 6th is added. Same will happen for every 5*i + 1 element.
+     * To avoid that, cache the size and reuse it.
+     */
+    private int lastHistorySize = EXPECTED_FIRST_HISTORY_SIZE;
 	/*
 	 * The UID stats are kept here as their methods / data can not be accessed
 	 * outside of this class due to non-public types (Uid, Proc, etc.)
@@ -1419,6 +1431,7 @@ public class BatteryStatsProxy
 	{
 		
 		ArrayList<HistoryItem> myStats = new ArrayList<HistoryItem>();
+		myStats.ensureCapacity(lastHistorySize + HISTORY_SIZE_GROWTH);
 	        	 
         try
         {			
@@ -1567,7 +1580,9 @@ public class BatteryStatsProxy
         	Log.e("TAG", "An exception occured in getHistory(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
             throw e;
         }
-			
+		myStats.trimToSize();
+		lastHistorySize = myStats.size();
+		Log.d(TAG, "History size is " + lastHistorySize);
 		return myStats;
 	}
 
