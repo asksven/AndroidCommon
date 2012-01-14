@@ -127,8 +127,10 @@ public class BatteryStatsProxy
 	          Object[] paramsGetService= new Object[1];
 	          paramsGetService[0] = "batteryinfo";
 	     
+	          Log.i(TAG, "invoking android.os.ServiceManager.getService(\"batteryinfo\")");
 	          IBinder serviceBinder = (IBinder) methodGetService.invoke(serviceManagerClass, paramsGetService); 
 
+	          Log.i(TAG, "android.os.ServiceManager.getService(\"batteryinfo\") returned a service binder");
 	          // now we have a binder. Let's us that on IBatteryStats.Stub.asInterface
 	          // to get an IBatteryStats
 	          // Note the $-syntax here as Stub is a nested class
@@ -147,6 +149,7 @@ public class BatteryStatsProxy
 	          Object[] paramsAsInterface= new Object[1];
 	          paramsAsInterface[0] = serviceBinder;
 	          	          
+	          Log.i(TAG, "invoking com.android.internal.app.IBatteryStats$Stub.asInterface");
 	          Object iBatteryStatsInstance = methodAsInterface.invoke(iBatteryStatsStub, paramsAsInterface);
 	          
 	          // and finally we call getStatistics from that IBatteryStats to obtain a Parcel
@@ -155,7 +158,11 @@ public class BatteryStatsProxy
 	          
 	          @SuppressWarnings("unchecked")
 	          Method methodGetStatistics = iBatteryStats.getMethod("getStatistics");
+	          
+	          Log.i(TAG, "invoking getStatistics");
 	          byte[] data = (byte[]) methodGetStatistics.invoke(iBatteryStatsInstance);
+	          
+	          Log.i(TAG, "retrieving parcel");
 	          
 	          Parcel parcel = Parcel.obtain();
 	          parcel.unmarshall(data, 0, data.length);
@@ -163,6 +170,8 @@ public class BatteryStatsProxy
 	          
 	          @SuppressWarnings("rawtypes")
 			  Class batteryStatsImpl = cl.loadClass("com.android.internal.os.BatteryStatsImpl");
+
+	          Log.i(TAG, "reading CREATOR field");
 	          Field creatorField = batteryStatsImpl.getField("CREATOR");
 	          
 	          // From here on we don't need reflection anymore
@@ -173,7 +182,7 @@ public class BatteryStatsProxy
 	    }
 		catch( Exception e )
 		{
-			Log.e("TAG", "An exception occured in BatteryStatsProxy(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
+			Log.e("TAG", "An exception occured in BatteryStatsProxy(). Message: " + e.getMessage());
 	    	m_Instance = null;
 	    }    
 	}
