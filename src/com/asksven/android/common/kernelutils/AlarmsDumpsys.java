@@ -30,6 +30,7 @@ public class AlarmsDumpsys
 	public static ArrayList<Alarm> getAlarms()
 	{
 		ArrayList<Alarm> myAlarms = null;
+		long nTotalCount = 0;
 		// ExecResult res = Exec.execPrint(new String[]{"/system/bin/su", "-c", "/system/bin/dumpsys alarm"});
 		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "dumpsys alarm"});
 		if (res.getSuccess())
@@ -100,6 +101,7 @@ public class AlarmsDumpsys
 								else
 								{
 									myAlarm.setWakeups(nWakeups);
+									nTotalCount += nWakeups;
 								}
 							}
 							catch (Exception e)
@@ -144,6 +146,11 @@ public class AlarmsDumpsys
 					}
 				}
 			}
+		}
+		
+		for (int i=0; i < myAlarms.size(); i++)
+		{
+			myAlarms.get(i).setTotalCount(nTotalCount);
 		}
 		return myAlarms;
 	}

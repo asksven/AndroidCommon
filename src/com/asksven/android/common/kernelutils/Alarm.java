@@ -42,6 +42,10 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	/** The number od wakeups */
 	long m_nWakeups;
 	
+	/** The total count */
+	long m_nTotalCount;
+	
+	
 	/** The details */
 	ArrayList<AlarmItem> m_items;
 	
@@ -67,6 +71,23 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	}
 	
 
+	/**
+	 * Set the total wakeup count for the sum of all alarms
+	 * @param nCount
+	 */
+	public void setTotalCount(long nCount)
+	{
+		m_nTotalCount = nCount;
+	}
+	
+	/**
+	 * Return the max of all alarms (wakeups) 
+	 */
+	public double getMaxValue()
+	{
+		return m_nTotalCount;
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.asksven.android.common.privateapiproxies.StatElement#getName()
 	 */
@@ -108,7 +129,7 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	public double[] getValues()
 	{
 		double[] retVal = new double[2];
-		retVal[0] = getDuration();
+		retVal[0] = getCount();
 		return retVal;
 	}
 	
@@ -160,6 +181,7 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 					{
 						Log.i(TAG, "Substracting " + myRef.toString() + " from " + this.toString());
 						this.m_nWakeups		-= myRef.getCount();
+						this.m_nTotalCount  -= myRef.getMaxValue();
 						Log.i(TAG, "Result: " + this.toString());
 
 						if (this.getCount() < 0)
