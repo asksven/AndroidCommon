@@ -186,7 +186,63 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 	{
 		return m_count;
 	}
+
+	/**
+	 * the expire count
+	 */
+	public int getExpireCount()
+	{
+		return m_expireCount;
+	}
+
+	/**
+	 * the wake count
+	 */
+	public int getWakeCount()
+	{
+		return m_wakeCount;
+	}
+
+	/**
+	 * the active_since time
+	 */
+	public long getActiveSince()
+	{
+		return m_activeSince;
+	}
+
+	/**
+	 * the total_time
+	 */
+	public long getTtlTime()
+	{
+		return m_ttlTime;
+	}
 	
+	/**
+	 * the sleep time
+	 */
+	public long getSleepTime()
+	{
+		return m_sleepTime;
+	}
+
+	/**
+	 * the max time
+	 */
+	public long getMaxTime()
+	{
+		return m_maxTime;
+	}
+
+	/**
+	 * the last change
+	 */
+	public long getLastChange()
+	{
+		return m_lastChange;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
