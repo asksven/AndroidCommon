@@ -64,11 +64,22 @@ public class BatteryStatsProxy
 	 * An instance to the UidNameResolver 
 	 */
 	private UidNameResolver m_nameResolver;
-
+	private static BatteryStatsProxy m_proxy = null;
+	
+	public static BatteryStatsProxy getInstance(Context ctx)
+	{
+		if (m_proxy == null)
+		{
+			m_proxy = new BatteryStatsProxy(ctx);
+		}
+		
+		return m_proxy;
+	}
+	
     /**
 	 * Default cctor
 	 */
-	public BatteryStatsProxy(Context context)
+	private BatteryStatsProxy(Context context)
 	{
 		/*
 		 * As BatteryStats is a service we need to get a binding using the IBatteryStats.Stub.getStatistics()

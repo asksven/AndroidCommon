@@ -66,16 +66,16 @@ public class HistoryItem implements Serializable, Parcelable
         STATE_BATTERY_PLUGGED_FLAG | STATE_SCREEN_ON_FLAG
         | STATE_GPS_ON_FLAG | STATE_PHONE_IN_CALL_FLAG;
     
-    private Long m_time;
-    private Long m_offset;
-    private Byte m_cmd;
-    private Byte m_batteryLevel;
-    private Byte m_batteryStatusValue;
-    private Byte m_batteryHealthValue;
-    private Byte m_batteryPlugTypeValue;
-    private String m_batteryTemperatureValue;
-    private String m_batteryVoltageValue;
-    private Integer m_statesValue;
+    protected Long m_time;
+    protected Long m_offset;
+    protected Byte m_cmd;
+    protected Byte m_batteryLevel;
+    protected Byte m_batteryStatusValue;
+    protected Byte m_batteryHealthValue;
+    protected Byte m_batteryPlugTypeValue;
+    protected String m_batteryTemperatureValue;
+    protected String m_batteryVoltageValue;
+    protected Integer m_statesValue;
     
     public HistoryItem(Long time, Byte cmd, Byte batteryLevel, Byte batteryStatusValue,
     		Byte batteryHealthValue, Byte batteryPlugTypeValue,
@@ -170,15 +170,6 @@ public class HistoryItem implements Serializable, Parcelable
 		return m_statesValue;
 	}
 
-	/**
-	 * @return the m_bCharging
-	 */
-	public boolean isCharging()
-	{
-		boolean bCharging = (m_statesValue & STATE_BATTERY_PLUGGED_FLAG) != 0;
-		
-		return bCharging;
-	}
 
 	/**
 	 * @return the m_bCharging as "0" or "1"
@@ -271,9 +262,7 @@ public class HistoryItem implements Serializable, Parcelable
 	public String getPhoneInCall()
 	{
 		
-		boolean bPhoneInCall = (m_statesValue & STATE_PHONE_IN_CALL_FLAG) != 0;
-
-		return getBooleanAsString(bPhoneInCall);
+		return getBooleanAsString(isPhoneInCall());
 	}
 
 	/**
@@ -281,9 +270,7 @@ public class HistoryItem implements Serializable, Parcelable
 	 */
 	public String getPhoneScanning()
 	{
-		boolean bPhoneScanning = (m_statesValue & STATE_PHONE_SCANNING_FLAG) != 0;
-
-		return getBooleanAsString(bPhoneScanning);
+		return getBooleanAsString(isPhoneScanning());
 	}
 
 	/**
@@ -291,26 +278,23 @@ public class HistoryItem implements Serializable, Parcelable
 	 */
 	public String getBluetoothOn()
 	{
-		boolean bBluetoothOn = (m_statesValue & STATE_BLUETOOTH_ON_FLAG) != 0;
-
-		return getBooleanAsString(bBluetoothOn);
+		return getBooleanAsString(isBluetoothOn());
 	}
 
 	/**
-	 * @return the m_bBluetoothInt as intener
+	 * @return the m_bBluetoothInt as integer
 	 */
 	public int getBluetoothOnInt()
 	{
-		boolean bBluetoothOn = (m_statesValue & STATE_BLUETOOTH_ON_FLAG) != 0;
 
-		return getBooleanAsInt(bBluetoothOn);
+		return getBooleanAsInt(isBluetoothOn());
 	}
 
 	
 	/**
 	 * @return the m_bCharging as "0" or "1"
 	 */
-	private String getBooleanAsString(boolean bVal)
+	protected String getBooleanAsString(boolean bVal)
 	{
 		if (bVal)
 		{
@@ -325,7 +309,7 @@ public class HistoryItem implements Serializable, Parcelable
 	/**
 	 * @return the boolean as 0 or 1
 	 */
-	private int getBooleanAsInt(boolean bVal)
+	protected int getBooleanAsInt(boolean bVal)
 	{
 		if (bVal)
 		{
@@ -338,7 +322,17 @@ public class HistoryItem implements Serializable, Parcelable
 	}
 
 	/**
-	 * @return the m_bScreenOn
+	 * @return true is phone is charging
+	 */
+	public boolean isCharging()
+	{
+		boolean bCharging = (m_statesValue & STATE_BATTERY_PLUGGED_FLAG) != 0;
+		
+		return bCharging;
+	}
+
+	/**
+	 * @return true if screen is on
 	 */
 	public boolean isScreenOn()
 	{
@@ -347,7 +341,7 @@ public class HistoryItem implements Serializable, Parcelable
 	}
 
 	/**
-	 * @return the m_bGpsOn
+	 * @return true is GPS is on
 	 */
 	public boolean isGpsOn()
 	{
@@ -356,7 +350,7 @@ public class HistoryItem implements Serializable, Parcelable
 	}
 	
 	/**
-	 * @return the m_bWifiRunning
+	 * @return true is wifi is running
 	 */
 	public boolean isWifiRunning()
 	{
@@ -365,14 +359,45 @@ public class HistoryItem implements Serializable, Parcelable
 	}
 
 	/**
-	 * @return the m_bWakeLock
+	 * @return true is a wakelock is present
 	 */
 	public boolean isWakeLock()
 	{
 		boolean bWakeLock = (m_statesValue & STATE_WAKE_LOCK_FLAG) != 0;
 		return bWakeLock;
 	}
-	
+
+	/**
+	 * @return true  if Phone is in Call
+	 */
+	public boolean isPhoneInCall()
+	{
+		
+		boolean bPhoneInCall = (m_statesValue & STATE_PHONE_IN_CALL_FLAG) != 0;
+
+		return bPhoneInCall;
+	}
+
+	/**
+	 * @return true if Phone is Scanning
+	 */
+	public boolean isPhoneScanning()
+	{
+		boolean bPhoneScanning = (m_statesValue & STATE_PHONE_SCANNING_FLAG) != 0;
+
+		return bPhoneScanning;
+	}
+
+	/**
+	 * @return the true if bluetooth is on
+	 */
+	public boolean isBluetoothOn()
+	{
+		boolean bBluetoothOn = (m_statesValue & STATE_BLUETOOTH_ON_FLAG) != 0;
+
+		return bBluetoothOn;
+	}
+
 	
 	public void setOffset(Long offset)
 	{
