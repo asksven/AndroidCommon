@@ -179,15 +179,28 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 					Alarm myRef = (Alarm) myList.get(i);
 					if (this.getName().equals(myRef.getName()))
 					{
+						// process main values
 						Log.i(TAG, "Substracting " + myRef.toString() + " from " + this.toString());
 						this.m_nWakeups		-= myRef.getCount();
 						this.m_nTotalCount  -= myRef.getMaxValue();
 						Log.i(TAG, "Result: " + this.toString());
+						
+						// and process items
+						for (int j=0; j < this.m_items.size(); j++)
+						{
+							AlarmItem myItem = this.m_items.get(j);
+							myItem.substractFromRef(myRef.getItems());
+						}
 
 						if (this.getCount() < 0)
 						{
 							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
 						}
+						if (this.getItems().size() < myRef.getItems().size())
+						{
+							Log.e(TAG, "substractFromRef error processing alarm items: ref can not have less items");
+						}
+							
 					}
 				}
 				catch (ClassCastException e)
@@ -235,12 +248,61 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 		}
 		
 		/**
+		 * Returns the intent name
+		 * @return
+		 */
+		public String getIntent()
+		{
+			return m_strIntent;
+		}
+		
+		/**
+		 * Returns the count
+		 * @return
+		 */
+		public long getCount()
+		{
+			return m_nNumber;
+		}
+		/**
 		 * Returns the data as a string
 		 * @return
 		 */
 		public String getData()
 		{
 			return "Alarms: " + m_nNumber + ", Intent: " + m_strIntent;
+		}
+		/**
+		 * Substracts the values from a previous object
+		 * found in myList from the current Process
+		 * in order to obtain an object containing only the data since a referenc
+		 * @param myList
+		 */
+		public void substractFromRef(List<AlarmItem> myList )
+		{
+			if (myList != null)
+			{
+				for (int i = 0; i < myList.size(); i++)
+				{
+					try
+					{
+						AlarmItem myRef = (AlarmItem) myList.get(i);
+						if (this.getIntent().equals(myRef.getIntent()))
+						{
+							// process main values
+							Log.i(TAG, "Substracting " + myRef.toString() + " from " + this.toString());
+							this.m_nNumber		-= myRef.getCount();
+							Log.i(TAG, "Result: " + this.toString());
+						}
+					}
+					catch (ClassCastException e)
+					{
+						// just log as it is no error not to change the process
+						// being substracted from to do nothing
+						Log.e(TAG, "AlarmItem.substractFromRef was called with a wrong list type");
+					}
+				}
+			}
 		}
 	}
 	
