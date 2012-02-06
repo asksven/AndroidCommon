@@ -76,6 +76,11 @@ public class BatteryStatsProxy
 		return m_proxy;
 	}
 	
+	public void invalidate()
+	{
+		m_proxy = null;
+	}
+	
     /**
 	 * Default cctor
 	 */
