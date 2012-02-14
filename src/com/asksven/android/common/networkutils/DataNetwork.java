@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 asksven
+ * Copyright (C) 2011-12 asksven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,9 @@ public class DataNetwork
 		
 		// if no network connection is available buffer the update
 		// @see android.net.NetworkInfo
-		if (!myConnectivity.getActiveNetworkInfo().isAvailable())
+		if ( (myConnectivity == null)
+				|| (myConnectivity.getActiveNetworkInfo() == null)
+				|| (!myConnectivity.getActiveNetworkInfo().isAvailable()) )
 		{
 			
 			ret = false;
