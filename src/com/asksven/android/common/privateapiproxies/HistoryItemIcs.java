@@ -37,15 +37,6 @@ public class HistoryItemIcs extends HistoryItem implements Serializable, Parcela
     public static final byte CMD_OVERFLOW = 3;
     
     public byte cmd = CMD_NULL;
-    
-    public byte batteryLevel;
-    public byte batteryStatus;
-    public byte batteryHealth;
-    public byte batteryPlugType;
-    
-    public char batteryTemperature;
-    public char batteryVoltage;
-    
     // Constants from SCREEN_BRIGHTNESS_*
     public static final int STATE_BRIGHTNESS_MASK = 0x0000000f;
     public static final int STATE_BRIGHTNESS_SHIFT = 0;
@@ -94,4 +85,83 @@ public class HistoryItemIcs extends HistoryItem implements Serializable, Parcela
     		batteryTemperatureValue, batteryVoltageValue,
     		statesValue);
     }
+    
+
+	
+	/**
+	 * @return true is phone is charging
+	 */
+	public boolean isCharging()
+	{
+		boolean bCharging = (m_statesValue & STATE_BATTERY_PLUGGED_FLAG) != 0;
+		
+		return bCharging;
+	}
+
+	/**
+	 * @return true if screen is on
+	 */
+	public boolean isScreenOn()
+	{
+		boolean bScreenOn = (m_statesValue & STATE_SCREEN_ON_FLAG) != 0;
+		return bScreenOn;
+	}
+
+	/**
+	 * @return true is GPS is on
+	 */
+	public boolean isGpsOn()
+	{
+		boolean bGpsOn = (m_statesValue & STATE_GPS_ON_FLAG) != 0;
+		return bGpsOn;
+	}
+	
+	/**
+	 * @return true is wifi is running
+	 */
+	public boolean isWifiRunning()
+	{
+		boolean bWifiRunning = (m_statesValue & STATE_WIFI_RUNNING_FLAG) != 0;
+		return bWifiRunning;
+	}
+
+	/**
+	 * @return true is a wakelock is present
+	 */
+	public boolean isWakeLock()
+	{
+		boolean bWakeLock = (m_statesValue & STATE_WAKE_LOCK_FLAG) != 0;
+		return bWakeLock;
+	}
+
+	/**
+	 * @return true  if Phone is in Call
+	 */
+	public boolean isPhoneInCall()
+	{
+		
+		boolean bPhoneInCall = (m_statesValue & STATE_PHONE_IN_CALL_FLAG) != 0;
+
+		return bPhoneInCall;
+	}
+
+	/**
+	 * @return true if Phone is Scanning
+	 */
+	public boolean isPhoneScanning()
+	{
+		boolean bPhoneScanning = (m_statesValue & STATE_PHONE_SCANNING_FLAG) != 0;
+
+		return bPhoneScanning;
+	}
+
+	/**
+	 * @return the true if bluetooth is on
+	 */
+	public boolean isBluetoothOn()
+	{
+		boolean bBluetoothOn = (m_statesValue & STATE_BLUETOOTH_ON_FLAG) != 0;
+
+		return bBluetoothOn;
+	}
 }

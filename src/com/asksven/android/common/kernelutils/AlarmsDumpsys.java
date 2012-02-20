@@ -21,6 +21,7 @@ import com.asksven.android.common.shellutils.ExecResult;
 public class AlarmsDumpsys
 {
 	static final String TAG = "AlarmsDumpsys";
+	static final String PERMISSION_DENIED = "su rights required to access alarms are not available / were not granted";
 
 	/**
 	 * Returns a list of alarm value objects
@@ -30,6 +31,7 @@ public class AlarmsDumpsys
 	public static ArrayList<Alarm> getAlarms()
 	{
 		ArrayList<Alarm> myAlarms = null;
+		long nTotalCount = 0;
 		// ExecResult res = Exec.execPrint(new String[]{"/system/bin/su", "-c", "/system/bin/dumpsys alarm"});
 		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "dumpsys alarm"});
 		if (res.getSuccess())
@@ -100,6 +102,7 @@ public class AlarmsDumpsys
 								else
 								{
 									myAlarm.setWakeups(nWakeups);
+									nTotalCount += nWakeups;
 								}
 							}
 							catch (Exception e)
@@ -144,6 +147,26 @@ public class AlarmsDumpsys
 					}
 				}
 			}
+			else
+			{
+				myAlarms = new ArrayList<Alarm>();
+				Alarm myAlarm = new Alarm(PERMISSION_DENIED);
+				myAlarm.setWakeups(1);
+				myAlarms.add(myAlarm);
+			}
+		}
+		else
+		{
+			myAlarms = new ArrayList<Alarm>();
+			Alarm myAlarm = new Alarm(PERMISSION_DENIED);
+			myAlarm.setWakeups(1);
+			myAlarms.add(myAlarm);
+
+		}
+		
+		for (int i=0; i < myAlarms.size(); i++)
+		{
+			myAlarms.get(i).setTotalCount(nTotalCount);
 		}
 		return myAlarms;
 	}

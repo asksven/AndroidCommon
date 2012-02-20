@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 asksven
+ * Copyright (C) 2011-2012 asksven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@ package com.asksven.android.common.kernelutils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+
+import android.util.Log;
 
 import com.asksven.android.common.privateapiproxies.StatElement;
 
@@ -28,11 +31,20 @@ import com.asksven.android.common.privateapiproxies.StatElement;
  */
 public class Alarm extends StatElement implements Comparable<Alarm>, Serializable
 {
+	/** 
+	 * the tag for logging
+	 */
+	private static transient final String TAG = "Alarm";
+	
 	/** The name of the app responsible for the alarm */
 	String m_strPackageName;
 	
 	/** The number od wakeups */
 	long m_nWakeups;
+	
+	/** The total count */
+	long m_nTotalCount;
+	
 	
 	/** The details */
 	ArrayList<AlarmItem> m_items;
@@ -59,6 +71,23 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	}
 	
 
+	/**
+	 * Set the total wakeup count for the sum of all alarms
+	 * @param nCount
+	 */
+	public void setTotalCount(long nCount)
+	{
+		m_nTotalCount = nCount;
+	}
+	
+	/**
+	 * Return the max of all alarms (wakeups) 
+	 */
+	public double getMaxValue()
+	{
+		return m_nTotalCount;
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.asksven.android.common.privateapiproxies.StatElement#getName()
 	 */
@@ -100,7 +129,7 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	public double[] getValues()
 	{
 		double[] retVal = new double[2];
-		retVal[0] = getDuration();
+		retVal[0] = getCount();
 		return retVal;
 	}
 	
@@ -134,11 +163,75 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	}
 	
 	/**
+	 * Substracts the values from a previous object
+	 * found in myList from the current Process
+	 * in order to obtain an object containing only the data since a referenc
+	 * @param myList
+	 */
+	public void substractFromRef(List<StatElement> myList )
+	{
+		if (myList != null)
+		{
+			for (int i = 0; i < myList.size(); i++)
+			{
+				try
+				{
+					Alarm myRef = (Alarm) myList.get(i);
+					if (this.getName().equals(myRef.getName()))
+					{
+						// process main values
+						Log.i(TAG, "Substracting " + myRef.toString() + " from " + this.toString());
+						this.m_nWakeups		-= myRef.getCount();
+						this.m_nTotalCount  -= myRef.getMaxValue();
+						Log.i(TAG, "Result: " + this.toString());
+						
+						// and process items
+						for (int j=0; j < this.m_items.size(); j++)
+						{
+							AlarmItem myItem = this.m_items.get(j);
+							myItem.substractFromRef(myRef.getItems());
+						}
+
+						if (this.getCount() < 0)
+						{
+							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
+						}
+						if (this.getItems().size() < myRef.getItems().size())
+						{
+							Log.e(TAG, "substractFromRef error processing alarm items: ref can not have less items");
+						}
+							
+					}
+				}
+				catch (ClassCastException e)
+				{
+					// just log as it is no error not to change the process
+					// being substracted from to do nothing
+					Log.e(TAG, "substractFromRef was called with a wrong list type");
+				}
+				
+			}
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() 
+	{
+		return getName() + " ["
+				+ getData()
+				+ "]";
+	}
+
+
+	/**
 	 * Value holder for alarm items
 	 * @author sven
 	 *
 	 */
-	public class AlarmItem
+	public class AlarmItem implements Serializable
 	{
 		long m_nNumber;
 		String m_strIntent;
@@ -155,12 +248,61 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 		}
 		
 		/**
+		 * Returns the intent name
+		 * @return
+		 */
+		public String getIntent()
+		{
+			return m_strIntent;
+		}
+		
+		/**
+		 * Returns the count
+		 * @return
+		 */
+		public long getCount()
+		{
+			return m_nNumber;
+		}
+		/**
 		 * Returns the data as a string
 		 * @return
 		 */
 		public String getData()
 		{
 			return "Alarms: " + m_nNumber + ", Intent: " + m_strIntent;
+		}
+		/**
+		 * Substracts the values from a previous object
+		 * found in myList from the current Process
+		 * in order to obtain an object containing only the data since a referenc
+		 * @param myList
+		 */
+		public void substractFromRef(List<AlarmItem> myList )
+		{
+			if (myList != null)
+			{
+				for (int i = 0; i < myList.size(); i++)
+				{
+					try
+					{
+						AlarmItem myRef = (AlarmItem) myList.get(i);
+						if (this.getIntent().equals(myRef.getIntent()))
+						{
+							// process main values
+							Log.i(TAG, "Substracting " + myRef.toString() + " from " + this.toString());
+							this.m_nNumber		-= myRef.getCount();
+							Log.i(TAG, "Result: " + this.toString());
+						}
+					}
+					catch (ClassCastException e)
+					{
+						// just log as it is no error not to change the process
+						// being substracted from to do nothing
+						Log.e(TAG, "AlarmItem.substractFromRef was called with a wrong list type");
+					}
+				}
+			}
 		}
 	}
 	
@@ -191,8 +333,4 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 			return ((int)(b.getDuration() - a.getDuration()));
 		}
 	}
-
-	
-	
-
 }
