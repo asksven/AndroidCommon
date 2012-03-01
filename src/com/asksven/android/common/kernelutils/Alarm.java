@@ -138,7 +138,15 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	 */
 	public String getData()
 	{
-		return "Wakeups: " + getCount();
+		String strRet = "";
+		strRet = "Wakeups: " + getCount() + "\n";
+		
+		for (int i=0; i < m_items.size(); i++)
+		{
+			strRet += "  " + m_items.toString() + "\n";
+		}
+		
+		return strRet;
 	}
 
 
