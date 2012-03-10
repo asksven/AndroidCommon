@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.asksven.android.common.privateapiproxies.StatElement;
@@ -139,16 +140,34 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	public String getData()
 	{
 		String strRet = "";
+		strRet = "Wakeups: " + getCount();
+		
+		return strRet;
+	}
+
+	/**
+	 * returns a string representation of the detailed data (including children)  
+	 */
+	public String getDetailedData()
+	{
+		String strRet = "";
 		strRet = "Wakeups: " + getCount() + "\n";
 		
 		for (int i=0; i < m_items.size(); i++)
 		{
-			strRet += "  " + m_items.toString() + "\n";
+			strRet += "  " + m_items.get(i).getData() + "\n";
 		}
 		
 		return strRet;
 	}
 
+	/** 
+	 * returns the representation of the data for file dump
+	 */	
+	public String getDumpData(Context context)
+	{
+		return this.getName() + " (" + this.getFqn(context) + "): " + this.getDetailedData();
+	}
 
 	
 	/**

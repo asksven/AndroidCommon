@@ -41,7 +41,7 @@ public class AlarmsDumpsys
 			{
 				Pattern begin = Pattern.compile("Alarm Stats");
 				boolean bParsing = false;
-				ArrayList<String> myRes = res.getResult();
+				ArrayList<String> myRes = res.getResult(); // getTestData();
 
 				// we are looking for multiline entries in the format
 				// ' <package name>
@@ -146,6 +146,9 @@ public class AlarmsDumpsys
 						}
 					}
 				}
+				// the last populated alarms has not been added to the list yet
+				myAlarms.add(myAlarm);
+				
 			}
 			else
 			{
@@ -164,10 +167,67 @@ public class AlarmsDumpsys
 
 		}
 		
+		
 		for (int i=0; i < myAlarms.size(); i++)
 		{
 			myAlarms.get(i).setTotalCount(nTotalCount);
 		}
 		return myAlarms;
+	}
+	
+	static ArrayList<String> getTestData()
+	{
+		ArrayList<String> myRet = new ArrayList<String>()
+				{{
+					add("Alarm Stats:");
+					add("  com.google.android.gsf");
+					add("  8417ms running, 204 wakeups");
+					add("  17 alarms: act=com.google.android.intent.action.GTALK_RECONNECT flg=0x4");
+					add("  187 alarms: flg=0x4");
+//						  com.anod.calendar
+//						    311ms running, 0 wakeups
+//						    4 alarms: act=android.appwidget.action.APPWIDGET_UPDATE dat=com.anod.calendar://widget/id/45 flg=0x4
+//						  com.yahoo.mobile.client.android.mail
+//						    1248ms running, 96 wakeups
+//						    2 alarms: act=com.yahoo.android.push.Timer_VitalizeSessionybres89mail flg=0x4 cmp=com.yahoo.mobile.client.android.mail/com.yahoo.mobile.client.share.push.HTTPKeepAliveService
+//						    2 alarms: act=com.yahoo.android.push.Connection_Watchdogybres89mail flg=0x4 cmp=com.yahoo.mobile.client.android.mail/com.yahoo.mobile.client.share.push.HTTPKeepAliveService
+//						    92 alarms: act=com.yahoo.android.push.Connection_Recoveryybres89mail flg=0x4 cmp=com.yahoo.mobile.client.android.mail/com.yahoo.mobile.client.share.push.HTTPKeepAliveService
+//						  com.android.vending
+//						    6669ms running, 0 wakeups
+//						    12 alarms: act=com.android.vending.FORCE_UPDATE_CHECK flg=0x4
+//						  com.moctav.weather
+//						    3783ms running, 0 wakeups
+//						    94 alarms: act=Autoupdate flg=0x4 cmp=com.moctav.weather/.WeatherUpdateService
+//						  android
+//						    517606ms running, 137 wakeups
+//						    4 alarms: act=android.intent.action.DATE_CHANGED flg=0x30000004
+//						    70 alarms: act=com.android.internal.policy.impl.PhoneWindowManager.DELAYED_KEYGUARD flg=0x4
+//						    5599 alarms: act=android.intent.action.TIME_TICK flg=0x40000004
+//						    557 alarms: act=com.android.server.ThrottleManager.action.POLL flg=0x4
+//						    54 alarms: act=android.app.backup.intent.RUN flg=0x40000004
+//						    13 alarms: act=android.content.syncmanager.SYNC_ALARM flg=0x4
+//						  com.whatsapp
+//						    36757ms running, 11 wakeups
+//						    4 alarms: act=ALARM_REPORT_SYNCS flg=0x4
+//						    4 alarms: act=ALARM_MESSAGES_DB_BACKUP flg=0x4
+//						    4 alarms: act=ALARM_ROTATE_LOGS flg=0x4
+//						    2 alarms: act=ALARM_AVAILABLE_TIMEOUT flg=0x4
+//						    114 alarms: act=ALARM_ACTION flg=0x4
+//						    1 alarms: act=com.whatsapp.MessageService.RECONNECT flg=0x4 cmp=com.whatsapp/.messaging.MessageService
+//						  com.google.android.apps.maps
+//						    2238ms running, 93 wakeups
+//						    93 alarms: flg=0x4 cmp=com.google.android.apps.maps/com.google.googlenav.prefetch.android.PrefetcherService
+//						  com.android.providers.calendar
+//						    344ms running, 4 wakeups
+//						    4 alarms: act=com.android.providers.calendar.SCHEDULE_ALARM flg=0x4
+//						  com.android.deskclock
+//						    1219ms running, 4 wakeups
+//						    4 alarms: act=com.android.deskclock.ALARM_ALERT flg=0x4
+						add("  com.carl.trafficcounter");
+						add("  446486ms running, 5584 wakeups");
+						add("  5584 alarms: act=com.carl.trafficcounter.UPDATE_RUN flg=0x4");
+				}};
+
+		return myRet;
 	}
 }
