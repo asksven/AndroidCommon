@@ -46,6 +46,7 @@ import com.asksven.android.system.AndroidVersion;
  */
 public class BatteryStatsProxy
 {
+
 	/*
 	 * Instance of the BatteryStatsImpl
 	 */
@@ -54,6 +55,18 @@ public class BatteryStatsProxy
 	private Class m_ClassDefinition = null;
 	
 	private static final String TAG = "BatteryStatsProxy";
+	private static final boolean DBG = false;
+
+    private static final int EXPECTED_FIRST_HISTORY_SIZE = 300;
+    private static final int HISTORY_SIZE_GROWTH = 20;
+    /**
+     * User to create the history ArrayList.
+     * Reason to use is to aviod extensive copying and garbage collection. When created with a default constuctor,
+     * ArrayList allocates memory for 5 elements. Once you add 6th, new ArrayList for 10 elements is allocated, 5 
+     * old elements are copied and then 6th is added. Same will happen for every 5*i + 1 element.
+     * To avoid that, cache the size and reuse it.
+     */
+    private int lastHistorySize = EXPECTED_FIRST_HISTORY_SIZE;
 	/*
 	 * The UID stats are kept here as their methods / data can not be accessed
 	 * outside of this class due to non-public types (Uid, Proc, etc.)
@@ -1105,7 +1118,7 @@ public class BatteryStatsProxy
 							paramsGetTotalTimeLocked[1]= new Integer(iStatType);
 							
 							Long wake = (Long) methodGetTotalTimeLocked.invoke(wakeTimer, paramsGetTotalTimeLocked);
-							Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wake);
+							if (DBG) Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wake);
 							wakelockTime += wake;
 
 							//Parameters Types
@@ -1120,13 +1133,13 @@ public class BatteryStatsProxy
 							paramsGetCountLocked[0]= new Integer(iStatType);
 
 							Integer count = (Integer) methodGetCountLocked.invoke(wakeTimer, paramsGetCountLocked);
-							Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " count " + count);
+							if (DBG) Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " count " + count);
 							wakelockCount += count;
 
 		                }
 						else
 						{
-							Log.d(TAG, "Wakelocks: Process = " + wakelockEntry.getKey() + "with no Timer spotted");
+							if (DBG) Log.d(TAG, "Wakelocks: Process = " + wakelockEntry.getKey() + "with no Timer spotted");
 						}
 						// convert so milliseconds
 						wakelockTime /= 1000;
@@ -1151,7 +1164,7 @@ public class BatteryStatsProxy
 						myWl.setUid(uid);
 						myStats.add(myWl);
 
-						Log.d(TAG, "Wakelocks: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wakelockTime + ", count " + wakelockCount);
+						if (DBG) Log.d(TAG, "Wakelocks: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wakelockTime + ", count " + wakelockCount);
 		            }
 		        }
             }
@@ -1184,7 +1197,7 @@ public class BatteryStatsProxy
 			throw new Exception("Invalid WakeType or StatType");
 		}
 		
-		Log.d(TAG, "getWakelockStats was called with params "
+		if (DBG) Log.d(TAG, "getWakelockStats was called with params "
 				+"[iStatType] = " + iStatType
 				+ "[iWlPctRef] = " + iWlPctRef);
 		
@@ -1245,7 +1258,7 @@ public class BatteryStatsProxy
             	Boolean inDischargeVal 				= (Boolean) inDischarge.get(params[0]);
             	Boolean trackingReportedValuesVal 	= (Boolean) trackingReportedValues.get(params[0]);
             	
-            	Log.d(TAG, "Kernel wakelock '" + wakelockEntry.getKey() + "'"
+            	if (DBG) Log.d(TAG, "Kernel wakelock '" + wakelockEntry.getKey() + "'"
             			+ " : reading fields from SampleTimer: " 
             			+ " [currentReportedCountVal] = " + currentReportedCountVal
             			+ " [currentReportedTotalTimeVal] = " + currentReportedTotalTimeVal
@@ -1290,7 +1303,7 @@ public class BatteryStatsProxy
 				
 				Integer count = (Integer) methodGetCountLocked.invoke(samplingTimer, paramGetCountLocked);
 				
-				Log.d(TAG, "Kernel wakelock: " + wakelockEntry.getKey() + " wakelock [s] " + wake / 1000
+				if (DBG) Log.d(TAG, "Kernel wakelock: " + wakelockEntry.getKey() + " wakelock [s] " + wake / 1000
 						+ " count " + count);
 
 				// return the data depending on the method 
@@ -1365,7 +1378,7 @@ public class BatteryStatsProxy
 					{
 					    for (Map.Entry<String, ? extends Object> ent : processStats.entrySet())
 					    {
-					    	Log.d(TAG, "Process name = " + ent.getKey());
+					    	if (DBG) Log.d(TAG, "Process name = " + ent.getKey());
 						    // Object is a BatteryStatsTypes.Uid.Proc
 						    Object ps = ent.getValue();
 							@SuppressWarnings("rawtypes")
@@ -1388,9 +1401,9 @@ public class BatteryStatsProxy
 							Long systemTime = (Long) methodGetSystemTime.invoke(ps, paramsGetXxxTime);
 							Integer starts = (Integer) methodGetStarts.invoke(ps, paramsGetXxxTime);
 							
-							Log.d(TAG, "UserTime = " + userTime);
-							Log.d(TAG, "SystemTime = " + systemTime);
-							Log.d(TAG, "Starts = " + starts);
+							if (DBG) Log.d(TAG, "UserTime = " + userTime);
+							if (DBG) Log.d(TAG, "SystemTime = " + systemTime);
+							if (DBG) Log.d(TAG, "Starts = " + starts);
 							
 							// take only the processes with CPU time
 							if ((userTime + systemTime) > 1000)
@@ -1405,7 +1418,7 @@ public class BatteryStatsProxy
 							}
 							else
 							{
-								Log.d(TAG, "Process " + ent.getKey() + " was discarded (CPU time =0)");
+								if (DBG) Log.d(TAG, "Process " + ent.getKey() + " was discarded (CPU time =0)");
 							}
 					    }		
 		            }
@@ -1472,7 +1485,7 @@ public class BatteryStatsProxy
 					Method methodGetUid	= iBatteryStatsUid.getMethod("getUid");
 					Integer uid 		= (Integer) methodGetUid.invoke(myUid);
 					
-					Log.d(TAG, "Uid = " + uid + ": received:" + tcpBytesReceived + ", sent: " + tcpBytesSent);
+					if (DBG) Log.d(TAG, "Uid = " + uid + ": received:" + tcpBytesReceived + ", sent: " + tcpBytesSent);
 
 					NetworkUsage myData = new NetworkUsage(uid, tcpBytesReceived, tcpBytesSent);
 					// try resolving names
@@ -1494,6 +1507,7 @@ public class BatteryStatsProxy
 	{
 		
 		ArrayList<HistoryItem> myStats = new ArrayList<HistoryItem>();
+		myStats.ensureCapacity(lastHistorySize + HISTORY_SIZE_GROWTH);
 	        	 
         try
         {			
@@ -1530,7 +1544,7 @@ public class BatteryStatsProxy
 	                BatteryStatsTypes.STATS_SINCE_CHARGED));
 	        statTimeRef = System.currentTimeMillis(); 
 	        
-	        Log.d(TAG, "Reference time (" + statTimeRef + ": " + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeRef));
+	        if (DBG) Log.d(TAG, "Reference time (" + statTimeRef + ": " + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeRef));
 	        // statTimeLast stores the timestamp of the last sample
 	        Long statTimeLast = Long.valueOf(0);
 	        
@@ -1606,7 +1620,7 @@ public class BatteryStatsProxy
 							}
 							
 					        myStats.add(myItem);
-					        Log.d(TAG, "Added HistoryItem " + myItem.toString());
+					        if (DBG) Log.d(TAG, "Added HistoryItem " + myItem.toString());
 
 				        }
 					    // overwrite the time of the last sample
@@ -1615,7 +1629,7 @@ public class BatteryStatsProxy
 					}
 					else
 					{
-						Log.d(TAG, "Skipped item");
+						if (DBG) Log.d(TAG, "Skipped item");
 					}
 					
 					bNext = (Boolean) methodNext.invoke(m_Instance, params);
@@ -1626,11 +1640,11 @@ public class BatteryStatsProxy
 				// the stats is being collected
 				// the ref time is a full plain time (with date)
 				Long offset = statTimeRef - statTimeLast;
-				Log.d(TAG, "Reference time (" + statTimeRef + ")" + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeRef));
+				if (DBG) Log.d(TAG, "Reference time (" + statTimeRef + ")" + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeRef));
 				
-				Log.d(TAG, "Last sample (" + statTimeLast + ")" + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeLast));
+				if (DBG) Log.d(TAG, "Last sample (" + statTimeLast + ")" + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeLast));
 				
-				Log.d(TAG, "Correcting all HistoryItem times by an offset of (" + offset + ")" + DateUtils.formatDuration(offset * 1000));
+				if (DBG) Log.d(TAG, "Correcting all HistoryItem times by an offset of (" + offset + ")" + DateUtils.formatDuration(offset * 1000));
 				for (int i=0; i < myStats.size(); i++)
 				{
 					myStats.get(i).setOffset(offset);
@@ -1642,7 +1656,9 @@ public class BatteryStatsProxy
         	Log.e("TAG", "An exception occured in getHistory(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
             throw e;
         }
-			
+		myStats.trimToSize();
+		lastHistorySize = myStats.size();
+		if (DBG) Log.d(TAG, "History size is " + lastHistorySize);
 		return myStats;
 	}
 
