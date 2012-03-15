@@ -454,6 +454,51 @@ public class BatteryStatsProxy
           params[1]= new Integer(iStatsType);
 
           ret= (Long) method.invoke(m_Instance, params);
+          Log.i("TAG", "getWifiOnTime with params " + params[0] + " and " + params[1] +  " returned " + ret);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+        }
+
+        return ret;
+
+	
+	}
+
+	/**
+     * Returns the total, last, or current wifi on time in microseconds.
+     *
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getGlobalWifiRunningTime(long batteryRealtime, int iStatsType)
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[2];
+          paramTypes[0]= long.class;
+          paramTypes[1]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getGlobalWifiRunningTime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[2];
+          params[0]= new Long(batteryRealtime);
+          params[1]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+          Log.i("TAG", "getGlobalWifiRunningTime with params " + params[0] + " and " + params[1] +  " returned " + ret);
 
         }
         catch( IllegalArgumentException e )
@@ -508,17 +553,22 @@ public class BatteryStatsProxy
 		        	Object[] params= new Object[2];
 		        	params[0]= new Long(batteryRealtime);
 		        	params[1]= new Integer(iStatsType);
-	
+		        	
 		        	ret += (Long) method.invoke(myUid, params);
+		        	
+		        	Log.i(TAG, "getWifiRunningTime with params " + params[0] + " and " + params[1] + " returned " + ret);
+		        	
 	    	
 		        }
 	        }
 	        catch( IllegalArgumentException e )
 	        {
+	        	Log.e(TAG, "getWifiRunning threw an IllegalArgumentException: " + e.getMessage());
 	            throw e;
 	        }
 	        catch( Exception e )
 	        {
+	        	Log.e(TAG, "getWifiRunning threw an Exception: " + e.getMessage());
 	            ret = new Long(0);
 	        }
 		}
