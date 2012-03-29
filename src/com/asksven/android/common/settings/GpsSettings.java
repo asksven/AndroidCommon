@@ -15,6 +15,7 @@
  */
 package com.asksven.android.common.settings;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import android.provider.Settings;
  */
 public class GpsSettings
 {
+	@TargetApi(8)
 	public static void turnGPSOn(Context context)
 	{
 	    String provider = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
