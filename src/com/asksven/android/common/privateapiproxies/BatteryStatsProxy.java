@@ -1105,7 +1105,7 @@ public class BatteryStatsProxy
 							paramsGetTotalTimeLocked[1]= new Integer(iStatType);
 							
 							Long wake = (Long) methodGetTotalTimeLocked.invoke(wakeTimer, paramsGetTotalTimeLocked);
-							Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wake);
+//							Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wake);
 							wakelockTime += wake;
 
 							//Parameters Types
@@ -1120,7 +1120,7 @@ public class BatteryStatsProxy
 							paramsGetCountLocked[0]= new Integer(iStatType);
 
 							Integer count = (Integer) methodGetCountLocked.invoke(wakeTimer, paramsGetCountLocked);
-							Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " count " + count);
+//							Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " count " + count);
 							wakelockCount += count;
 
 		                }
@@ -1151,7 +1151,7 @@ public class BatteryStatsProxy
 						myWl.setUid(uid);
 						myStats.add(myWl);
 
-						Log.d(TAG, "Wakelocks: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wakelockTime + ", count " + wakelockCount);
+//						Log.d(TAG, "Wakelocks: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wakelockTime + ", count " + wakelockCount);
 		            }
 		        }
             }

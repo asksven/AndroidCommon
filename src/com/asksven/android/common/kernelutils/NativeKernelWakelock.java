@@ -38,7 +38,7 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 	/** 
 	 * the tag for logging
 	 */
-	private static transient final String TAG = "KernelWakelock";
+	private static transient final String TAG = "NativeKernelWakelock";
 
 	/**
 	 * the name of the wakelock holder
@@ -124,7 +124,7 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 					NativeKernelWakelock myRef = (NativeKernelWakelock) myList.get(i);
 					if ( (this.getName().equals(myRef.getName())) && (this.getuid() == myRef.getuid()) )
 					{
-						Log.i(TAG, "Substracting " + myRef.toString() + " from " + this.toString());
+//						Log.i(TAG, "Substracting " + myRef.toString() + " from " + this.toString());
 						this.m_count		-= myRef.m_count;
 						this.m_expireCount	-= myRef.m_expireCount;
 						this.m_wakeCount	-= myRef.m_wakeCount;
@@ -135,7 +135,7 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 						this.m_lastChange	= Math.max(this.m_lastChange, myRef.m_lastChange);
 						this.m_totalTime	-= myRef.m_totalTime;
 						
-						Log.i(TAG, "Result: " + this.toString());
+//						Log.i(TAG, "Result: " + this.toString());
 
 						if ((m_count < 0) || (m_sleepTime < 0) || (m_totalTime < 0))
 						{
