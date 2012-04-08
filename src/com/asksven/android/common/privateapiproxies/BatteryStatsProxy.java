@@ -741,6 +741,100 @@ public class BatteryStatsProxy
 	}
 
 	/**
+     * Returns the time in microseconds the phone has been running with the given data connection type.
+     *
+     * @params dataType the given data connection type (@see http://www.netmite.com/android/mydroid/donut/frameworks/base/core/java/android/os/BatteryStats.java)
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getPhoneDataConnectionTime(int dataType, long batteryRealtime, int iStatsType)
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[3];
+          paramTypes[0]= int.class;
+          paramTypes[1]= long.class;
+          paramTypes[2]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getPhoneDataConnectionTime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[3];
+          params[1]= new Integer(dataType);
+          params[1]= new Long(batteryRealtime);
+          params[2]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+          Log.i("TAG", "getPhoneDataConnectionTime with params " + params[0] + ", " + params[1] + "and " + params[2] + " returned " + ret);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+        }
+
+        return ret;
+
+	
+	}
+
+	/**
+     * Returns the time in microseconds the phone has been running with the given signal strength.
+     *
+     * @params signalStrength the given data connection type (@see http://www.netmite.com/android/mydroid/donut/frameworks/base/core/java/android/os/BatteryStats.java)
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getPhoneSignalStrengthTime(int signalStrength, long batteryRealtime, int iStatsType)
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[3];
+          paramTypes[0]= int.class;
+          paramTypes[1]= long.class;
+          paramTypes[2]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getPhoneDataConnectionTime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[3];
+          params[1]= new Integer(signalStrength);
+          params[1]= new Long(batteryRealtime);
+          params[2]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+          Log.i("TAG", "getPhoneSignalStrengthTime with params " + params[0] + ", " + params[1] + "and " + params[2] + " returned " + ret);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+        }
+
+        return ret;
+
+	
+	}
+
+    /**
      * Returns the total, last, or current audio on time in microseconds.
      *
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).

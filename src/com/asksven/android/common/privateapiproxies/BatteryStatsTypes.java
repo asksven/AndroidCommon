@@ -43,6 +43,20 @@ public class BatteryStatsTypes
     public static final int WAKE_TYPE_WINDOW = 2;
     
     /**
+     * Constants for data connection type
+     */
+    public static final int DATA_CONNECTION_NONE = 0;
+    
+    /**
+     * Constants for signal strength
+     */
+    public static final int SIGNAL_STRENGTH_NONE_OR_UNKNOWN = 0;
+    public static final int SIGNAL_STRENGTH_POOR = 1;
+    public static final int SIGNAL_STRENGTH_MODERATE = 2;
+    public static final int SIGNAL_STRENGTH_GOOD = 3;
+    public static final int SIGNAL_STRENGTH_GREAT = 4;
+    
+    /**
      * Enum of valid wakelock types
      */
     public static final boolean assertValidWakeType(int iWakeType)

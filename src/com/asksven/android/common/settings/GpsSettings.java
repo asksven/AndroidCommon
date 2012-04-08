@@ -26,6 +26,7 @@ import android.provider.Settings;
  * @author sven
  *
  */
+@TargetApi(8)
 public class GpsSettings
 {
 	@TargetApi(8)
