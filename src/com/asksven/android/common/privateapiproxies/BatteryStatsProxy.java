@@ -765,7 +765,7 @@ public class BatteryStatsProxy
 
           //Parameters
           Object[] params= new Object[3];
-          params[1]= new Integer(dataType);
+          params[0]= new Integer(dataType);
           params[1]= new Long(batteryRealtime);
           params[2]= new Integer(iStatsType);
 
@@ -812,7 +812,7 @@ public class BatteryStatsProxy
 
           //Parameters
           Object[] params= new Object[3];
-          params[1]= new Integer(signalStrength);
+          params[0]= new Integer(signalStrength);
           params[1]= new Long(batteryRealtime);
           params[2]= new Integer(iStatsType);
 
