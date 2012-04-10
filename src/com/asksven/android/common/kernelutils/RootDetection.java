@@ -32,7 +32,17 @@ public class RootDetection
 	 */
 	public static boolean hasSuRights()
 	{
-		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "ls /"});
+		return hasSuRights("ls /");
+	}
+
+	/**
+	 * Checks for su with a specific command
+	 * @param command
+	 * @return
+	 */
+	public static boolean hasSuRights(String command)
+	{
+		ExecResult res = Exec.execPrint(new String[]{"su", "-c", command});
 		boolean bRet = false;
 		
 		if (res.getSuccess())
@@ -46,5 +56,5 @@ public class RootDetection
 		
 		return bRet;
 	}
-	
+
 }
