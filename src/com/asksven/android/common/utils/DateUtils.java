@@ -104,6 +104,10 @@ public class DateUtils
         	ret += seconds + " s ";
         }
         
+        if (ret.equals(""))
+        {
+        	ret = "0 s";
+        }
         return ret;
 	}
 }
