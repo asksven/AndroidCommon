@@ -1176,7 +1176,7 @@ public class BatteryStatsProxy
 						// are the ones that should normally be of interest but
 						// WAKE_TYPE_PARTIAL, WAKE_TYPE_FULL, WAKE_TYPE_WINDOW
 		                // are possible
-						paramsGetWakeTime[0]= new Integer(iWakeType);
+						paramsGetWakeTime[0]= Integer.valueOf(iWakeType);
 						
 						// BatteryStats.Timer
 						Object wakeTimer = methodGetWakeTime.invoke(wakelock, paramsGetWakeTime);
@@ -1196,7 +1196,7 @@ public class BatteryStatsProxy
 							//Parameters
 							Object[] paramsGetTotalTimeLocked= new Object[2];
 							paramsGetTotalTimeLocked[0]= new Long(uSecBatteryTime);
-							paramsGetTotalTimeLocked[1]= new Integer(iStatType);
+							paramsGetTotalTimeLocked[1]= Integer.valueOf(iStatType);
 							
 							Long wake = (Long) methodGetTotalTimeLocked.invoke(wakeTimer, paramsGetTotalTimeLocked);
 //							Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wake);
@@ -1218,10 +1218,10 @@ public class BatteryStatsProxy
 							wakelockCount += count;
 
 		                }
-						else
-						{
-							Log.d(TAG, "Wakelocks: Process = " + wakelockEntry.getKey() + "with no Timer spotted");
-						}
+//						else
+//						{
+//							Log.d(TAG, "Wakelocks: Process = " + wakelockEntry.getKey() + " with no Timer spotted");
+//						}
 						// convert so milliseconds
 						wakelockTime /= 1000;
 						
