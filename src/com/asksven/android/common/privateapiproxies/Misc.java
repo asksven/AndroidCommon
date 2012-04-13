@@ -77,6 +77,11 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 					Misc myRef = (Misc) myList.get(i);
 					if ( (this.getName().equals(myRef.getName())) && (this.getuid() == myRef.getuid()) )
 					{
+						if (this.getName().equals("Deep Sleep"))
+						{
+							Log.d(TAG, "Substracting " + myRef.getName() + " " + myRef.getData()
+									+ " from " + this.getName() + " " + this.getData());
+						}
 						this.m_timeOn		-= myRef.getTimeOn();
 						this.m_timeRunning	-= myRef.getTimeRunning();
 
@@ -165,7 +170,7 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 	
 	public double getMaxValue()
 	{
-		return getTimeRunning();            
+		return getTimeOn();            
     }
 	
 }

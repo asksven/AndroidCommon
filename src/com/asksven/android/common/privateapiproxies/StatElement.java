@@ -202,7 +202,12 @@ public abstract class StatElement implements Serializable
 	/** 
 	 * returns the values of the data
 	 */	
-	public abstract double[] getValues();
+	public double[] getValues()
+	{
+		double[] retVal = new double[2];
+		retVal[0] = m_totalTime;
+		return retVal;
+	}
 
 
 	/** 
@@ -210,6 +215,6 @@ public abstract class StatElement implements Serializable
 	 */	
 	public double getMaxValue()
 	{
-		return m_totalTime;
+		return getValues()[0]; //m_totalTime;
 	}
 }
