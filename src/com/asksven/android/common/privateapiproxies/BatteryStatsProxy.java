@@ -20,6 +20,7 @@ package com.asksven.android.common.privateapiproxies;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -198,7 +199,11 @@ public class BatteryStatsProxy
 	    }
 		catch( Exception e )
 		{
-			Log.e("TAG", "An exception occured in BatteryStatsProxy(). Message: " + e.getMessage());
+			if (e instanceof InvocationTargetException && e.getCause() != null) {
+				Log.e("TAG", "An exception occured in BatteryStatsProxy(). Message: " + e.getCause().getMessage());
+			} else {
+				Log.e("TAG", "An exception occured in BatteryStatsProxy(). Message: " + e.getMessage());
+			}
 	    	m_Instance = null;
 	    }    
 	}
@@ -1741,3 +1746,4 @@ public class BatteryStatsProxy
 	}
 
 }
+
