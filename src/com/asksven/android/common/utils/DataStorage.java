@@ -107,6 +107,7 @@ public class DataStorage
 		
 		 if (!(serializableObject instanceof java.io.Serializable))
 		 {
+			 Log.e(TAG, "The object is not serializable: " + fileName);
 		     return false;
 		 }
 		try
@@ -116,12 +117,10 @@ public class DataStorage
 			os.writeObject(serializableObject);
 			os.close();
 		}
-		catch (FileNotFoundException e)
+		catch (Exception e)
 		{
-			bRet = false;
-		}
-		catch (IOException e)
-		{
+			 Log.e(TAG, "An error occured while writing " + fileName + " " + e.getMessage());
+
 			bRet = false;
 		}
 
