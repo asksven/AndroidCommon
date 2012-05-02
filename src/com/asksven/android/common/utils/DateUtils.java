@@ -110,4 +110,57 @@ public class DateUtils
         }
         return ret;
 	}
+	
+	/**
+	 * Formats milliseconds to a friendly form. Short means that seconds are truncated if value > 1 Day 
+	 * @param millis
+	 * @return the formated string
+	 */
+	public static String formatDurationShort(long millis)
+	{
+		String ret = "";
+		
+        int seconds = (int) Math.floor(millis / 1000);
+        
+        int days = 0, hours = 0, minutes = 0;
+        if (seconds > (60*60*24)) {
+            days = seconds / (60*60*24);
+            seconds -= days * (60*60*24);
+        }
+        if (seconds > (60 * 60)) {
+            hours = seconds / (60 * 60);
+            seconds -= hours * (60 * 60);
+        }
+        if (seconds > 60) {
+            minutes = seconds / 60;
+            seconds -= minutes * 60;
+        }
+        ret = "";
+        if (days > 0)
+        {
+            ret += days + " d ";
+        }
+        
+        if (hours > 0)
+        {
+        	ret += hours + " h ";
+        }
+        
+        if (minutes > 0)
+        { 
+        	ret += minutes + " m ";
+        }
+        if ( (seconds > 0) && (days == 0) )
+        {
+        	// only show seconds when value < 1 day
+        	ret += seconds + " s ";
+        }
+        
+        if (ret.equals(""))
+        {
+        	ret = "0 s";
+        }
+        return ret;
+	}
+
 }
