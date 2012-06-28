@@ -125,5 +125,65 @@ public class UidNameResolver
 
     	return myInfo;
     }
+    
+    /**
+     * Returns the name for UIDs < 2000
+     * @param uid
+     * @return
+     */
+    String getName(int uid)
+    {
+    	String ret = "";
+    	switch (uid)
+    	{
+    		case 0:
+    			ret = "root";
+    			break;
+    		case 1000:
+    			ret = "system";
+    			break;
+    		case 1001:
+    			ret = "radio";
+    			break;
+    		case 1002:
+    			ret = "bluetooth";
+    			break;
+    		case 1003:
+    			ret = "graphics";
+    			break;
+    		case 1004:
+    			ret = "input";
+    			break;
+    		case 1005:
+    			ret = "audio";
+    			break;
+    		case 1006:
+    			ret = "camera";
+    			break;
+    		case 1007:
+    			ret = "log";
+    			break;
+    		case 1008:
+    			ret = "compass";
+    			break;
+    		case 1009:
+    			ret = "mount";
+    			break;
+    		case 1010:
+    			ret = "wifi";
+    			break;
+    		case 1011:
+    			ret = "adb";
+    			break;
+    		case 1013:
+    			ret = "media";
+    			break;
+    		case 1014:
+    			ret = "dhcp";
+    			break;
+    			
+    	}
+    	return ret;
+    }
 
 }

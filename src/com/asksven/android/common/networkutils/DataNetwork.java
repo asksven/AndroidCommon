@@ -44,4 +44,20 @@ public class DataNetwork
 		
 		return ret;
 	}
+	
+	public static boolean hasWifiConnection(Context ctx)
+	{
+		boolean ret = false;
+		ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+	    if( cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting() )
+	    {
+	        ret = true; 
+	    }
+	    else
+	    {
+	    	ret = false;
+	    }
+	    
+	    return ret;
+	}
 }

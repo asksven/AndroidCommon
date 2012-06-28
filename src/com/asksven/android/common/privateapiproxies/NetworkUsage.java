@@ -17,8 +17,13 @@
 package com.asksven.android.common.privateapiproxies;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 
+import com.asksven.android.common.nameutils.UidInfo;
+
+import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 public class NetworkUsage extends StatElement implements Comparable<NetworkUsage>, Serializable
@@ -26,23 +31,40 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	/** 
 	 * the tag for logging
 	 */
-	private static transient final String TAG = "Misc";
+	private static transient final String TAG = "NetworkUsage";
 	
-	/**
-	 * the uid of the program
-	 */
-	private int m_uid;
 	
 	/**
 	 * tcpBytes received by the program
 	 */
-	private long m_bytesReceived;
+	private long m_bytesReceived=0;
 	
 	/**
 	 * tcpBytes sent by the program
 	 */
-	private long m_bytesSent;
-	
+	private long m_bytesSent=0;
+
+	/**
+	 * the interface
+	 */
+	private String m_iface = "";
+
+
+	/**
+	 * 
+	 * @param uid
+	 * @param iface
+	 * @param bytesReceived
+	 * @param bytesSent
+	 */
+	public NetworkUsage(int uid, String iface, long bytesReceived, long bytesSent)
+	{
+		super.setUid(uid);
+		m_iface			= iface;
+		m_bytesReceived	= bytesReceived;
+		m_bytesSent		= bytesSent;
+	}
+
 	/**
 	 * 
 	 * @param uid
@@ -51,11 +73,28 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	 */
 	public NetworkUsage(int uid, long bytesReceived, long bytesSent)
 	{
-		m_uid		= uid;
+		super.setUid(uid);
+		m_iface			= "";
 		m_bytesReceived	= bytesReceived;
 		m_bytesSent		= bytesSent;
 	}
 
+	/**
+	 * Creates an Object by passing its name
+	 * @param name
+	 * @param uid
+	 * @param bytesReceived
+	 * @param bytesSent
+	 */
+	public NetworkUsage(String name, int uid, long bytesReceived, long bytesSent)
+	{
+		m_uidInfo = new UidInfo();
+		m_uidInfo.setName(name);
+		m_uidInfo.setUid(uid);
+		super.setUid(uid);
+		m_bytesReceived	= bytesReceived;
+		m_bytesSent		= bytesSent;
+	}
 	/**
 	 * Substracts the values from a previous object
 	 * found in myList from the current Process
@@ -71,10 +110,11 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 				try
 				{
 					NetworkUsage myRef = (NetworkUsage) myList.get(i);
-					if ( (this.getName().equals(myRef.getName())) && (this.getuid() == myRef.getuid()) )
+					if ( (this.getInterface().equals(myRef.getInterface())) 
+							&& (this.getuid() == myRef.getuid()) )
 					{
-						this.m_bytesReceived	= getBytesReceived();
-						this.m_bytesSent		= getBytesSent();
+						this.m_bytesReceived	-= myRef.getBytesReceived();
+						this.m_bytesSent		-= myRef.getBytesSent();
 					
 						if ((m_bytesReceived < 0) || (m_bytesSent < 0))
 						{
@@ -93,13 +133,33 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 		}
 	}
 
+
 	/**
-	 * @return the uid
+	 * @return the interface
 	 */
-	public int getUid()
+	public String getInterface()
 	{
-		return m_uid;
+		String ret = "";
+		if (m_iface.startsWith("wlan"))
+		{
+			ret = "Wifi";
+		}
+		else if (m_iface.startsWith("rmnet"))
+		{
+			ret = "Mobile";
+		}
+		if (m_iface.startsWith("bnep"))
+		{
+			ret = "Bluetooth";
+		}
+		else
+		{
+			ret = m_iface;
+		}
+
+		return ret;
 	}
+
 
 	/**
 	 * @return the bytes received
@@ -109,6 +169,15 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 		return m_bytesReceived;
 	}
 
+	public void addBytesReceived(long bytes)
+	{
+		m_bytesReceived += bytes;
+	}
+
+	public void addBytesSent(long bytes)
+	{
+		m_bytesSent += bytes;
+	}
 	/**
 	 * @return the bytes sent
 	 */
@@ -117,7 +186,15 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 		return m_bytesSent;
 	}
 	
-	 /**
+	/**
+	 * @return the total bytes sent and received
+	 */
+	public long getTotalBytes()
+	{
+		return m_bytesSent + m_bytesReceived;
+	}
+
+	/**
      * Compare a given NetworkUsage with this object.
      * If the duration of this object is 
      * greater than the received object,
@@ -134,7 +211,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	 */
 	@Override
 	public String toString() {
-		return "NetworkUsage [m_uid=" + m_uid + ", m_bytesReceived="
+		return "NetworkUsage [m_uid=" + super.getuid() + ", m_bytesReceived="
 				+ m_bytesReceived + ", m_bytesSent=" + m_bytesSent + "]";
 	}
 	
@@ -143,7 +220,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	 */
 	public String getName()
 	{
-		return String.valueOf(m_uid);
+		return String.valueOf(super.getuid() + " (" + m_iface + ")");
 	}
 	
 	/**
@@ -151,7 +228,8 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	 */
 	public String getData()
 	{
-		return "Rec. Byes: " + String.valueOf(m_bytesReceived) + ", Sent Bytes: " + String.valueOf(m_bytesSent);
+		return formatVolume(getTotalBytes());
+		//"RX Bytes: " + String.valueOf(m_bytesReceived) + ", TX Bytes: " + String.valueOf(m_bytesSent);
 	}
 
 	/** 
@@ -164,5 +242,43 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 		retVal[1] = getBytesReceived() + getBytesSent();
 		return retVal;
 	}
+	
+	/**
+	 * Formats data volumes 
+	 * @param bytes
+	 * @return the formated string
+	 */
+	public static String formatVolume(double bytes)
+	{
+		String ret = "";
+		
+		double kB = Math.floor(bytes / 1024);
+		double mB = Math.floor(bytes / 1024 / 1024);
+		double gB = Math.floor(bytes / 1024 / 1024 / 1024);
+		double tB = Math.floor(bytes / 1024 / 1024 / 1024 / 1024);
+        
+        if (tB > 0)
+        {
+            ret = tB + " TBytes";
+        }
+        else if ( gB > 0)
+        {
+            ret = gB + " GBytes";
+        }
+        else if ( mB > 0)
+        {
+            ret = mB + " MBytes";
+        }
+        else if ( kB > 0)
+        {
+            ret = kB + " KBytes";
+        }
+        else
+        {
+            ret = bytes + " Bytes";
+        }
+        return ret;
+	}
+
 
 }

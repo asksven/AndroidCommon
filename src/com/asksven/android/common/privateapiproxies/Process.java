@@ -165,7 +165,7 @@ public class Process extends StatElement implements Comparable<Process>, Seriali
 	public String getData()
 	{
 		
-		return "Sys: " + this.formatDuration(getSystemTime()) + " (" + getSystemTime()/1000 + " s)"
+		return "Uid: " + this.getuid() + " Sys: " + this.formatDuration(getSystemTime()) + " (" + getSystemTime()/1000 + " s)"
 		+ " Us: " + this.formatDuration(getUserTime()) + " (" + getUserTime()/1000 + " s)"
 		+ " Starts: " + String.valueOf(getStarts());
 	}

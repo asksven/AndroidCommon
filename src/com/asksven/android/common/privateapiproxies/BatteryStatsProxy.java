@@ -1588,6 +1588,37 @@ public class BatteryStatsProxy
 		return myStats;
 	}
 	
+
+	/**
+	 * Obtain the network usage stats as a list of NetworkUsages (@see com.asksven.android.common.privateapiproxies.NetworkUsage}
+	 * @param context a Context
+	 * @param iStatType a type of stat @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes
+	 * @return a List of NetworkUsage s
+	 * @throws Exception
+	 */
+    public ArrayList<NetworkUsage> getKernelNetworkStats(int iStatsType)
+	{
+
+		ArrayList<NetworkUsage> myRet = new ArrayList<NetworkUsage>(); 
+		try
+		{
+			@SuppressWarnings("unchecked")
+			// we must use getDeclaredMethod as that method is private
+			Method method = m_ClassDefinition.getDeclaredMethod("getNetworkStatsDetailGroupedByUid");
+			method.setAccessible(true);
+	
+			Object networkStats = method.invoke(m_Instance);
+			String myRes = "tada";
+		}
+		catch (Exception e)
+		{
+			myRet = null;
+		}
+        return myRet;
+
+	
+	}
+	
 	@SuppressWarnings("unchecked")
 	public ArrayList<HistoryItem> getHistory(Context context) throws Exception
 	{
