@@ -220,7 +220,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	 */
 	public String getName()
 	{
-		return String.valueOf(super.getuid() + " (" + m_iface + ")");
+		return String.valueOf(super.getuid() + " (" + getInterface() + ")");
 	}
 	
 	/**
