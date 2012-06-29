@@ -238,8 +238,8 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	public double[] getValues()
 	{
 		double[] retVal = new double[2];
-		retVal[0] = getBytesReceived();
-		retVal[1] = getBytesReceived() + getBytesSent();
+		retVal[0] = getBytesReceived() + getBytesSent();
+//		retVal[1] = getBytesReceived() + getBytesSent();
 		return retVal;
 	}
 	
