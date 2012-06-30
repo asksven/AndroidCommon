@@ -219,4 +219,6 @@ public abstract class StatElement implements Serializable
 	{
 		return getValues()[0]; //m_totalTime;
 	}
+	
+
 }

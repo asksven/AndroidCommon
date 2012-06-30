@@ -31,6 +31,9 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.ArrayList;
+
+import com.asksven.android.common.privateapiproxies.StatElement;
+
 import android.util.Log;
 import android.os.SystemClock;
 
@@ -43,35 +46,10 @@ public class CpuStates
     public static final String VERSION_PATH = "/proc/version";
 
 
-    /** simple struct for states/time */
-    public class State
+    public static ArrayList<State> getTimesInStates()
     {
-        public int freq = 0;
-        public int duration = 0;
-
-        public State(int a, int b)
-        {
-        	freq = a;
-        	duration =b;
-        }
-    }
-
-
-    public int getTotalStateTime ()
-    {
-        // looop through and add up
-        int r = 0;
-        for (State state : getTimesInStates()) {
-            r += state.duration;
-        }
-
-        return r;
-    }
-
-    public List<State> getTimesInStates()
-    {
-        List<State> states = new ArrayList<State>();
-
+    	ArrayList<State> states = new ArrayList<State>();
+    	double totalTime = 0;
         try
         {
             // create a buffered reader to read in the time-in-states log
@@ -84,7 +62,9 @@ public class CpuStates
             {
                 // split open line and convert to Integers
                 String[] nums = line.split (" ");
-                states.add (new State(Integer.parseInt(nums[0]), Integer.parseInt(nums[1])));
+                State myState = new State(Integer.parseInt(nums[0]), Integer.parseInt(nums[1]));
+                totalTime += myState.m_duration;
+                states.add(myState);
             }
 
             is.close ();
@@ -100,7 +80,8 @@ public class CpuStates
         int sleepTime = (int)(SystemClock.elapsedRealtime() -
             SystemClock.uptimeMillis ()) / 10;
         states.add( new State(0, sleepTime));
-
+        totalTime += sleepTime;
+        
         return states;
     }
 }
