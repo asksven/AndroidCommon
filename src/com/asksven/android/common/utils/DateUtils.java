@@ -20,6 +20,7 @@ package com.asksven.android.common.utils;
  *
  */
 import java.util.Calendar;
+import java.util.Date;
 import java.text.SimpleDateFormat;
 
 public class DateUtils
@@ -53,13 +54,26 @@ public class DateUtils
 		return sdf.format(cal.getTime());
 	}
 	
+	public static String format(String dateFormat, Date time)
+	{
+
+		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+		return sdf.format(time);
+	}
+
 	public static String format(String dateFormat, Long time)
 	{
 
 		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
 		return sdf.format(time);
 	}
-	
+
+	public static String format(Date time)
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
+		return sdf.format(time);
+	}
+
 	/**
 	 * Formats milliseconds to a friendly form 
 	 * @param millis
