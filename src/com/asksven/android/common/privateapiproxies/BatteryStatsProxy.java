@@ -1502,7 +1502,7 @@ public class BatteryStatsProxy
 							Log.d(TAG, "Starts = " + starts);
 							
 							// take only the processes with CPU time
-							if (true) //((userTime + systemTime) > 1000)
+							if ((userTime + systemTime) > 1000)
 							{
 								// post-processing of eventX-YYYY processes
 								String details = "";
