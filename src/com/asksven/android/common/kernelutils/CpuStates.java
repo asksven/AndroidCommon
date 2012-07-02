@@ -49,7 +49,7 @@ public class CpuStates
     public static ArrayList<State> getTimesInStates()
     {
     	ArrayList<State> states = new ArrayList<State>();
-    	double totalTime = 0;
+    	long totalTime = 0;
         try
         {
             // create a buffered reader to read in the time-in-states log
@@ -62,7 +62,9 @@ public class CpuStates
             {
                 // split open line and convert to Integers
                 String[] nums = line.split (" ");
-                State myState = new State(Integer.parseInt(nums[0]), Integer.parseInt(nums[1]));
+                
+                // duration x 10 to store ms
+                State myState = new State(Integer.parseInt(nums[0]), Long.parseLong(nums[1])*10);
                 totalTime += myState.m_duration;
                 states.add(myState);
             }
@@ -77,8 +79,7 @@ public class CpuStates
         }
 
         // add in sleep state
-        int sleepTime = (int)(SystemClock.elapsedRealtime() -
-            SystemClock.uptimeMillis ()) / 10;
+        long sleepTime = SystemClock.elapsedRealtime() - SystemClock.uptimeMillis();
         states.add( new State(0, sleepTime));
         totalTime += sleepTime;
         

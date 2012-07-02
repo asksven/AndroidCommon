@@ -42,9 +42,9 @@ public class State extends StatElement implements Comparable<State>, Serializabl
 	private static final long serialVersionUID = 1L;
 	
 	public int m_freq = 0;
-    public int m_duration = 0;
+    public long m_duration = 0;
 
-    public State(int freq, int duration)
+    public State(int freq, long duration)
     {
     	m_freq 		= freq;
     	m_duration 	= duration;
@@ -53,7 +53,7 @@ public class State extends StatElement implements Comparable<State>, Serializabl
     public String getName()
     {
     	String ret = formatFreq(m_freq);
-    	if (ret.equals("0 MHz"))
+    	if (ret.equals("0 kHz"))
     	{
     		ret = "Deep Sleep";
     	}
