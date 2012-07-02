@@ -120,7 +120,7 @@ public class Netstats
 //					entry.txPackets = getParsedLong(parsed, KEY_TX_PACKETS);
 					
 					myStats = addToStats(myStats, entry);
-					totalBytes = entry.getTotalBytes();
+					totalBytes += entry.getTotalBytes();
 				}
 				
 				// set the total so that we can calculate the ratio
@@ -132,11 +132,6 @@ public class Netstats
 			}
 		}
 		
-		
-//		for (int i=0; i < myAlarms.size(); i++)
-//		{
-//			myAlarms.get(i).setTotalCount(nTotalCount);
-//		}
 		return myStats;
 	}
 	
