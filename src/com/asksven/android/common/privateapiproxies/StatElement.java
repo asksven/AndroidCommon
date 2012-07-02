@@ -31,7 +31,7 @@ public abstract class StatElement implements Serializable
 	/**
 	 * the battery realtime time
 	 */
-	protected long m_totalTime;	
+	private long m_total;	
 	/**
 	 * Set the uid
 	 * @param uid a process uid
@@ -132,6 +132,22 @@ public abstract class StatElement implements Serializable
 	public abstract String getData();
 	
 	/**
+	 * @return the m_totalTime
+	 */
+	public long getTotal()
+	{
+		return m_total;
+	}
+
+	/**
+	 * @param m_totalTime the total time to set
+	 */
+	public void setTotal(long total)
+	{
+		this.m_total = total;
+	}
+
+	/**
 	 * Formats milliseconds to a friendly form 
 	 * @param millis
 	 * @return the formated string
@@ -207,7 +223,7 @@ public abstract class StatElement implements Serializable
 	public double[] getValues()
 	{
 		double[] retVal = new double[2];
-		retVal[0] = m_totalTime;
+		retVal[0] = m_total;
 		return retVal;
 	}
 

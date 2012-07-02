@@ -104,7 +104,7 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 		m_sleepTime		= sleep_time;
 		m_maxTime		= max_time;
 		m_lastChange	= last_change;
-		m_totalTime		= time;
+		setTotal(time);
 	}
 
 	/**
@@ -133,11 +133,11 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 						this.m_sleepTime	-= myRef.m_sleepTime;
 						this.m_maxTime		-= myRef.m_maxTime;
 						this.m_lastChange	= Math.max(this.m_lastChange, myRef.m_lastChange);
-						this.m_totalTime	-= myRef.m_totalTime;
+						this.setTotal( this.getTotal() - myRef.getTotal() );
 						
 //						Log.i(TAG, "Result: " + this.toString());
 
-						if ((m_count < 0) || (m_sleepTime < 0) || (m_totalTime < 0))
+						if ((m_count < 0) || (m_sleepTime < 0) || (this.getTotal() < 0))
 						{
 							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
 						}
@@ -169,14 +169,6 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 	public long getDuration()
 	{
 		return m_sleepTime;
-	}
-
-	/**
-	 * @return the total time
-	 */
-	public long getTotalTime()
-	{
-		return m_totalTime;
 	}
 
 	/**
@@ -284,7 +276,7 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 		return this.formatDuration(getDuration()) 
 			+ " (" + getDuration()/1000 + " s)"
 			+ " Cnt:(c/wc/ec)" + getCount() + "/" + m_wakeCount + "/" + m_expireCount
-			+ " " + this.formatRatio(getDuration(), getTotalTime());
+			+ " " + this.formatRatio(getDuration(), getTotal());
 	}
 	
 	/** 

@@ -96,6 +96,7 @@ public class Netstats
 
 				
 				// process the file, starting on line 2
+				long totalBytes = 0;
 				for (int i=1; i < myRes.size(); i++)
 				{
 					String line = myRes.get(i);
@@ -119,9 +120,14 @@ public class Netstats
 //					entry.txPackets = getParsedLong(parsed, KEY_TX_PACKETS);
 					
 					myStats = addToStats(myStats, entry);
+					totalBytes = entry.getTotalBytes();
 				}
-				// the last populated alarms has not been added to the list yet
 				
+				// set the total so that we can calculate the ratio
+				for (int i = 0; i < myStats.size(); i++)
+				{
+					myStats.get(i).setTotal(totalBytes);
+				}
 				
 			}
 		}

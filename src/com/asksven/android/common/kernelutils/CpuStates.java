@@ -83,6 +83,12 @@ public class CpuStates
         states.add( new State(0, sleepTime));
         totalTime += sleepTime;
         
+        // store the total time in order to be able to calculate ratio
+        for (int i = 0; i < states.size(); i++ )
+        {
+        	states.get(i).setTotal(totalTime);
+        }
+        
         return states;
     }
 }

@@ -68,7 +68,7 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 		m_wakeType	= wakeType;
 		m_name		= name;
 		m_duration	= duration;
-		m_totalTime = time;
+		setTotal(time);
 		m_count		= count;
 	}
 
@@ -90,10 +90,10 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 					if ( (this.getName().equals(myRef.getName())) && (this.getuid() == myRef.getuid()) )
 					{
 						this.m_duration	-= myRef.getDuration();
-						this.m_totalTime -= myRef.getTotalTime();
+						this.setTotal( getTotal() - myRef.getTotal());
 						this.m_count	-= myRef.getCount();
 
-						if ((m_count < 0) || (m_duration < 0) || (m_totalTime < 0))
+						if ((m_count < 0) || (m_duration < 0) || (getTotal() < 0))
 						{
 							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
 						}
@@ -132,13 +132,6 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 	}
 
 	/**
-	 * @return the total time
-	 */
-	public long getTotalTime() {
-		return m_totalTime;
-	}
-
-	/**
 	 * @return the count
 	 */
 	public int getCount() {
@@ -174,7 +167,7 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 		return this.formatDuration(getDuration()) 
 			+ " (" + getDuration()/1000 + " s)"
 			+ " Count:" + getCount()
-			+ " " + this.formatRatio(getDuration(), getTotalTime());
+			+ " " + this.formatRatio(getDuration(), getTotal());
 	}
 	
 	/** 

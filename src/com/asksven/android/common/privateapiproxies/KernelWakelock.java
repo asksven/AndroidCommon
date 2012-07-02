@@ -60,7 +60,7 @@ public class KernelWakelock extends StatElement implements Comparable<KernelWake
 	{
 		m_name		= name;
 		m_duration	= duration;
-		m_totalTime = time;
+		setTotal(time);
 		m_count		= count;
 	}
 
@@ -82,10 +82,10 @@ public class KernelWakelock extends StatElement implements Comparable<KernelWake
 					if ( (this.getName().equals(myRef.getName())) && (this.getuid() == myRef.getuid()) )
 					{
 						this.m_duration	-= myRef.getDuration();
-						this.m_totalTime -= myRef.getTotalTime();
+						this.setTotal( this.getTotal() - myRef.getTotal());
 						this.m_count	-= myRef.getCount();
 
-						if ((m_count < 0) || (m_duration < 0) || (m_totalTime < 0))
+						if ((m_count < 0) || (m_duration < 0) || (this.getTotal() < 0))
 						{
 							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
 						}
@@ -117,14 +117,6 @@ public class KernelWakelock extends StatElement implements Comparable<KernelWake
 	public long getDuration()
 	{
 		return m_duration;
-	}
-
-	/**
-	 * @return the total time
-	 */
-	public long getTotalTime()
-	{
-		return m_totalTime;
 	}
 
 	/**
@@ -166,7 +158,7 @@ public class KernelWakelock extends StatElement implements Comparable<KernelWake
 		return this.formatDuration(getDuration()) 
 			+ " (" + getDuration()/1000 + " s)"
 			+ " Count:" + getCount()
-			+ " " + this.formatRatio(getDuration(), getTotalTime());
+			+ " " + this.formatRatio(getDuration(), getTotal());
 	}
 	
 	/** 

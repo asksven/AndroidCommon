@@ -115,6 +115,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 					{
 						this.m_bytesReceived	-= myRef.getBytesReceived();
 						this.m_bytesSent		-= myRef.getBytesSent();
+						this.setTotal( this.getTotal() - myRef.getTotal() );
 					
 						if ((m_bytesReceived < 0) || (m_bytesSent < 0))
 						{
@@ -228,7 +229,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	 */
 	public String getData()
 	{
-		return formatVolume(getTotalBytes());
+		return formatVolume(getTotalBytes()) + " " + this.formatRatio(getTotalBytes(), getTotal());
 		//"RX Bytes: " + String.valueOf(m_bytesReceived) + ", TX Bytes: " + String.valueOf(m_bytesSent);
 	}
 

@@ -62,7 +62,7 @@ public class State extends StatElement implements Comparable<State>, Serializabl
 
     public String getData()
     {
-    	return formatDuration(m_duration);
+    	return formatDuration(m_duration) + " " + this.formatRatio(m_duration, getTotal());
     }
 
 	/** 
@@ -125,6 +125,7 @@ public class State extends StatElement implements Comparable<State>, Serializabl
 					if ( (this.getName().equals(myRef.getName())) && (this.getuid() == myRef.getuid()) )
 					{
 						this.m_duration 	-= myRef.m_duration;
+						this.setTotal( this.getTotal() - myRef.getTotal() );
 						if (m_duration < 0)
 						{
 							Log.e(TAG, "substractFromRef generated negative values (" + this.m_duration + " - " + myRef.m_duration + ")");
