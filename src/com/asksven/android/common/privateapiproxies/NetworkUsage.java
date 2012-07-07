@@ -105,6 +105,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	{
 		if (myList != null)
 		{
+			long newTotal = 0;
 			for (int i = 0; i < myList.size(); i++)
 			{
 				try
@@ -115,7 +116,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 					{
 						this.m_bytesReceived	-= myRef.getBytesReceived();
 						this.m_bytesSent		-= myRef.getBytesSent();
-						this.setTotal( this.getTotal() - myRef.getTotal() );
+						newTotal += this.getTotalBytes();
 					
 						if ((m_bytesReceived < 0) || (m_bytesSent < 0))
 						{
@@ -129,6 +130,14 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 					// being substracted from to do nothing
 					Log.e(TAG, "substractFromRef was called with a wrong list type");
 				}
+				
+			}
+			
+			// update total
+			for (int i = 0; i < myList.size(); i++)
+			{
+				NetworkUsage myRef = (NetworkUsage) myList.get(i);
+				myRef.setTotal(newTotal);
 				
 			}
 		}
