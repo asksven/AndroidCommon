@@ -1508,6 +1508,7 @@ public class BatteryStatsProxy
 								String details = "";
 								if (ent.getKey().startsWith("event"))
 								{
+									Log.d(TAG, "Pattern 'event' found in " + ent.getKey());
 									int proc = 0;
 									String[] parts = ent.getKey().split("-");
 									if (parts.length == 2)
@@ -1515,6 +1516,7 @@ public class BatteryStatsProxy
 										try
 										{
 											proc = Integer.valueOf(parts[1]);
+											Log.d(TAG, "Resolving proc name for 'event' " + proc);
 										}
 										catch (Exception e)
 										{
@@ -1544,10 +1546,11 @@ public class BatteryStatsProxy
 											catch (NameNotFoundException e)
 											{
 												// not found
-												Log.e(TAG, "Cound not find any process for process id " + proc);
+												Log.e(TAG, "Cound not find any process for 'event' process id " + proc);
 												
 											}
 											details += ")";
+											Log.d(TAG, "Pattern 'event' resolved to " + details);
 
 										}
 									}
