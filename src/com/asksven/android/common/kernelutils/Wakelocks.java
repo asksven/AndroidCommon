@@ -63,11 +63,13 @@ public class Wakelocks
 				// post-processing of eventX-YYYY processes
 				String details = "";
 //				name = "event3-30240";
-				if (name.startsWith("event"))
+				// we start with a " here as that is the way the data comes from /proc
+				if (name.startsWith("\"event"))
 				{
-					Log.d(TAG, "Pattern 'event' found in " + name);
+					String process = name.replaceAll("\"", "");
+					Log.d(TAG, "Pattern 'event' found in " + process);
 					int proc = 0;
-					String[] parts = name.split("-");
+					String[] parts = process.split("-");
 					if (parts.length == 2)
 					{
 						try
@@ -77,7 +79,7 @@ public class Wakelocks
 						}
 						catch (Exception e)
 						{
-							Log.e(TAG, "Cound not split process name " + name);
+							Log.e(TAG, "Cound not split process name " + process);
 						}
 					}
 					
