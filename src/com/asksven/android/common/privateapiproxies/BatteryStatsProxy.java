@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.ActivityManager;
+import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -1465,11 +1466,6 @@ public class BatteryStatsProxy
 					// Map of String, BatteryStats.Uid.Proc
 					Map<String, ? extends Object> processStats = (Map<String, ? extends Object>)  methodGetProcessStats.invoke(myUid);
 					
-					// list the running processes
-					ActivityManager actvityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-					List<RunningTaskInfo> procInfos = actvityManager.getRunningTasks(Integer.MAX_VALUE);
-					PackageManager pack=context.getPackageManager();
-					
 					if (processStats.size() > 0)
 					{
 					    for (Map.Entry<String, ? extends Object> ent : processStats.entrySet())
@@ -1504,58 +1500,7 @@ public class BatteryStatsProxy
 							// take only the processes with CPU time
 							if ((userTime + systemTime) > 1000)
 							{
-								// post-processing of eventX-YYYY processes
-								String details = "";
-								if (ent.getKey().startsWith("event"))
-								{
-									Log.d(TAG, "Pattern 'event' found in " + ent.getKey());
-									int proc = 0;
-									String[] parts = ent.getKey().split("-");
-									if (parts.length == 2)
-									{
-										try
-										{
-											proc = Integer.valueOf(parts[1]);
-											Log.d(TAG, "Resolving proc name for 'event' " + proc);
-										}
-										catch (Exception e)
-										{
-											Log.e(TAG, "Cound not split process name " + ent.getKey());
-										}
-									}
-									
-									if (proc != 0)
-									{
-										// search for the process in the task list
-										for (int i = 0; i < procInfos.size(); i++)
-										{
-
-											String packageName = procInfos.get(i).topActivity.getPackageName();
-
-											details= " (" + packageName; 
-											String appName = "";
-
-											try
-											{
-
-												appName = (String) pack.getApplicationLabel(
-														pack.getApplicationInfo(packageName, PackageManager.GET_META_DATA));
-												details += " " + appName;
-
-											}
-											catch (NameNotFoundException e)
-											{
-												// not found
-												Log.e(TAG, "Cound not find any process for 'event' process id " + proc);
-												
-											}
-											details += ")";
-											Log.d(TAG, "Pattern 'event' resolved to " + details);
-
-										}
-									}
-								}
-								Process myPs = new Process(ent.getKey() + details, userTime, systemTime, starts);
+								Process myPs = new Process(ent.getKey(), userTime, systemTime, starts);
 								// opt for lazy loading: do no populate UidInfo, just uid. UidInfo will be fetched on demand
 								myPs.setUid(uid);
 								// try resolving names
