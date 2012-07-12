@@ -23,6 +23,7 @@ import java.lang.Math;
 
 import com.asksven.android.common.privateapiproxies.StatElement;
 
+import android.content.Context;
 import android.util.Log;
 
 /**
@@ -45,6 +46,11 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 	 */
 	private String m_name;
 	
+	/**
+	 * the details (packages) for that wakelock (if any
+	 */
+	private String m_details;
+
 	/**
 	 * the count
 	 */
@@ -93,9 +99,10 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 	 * @param time the battery realtime 
 	 * @param count the number of time the wakelock was active
 	 */
-	public NativeKernelWakelock(String name, int count, int expire_count, int wake_count, long active_since, long total_time, long sleep_time, long max_time, long last_change, long time)
+	public NativeKernelWakelock(String name, String details, int count, int expire_count, int wake_count, long active_since, long total_time, long sleep_time, long max_time, long last_change, long time)
 	{
 		m_name			= name;
+		m_details 		= details;
 		m_count			= count;
 		m_expireCount	= expire_count;
 		m_wakeCount		= wake_count;
@@ -268,6 +275,16 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 		return ((int)(o.getDuration() - this.getDuration()));
 	}
 	
+	/**
+	 * Returns the full qualified name (default, can be overwritten)
+	 * @return the full qualified name
+	 */
+	public String getFqn(Context context)
+	{
+		return m_details;
+		
+	}
+
 	/**
 	 * returns a string representation of the data
 	 */

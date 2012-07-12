@@ -114,7 +114,7 @@ public class Wakelocks
 				}
 
     			NativeKernelWakelock wl = new NativeKernelWakelock(
-    					name + details, count, expire_count, wake_count,
+    					name, details, count, expire_count, wake_count,
     					active_since, total_time, sleep_time, max_time,
     					last_change, msSinceBoot);
     			myRet.add(wl);
