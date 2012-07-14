@@ -38,6 +38,35 @@ public class StringUtils
         mFormatter.format("%.1f%%", perc);
         return mFormatBuilder.toString();
     }
+	
+	public static String join(String[] array, String sep, boolean merge)
+	{
+		String ret = "";
+		for (int i = 0; i < array.length; i++)
+		{
+			if (ret.isEmpty())
+			{
+				ret = array[i];
+			}
+			else
+			{
+				if (merge)
+				{
+					// check if the string is alread present
+					if (ret.indexOf(array[i]) == -1)
+					{
+						// add
+						ret += sep + array[i];
+					}
+				}
+				else
+				{
+					ret += sep + array[i];
+				}
+			}
+		}
+		return ret;
+	}
 
 
 }

@@ -22,6 +22,7 @@ import java.util.List;
 import java.lang.Math;
 
 import com.asksven.android.common.privateapiproxies.StatElement;
+import com.asksven.android.common.utils.StringUtils;
 
 import android.content.Context;
 import android.util.Log;
@@ -141,6 +142,20 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 						this.m_maxTime		-= myRef.m_maxTime;
 						this.m_lastChange	= Math.max(this.m_lastChange, myRef.m_lastChange);
 						this.setTotal( this.getTotal() - myRef.getTotal() );
+						
+						// for kernel wakelocks we need to merge the package list (aka. fqn)
+						// we don't care about double entries here, this must be handeled in getFqn
+						if (!myRef.m_details.equals(""))
+						{
+							if (!this.m_details.equals(""))
+							{
+								this.m_details += ", " + myRef.m_details;
+							}
+							else
+							{
+								this.m_details = myRef.m_details;
+							}
+						}
 						
 //						Log.i(TAG, "Result: " + this.toString());
 
@@ -281,7 +296,19 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 	 */
 	public String getFqn(Context context)
 	{
-		return m_details;
+		// we need to do some formating here as m_details may be of the form "a, b, a, c, b"
+		if (m_details.equals(""))
+		{
+			return m_details;
+		}
+		else
+		{
+			// merge
+			String[] splitArray = m_details.split(", ");
+			
+			m_details = StringUtils.join(splitArray, ", ", true);
+			return m_details;
+		}
 		
 	}
 
