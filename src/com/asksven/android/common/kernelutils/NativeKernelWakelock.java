@@ -303,6 +303,10 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 		}
 		else
 		{
+			// remove any left over "(" and ")"
+			m_details.replace("(", "");
+			m_details.replace(")", "");
+			
 			// merge
 			String[] splitArray = m_details.split(", ");
 			
