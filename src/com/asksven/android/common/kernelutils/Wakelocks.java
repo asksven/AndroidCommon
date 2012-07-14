@@ -93,7 +93,7 @@ public class Wakelocks
 							{
 								String processName = procInfos.get(psCount).processName;
 
-								details= " (" + processName; 
+								details= processName; 
 								String appName = "";
 
 								String[] pkgList = procInfos.get(count).pkgList;
@@ -106,7 +106,6 @@ public class Wakelocks
 									details += pkgList[j];
 								}
 
-								details += ")";
 								Log.d(TAG, "Pattern 'event' resolved to " + details);
 							}
 						}
