@@ -12,6 +12,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.asksven.android.common.privateapiproxies.NetworkUsage;
+import com.asksven.android.common.shellutils.Exec;
+import com.asksven.android.common.shellutils.ExecResult;
+
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.content.Context;
@@ -143,4 +147,30 @@ public class Wakelocks
     	}
 		return rows;
     }
+    
+	public static boolean isDiscreteKwlPatch()
+	{
+		boolean ret = false;
+		
+		String filePath = "/sys/module/wakelock/parameters/default_stats";
+    	try
+    	{
+			FileReader fr = new FileReader(filePath);
+			BufferedReader br = new BufferedReader(fr);
+
+			// read first line
+			String currentRecord = br.readLine();
+			
+			if (!currentRecord.equals("0"))
+			{
+				ret = true;
+			}
+			br.close();
+    	}
+    	catch (Exception e)
+    	{
+    		
+    	}
+		return ret;
+	}
 }
