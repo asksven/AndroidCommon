@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 public class DateUtils
 {
 	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd HH:mm:ss";
+	public static final String DATE_FORMAT_SHORT = "HH:mm:ss";
 
 	/**
 	 * Returns the current date in the default format.
@@ -72,6 +73,22 @@ public class DateUtils
 	{
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
 		return sdf.format(time);
+	}
+
+	public static String format(long timeMs)
+	{
+		return format(timeMs, DATE_FORMAT_NOW);
+	}
+
+	public static String formatShort(long timeMs)
+	{
+		return format(timeMs, DATE_FORMAT_SHORT);
+	}
+
+	public static String format(long timeMs, String format)
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		return sdf.format(timeMs);
 	}
 
 	/**
