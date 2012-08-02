@@ -73,7 +73,7 @@ public class BatteryStatsProxy
 	private UidNameResolver m_nameResolver;
 	private static BatteryStatsProxy m_proxy = null;
 	
-	public static BatteryStatsProxy getInstance(Context ctx)
+	synchronized public static BatteryStatsProxy getInstance(Context ctx)
 	{
 		if (m_proxy == null)
 		{
