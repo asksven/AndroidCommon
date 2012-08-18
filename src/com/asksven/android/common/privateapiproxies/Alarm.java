@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.asksven.android.common.kernelutils;
+package com.asksven.android.common.privateapiproxies;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,6 +22,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.asksven.android.common.privateapiproxies.StatElement;
@@ -333,6 +335,31 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 		}
 	}
 	
+	public Drawable getIcon(Context ctx)
+	{
+		if (m_icon == null)
+		{
+			// retrieve and store the icon for that package
+			String myPackage = m_uidInfo.getNamePackage();
+			if (!myPackage.equals(""))
+			{
+				PackageManager manager = ctx.getPackageManager();
+				try
+				{
+					m_icon = manager.getApplicationIcon(myPackage);
+				}
+				catch (Exception e)
+				{
+					// nop: no icon found
+					m_icon = null;
+				}
+				
+			}
+		}
+		return m_icon;
+	}
+
+	
 	 /**
      * Compare a given Wakelock with this object.
      * If the duration of this object is 
@@ -360,4 +387,6 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 			return ((int)(b.getDuration() - a.getDuration()));
 		}
 	}
+	
+	
 }

@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import android.util.Log;
 
+import com.asksven.android.common.privateapiproxies.Alarm;
 import com.asksven.android.common.shellutils.Exec;
 import com.asksven.android.common.shellutils.ExecResult;
 
