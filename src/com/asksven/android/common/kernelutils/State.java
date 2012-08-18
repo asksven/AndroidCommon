@@ -59,6 +59,11 @@ public class State extends StatElement implements Comparable<State>, Serializabl
     	}
     	return ret;
     }
+    
+    public String toString()
+    {
+    	return getName() + " " + getData();
+    }
 
     public String getData()
     {

@@ -20,6 +20,9 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 /**
@@ -195,5 +198,30 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 			return ((int)(b.getDuration() - a.getDuration()));
 		}
 	}
+	
+	public Drawable getIcon(Context ctx)
+	{
+		if (m_icon == null)
+		{
+			// retrieve and store the icon for that package
+			String myPackage = m_uidInfo.getNamePackage();
+			if (!myPackage.equals(""))
+			{
+				PackageManager manager = ctx.getPackageManager();
+				try
+				{
+					m_icon = manager.getApplicationIcon(myPackage);
+				}
+				catch (Exception e)
+				{
+					// nop: no icon found
+					m_icon = null;
+				}
+				
+			}
+		}
+		return m_icon;
+	}
+
 
 }

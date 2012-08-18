@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.asksven.andoid.common.CommonLogSettings;
 import com.asksven.android.common.privateapiproxies.NetworkUsage;
 import com.asksven.android.common.shellutils.Exec;
 import com.asksven.android.common.shellutils.ExecResult;
@@ -71,7 +72,11 @@ public class Wakelocks
 				if (name.startsWith("\"event"))
 				{
 					String process = name.replaceAll("\"", "");
-					Log.d(TAG, "Pattern 'event' found in " + process);
+					if (CommonLogSettings.DEBUG)
+					{
+						Log.d(TAG, "Pattern 'event' found in " + process);
+					}
+					
 					int proc = 0;
 					String[] parts = process.split("-");
 					if (parts.length == 2)
@@ -79,7 +84,10 @@ public class Wakelocks
 						try
 						{
 							proc = Integer.valueOf(parts[1]);
-							Log.d(TAG, "Resolving proc name for 'event' " + proc);
+							if (CommonLogSettings.DEBUG)
+							{
+								Log.d(TAG, "Resolving proc name for 'event' " + proc);
+							}
 						}
 						catch (Exception e)
 						{
@@ -110,7 +118,10 @@ public class Wakelocks
 									details += pkgList[j];
 								}
 
-								Log.d(TAG, "Pattern 'event' resolved to " + details);
+								if (CommonLogSettings.DEBUG)
+								{
+									Log.d(TAG, "Pattern 'event' resolved to " + details);
+								}
 							}
 						}
 					}

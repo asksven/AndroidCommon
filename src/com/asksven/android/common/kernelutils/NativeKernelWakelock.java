@@ -102,7 +102,15 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 	 */
 	public NativeKernelWakelock(String name, String details, int count, int expire_count, int wake_count, long active_since, long total_time, long sleep_time, long max_time, long last_change, long time)
 	{
-		m_name			= name;
+		// hack: remove "deleted: " from wakelock label (Siyah 1.5b6)
+		if (name.startsWith("\"deleted: "))
+		{
+			m_name = "\"" + name.split(" ")[1];
+		}
+		else
+		{
+			m_name			= name;
+		}
 		m_details 		= details;
 		m_count			= count;
 		m_expireCount	= expire_count;

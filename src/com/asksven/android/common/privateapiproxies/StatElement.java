@@ -9,6 +9,7 @@ import java.util.Formatter;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 
 import com.asksven.android.common.nameutils.UidInfo;
 import com.asksven.android.common.nameutils.UidNameResolver;
@@ -40,6 +41,8 @@ public abstract class StatElement implements Serializable
 	{
 		m_uid = uid;
 	}
+	
+	protected transient Drawable m_icon;
 	
 	/**
 	 * Get the uid
@@ -234,6 +237,11 @@ public abstract class StatElement implements Serializable
 	public double getMaxValue()
 	{
 		return getValues()[0]; //m_totalTime;
+	}
+	
+	public Drawable getIcon(Context ctx)
+	{
+		return m_icon;
 	}
 	
 
