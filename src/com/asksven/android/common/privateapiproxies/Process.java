@@ -206,20 +206,23 @@ public class Process extends StatElement implements Comparable<Process>, Seriali
 		if (m_icon == null)
 		{
 			// retrieve and store the icon for that package
-			String myPackage = m_uidInfo.getNamePackage();
-			if (!myPackage.equals(""))
+			if (m_uidInfo != null)
 			{
-				PackageManager manager = ctx.getPackageManager();
-				try
+				String myPackage = m_uidInfo.getNamePackage();
+				if (!myPackage.equals(""))
 				{
-					m_icon = manager.getApplicationIcon(myPackage);
+					PackageManager manager = ctx.getPackageManager();
+					try
+					{
+						m_icon = manager.getApplicationIcon(myPackage);
+					}
+					catch (Exception e)
+					{
+						// nop: no icon found
+						m_icon = null;
+					}
+					
 				}
-				catch (Exception e)
-				{
-					// nop: no icon found
-					m_icon = null;
-				}
-				
 			}
 		}
 		return m_icon;
