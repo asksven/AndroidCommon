@@ -340,7 +340,7 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 		if (m_icon == null)
 		{
 			// retrieve and store the icon for that package
-			String myPackage = m_uidInfo.getNamePackage();
+			String myPackage = m_strPackageName;
 			if (!myPackage.equals(""))
 			{
 				PackageManager manager = ctx.getPackageManager();
