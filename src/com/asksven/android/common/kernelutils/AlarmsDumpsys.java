@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import android.util.Log;
 
+import com.asksven.andoid.common.contrib.Util;
 import com.asksven.android.common.privateapiproxies.Alarm;
 import com.asksven.android.common.shellutils.Exec;
 import com.asksven.android.common.shellutils.ExecResult;
@@ -34,15 +35,18 @@ public class AlarmsDumpsys
 		ArrayList<Alarm> myAlarms = null;
 		long nTotalCount = 0;
 		// ExecResult res = Exec.execPrint(new String[]{"/system/bin/su", "-c", "/system/bin/dumpsys alarm"});
-		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "dumpsys alarm"});
-		if (res.getSuccess())
+//		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "dumpsys alarm"});
+		ArrayList<String> res = Util.run("su", "dumpsys alarm");
+//		if (res.getSuccess())
+		if (res.size() != 0)
+
 		{
-			String strRes = res.getResultLine(); 
-			if (!strRes.contains("Permission Denial"))
+//			String strRes = res.getResultLine(); 
+			if (true) //strRes.contains("Permission Denial"))
 			{
 				Pattern begin = Pattern.compile("Alarm Stats");
 				boolean bParsing = false;
-				ArrayList<String> myRes = res.getResult(); // getTestData();
+//				ArrayList<String> myRes = res.getResult(); // getTestData();
 
 				// we are looking for multiline entries in the format
 				// ' <package name>
@@ -56,13 +60,13 @@ public class AlarmsDumpsys
 				Alarm myAlarm = null;
 				
 				// process the file
-				for (int i=0; i < myRes.size(); i++)
+				for (int i=0; i < res.size(); i++)
 				{
 					// skip till start mark found
 					if (bParsing)
 					{
 						// parse the alarms by block 
-						String line = myRes.get(i);
+						String line = res.get(i);
 						Matcher mPackage 	= packagePattern.matcher(line);
 						Matcher mTime 		= timePattern.matcher(line);
 						Matcher mNumber 	= numberPattern.matcher(line);
@@ -140,7 +144,7 @@ public class AlarmsDumpsys
 					else
 					{
 						// look for beginning
-						Matcher line = begin.matcher(myRes.get(i));
+						Matcher line = begin.matcher(res.get(i));
 						if (line.find())
 						{
 							bParsing = true;

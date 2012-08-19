@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 
 import android.util.Log;
 
+import com.asksven.andoid.common.contrib.Util;
 import com.asksven.android.common.privateapiproxies.NetworkUsage;
 import com.asksven.android.common.shellutils.Exec;
 import com.asksven.android.common.shellutils.ExecResult;
@@ -72,11 +73,13 @@ public class Netstats
 	public static ArrayList<NetworkUsage> parseNetstats()
 	{
 		ArrayList<NetworkUsage> myStats = new ArrayList<NetworkUsage>();
-		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "cat /proc/net/xt_qtaguid/stats"});
-		if (res.getSuccess())
+//		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "cat /proc/net/xt_qtaguid/stats"});
+		ArrayList<String> res = Util.run("su", "cat /proc/net/xt_qtaguid/stats");
+//		if (res.getSuccess())
+		if (res.size() != 0)
 		{
-			String strRes = res.getResultLine(); 
-			if (!strRes.contains("Permission Denial"))
+//			String strRes = res.getResultLine(); 
+			if (true) //(!strRes.contains("Permission Denial"))
 			{
 				ArrayList<String> keys = new ArrayList<String>();
 				keys.add(KEY_IDX);
@@ -92,14 +95,14 @@ public class Netstats
 				final ArrayList<String> values = new ArrayList<String>();
 				final HashMap<String, String> parsed = new HashMap<String, String>();
 
-				ArrayList<String> myRes = res.getResult(); // getTestData();
+//				ArrayList<String> myRes = res.getResult(); // getTestData();
 
 				
 				// process the file, starting on line 2
 				long totalBytes = 0;
-				for (int i=1; i < myRes.size(); i++)
+				for (int i=1; i < res.size(); i++)
 				{
-					String line = myRes.get(i);
+					String line = res.get(i);
 					splitLine(line, values);
 					parseLine(keys, values, parsed);
 					

@@ -15,6 +15,9 @@
  */
 package com.asksven.android.common.kernelutils;
 
+import java.util.ArrayList;
+
+import com.asksven.andoid.common.contrib.Util;
 import com.asksven.android.common.shellutils.Exec;
 import com.asksven.android.common.shellutils.ExecResult;
 
@@ -42,16 +45,13 @@ public class RootDetection
 	 */
 	public static boolean hasSuRights(String command)
 	{
-		ExecResult res = Exec.execPrint(new String[]{"su", "-c", command});
+//		ExecResult res = Exec.execPrint(new String[]{"su", "-c", command});
+		ArrayList<String> res = Util.run("su", command);
 		boolean bRet = false;
 		
-		if (res.getSuccess())
+		if (res.size() != 0)
 		{
-			String strRes = res.getResultLine(); 
-			if (!strRes.contains("Permission Denial"))
-			{
-				bRet = true;
-			}
+			bRet = true;
 		}
 		
 		return bRet;
