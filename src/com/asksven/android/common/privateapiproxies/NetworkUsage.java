@@ -24,6 +24,8 @@ import com.asksven.android.common.nameutils.UidInfo;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 public class NetworkUsage extends StatElement implements Comparable<NetworkUsage>, Serializable
@@ -279,5 +281,43 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
         return ret;
 	}
 
+	public Drawable getIcon(Context ctx)
+	{
+		if (m_icon == null)
+		{
+			// retrieve and store the icon for that package
+			if (m_uidInfo != null)
+			{
+				String myPackage = m_uidInfo.getNamePackage();
+				if (!myPackage.equals(""))
+				{
+					PackageManager manager = ctx.getPackageManager();
+					try
+					{
+						m_icon = manager.getApplicationIcon(myPackage);
+					}
+					catch (Exception e)
+					{
+						// nop: no icon found
+						m_icon = null;
+					}
+					
+				}
+			}
+		}
+		return m_icon;
+	}
+
+	public String getPackageName()
+	{
+		if (m_uidInfo != null)
+		{
+			return m_uidInfo.getNamePackage();
+		}
+		else
+		{
+			return "";
+		}
+	}
 
 }
