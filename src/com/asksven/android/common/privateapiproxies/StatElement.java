@@ -244,5 +244,9 @@ public abstract class StatElement implements Serializable
 		return m_icon;
 	}
 	
+	public String getPackageName()
+	{
+		return "";
+	}
 
 }

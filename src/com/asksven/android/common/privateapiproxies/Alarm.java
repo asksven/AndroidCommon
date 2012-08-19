@@ -358,6 +358,12 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 		}
 		return m_icon;
 	}
+	
+	public String getPackageName()
+	{
+		return m_strPackageName;
+	}
+
 
 	
 	 /**

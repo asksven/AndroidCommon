@@ -222,6 +222,19 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 		}
 		return m_icon;
 	}
+	
+	public String getPackageName()
+	{
+		if (m_uidInfo != null)
+		{
+			return m_uidInfo.getNamePackage();
+		}
+		else
+		{
+			return "";
+		}
+	}
+
 
 
 }

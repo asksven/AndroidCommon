@@ -228,6 +228,17 @@ public class Process extends StatElement implements Comparable<Process>, Seriali
 		return m_icon;
 	}
 
+	public String getPackageName()
+	{
+		if (m_uidInfo != null)
+		{
+			return m_uidInfo.getNamePackage();
+		}
+		else
+		{
+			return "";
+		}
+	}
 	
 
 }
