@@ -91,7 +91,7 @@ public class BatteryStatsProxy
     /**
 	 * Default cctor
 	 */
-	private BatteryStatsProxy(Context context)
+	private BatteryStatsProxy(Context context) 
 	{
 		/*
 		 * As BatteryStats is a service we need to get a binding using the IBatteryStats.Stub.getStatistics()
@@ -211,6 +211,7 @@ public class BatteryStatsProxy
 				Log.e("TAG", "An exception occured in BatteryStatsProxy(). Message: " + e.getMessage());
 			}
 	    	m_Instance = null;
+	    	
 	    }    
 	}
 	
@@ -229,7 +230,7 @@ public class BatteryStatsProxy
      * @param curTime the current elapsed realtime in microseconds.
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long computeBatteryRealtime(long curTime, int iStatsType)
+    public Long computeBatteryRealtime(long curTime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -259,6 +260,7 @@ public class BatteryStatsProxy
         catch( Exception e )
         {
             ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
         }
 
         return ret;
@@ -272,7 +274,7 @@ public class BatteryStatsProxy
      * @param curTime the current elapsed realtime in microseconds.
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getBatteryRealtime(long curTime)
+    public Long getBatteryRealtime(long curTime) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -302,6 +304,7 @@ public class BatteryStatsProxy
         catch( Exception e )
         {
             ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
         }
 
         return ret;
@@ -315,7 +318,7 @@ public class BatteryStatsProxy
      * @param curTime the current elapsed realtime in microseconds.
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long computeBatteryUptime(long curTime, int iStatsType)
+    public Long computeBatteryUptime(long curTime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -345,6 +348,7 @@ public class BatteryStatsProxy
         catch( Exception e )
         {
             ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
         }
 
         return ret;
@@ -358,7 +362,7 @@ public class BatteryStatsProxy
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getScreenOnTime(long batteryRealtime, int iStatsType)
+    public Long getScreenOnTime(long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -388,6 +392,7 @@ public class BatteryStatsProxy
         catch( Exception e )
         {
             ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
         }
 
         return ret;
@@ -401,7 +406,7 @@ public class BatteryStatsProxy
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getPhoneOnTime(long batteryRealtime, int iStatsType)
+    public Long getPhoneOnTime(long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -431,6 +436,7 @@ public class BatteryStatsProxy
         catch( Exception e )
         {
             ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
         }
 
         return ret;
@@ -444,7 +450,7 @@ public class BatteryStatsProxy
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getWifiOnTime(long batteryRealtime, int iStatsType)
+    public Long getWifiOnTime(long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -475,6 +481,7 @@ public class BatteryStatsProxy
         catch( Exception e )
         {
             ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
         }
 
         return ret;
@@ -488,7 +495,7 @@ public class BatteryStatsProxy
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getGlobalWifiRunningTime(long batteryRealtime, int iStatsType)
+    public Long getGlobalWifiRunningTime(long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -519,6 +526,7 @@ public class BatteryStatsProxy
         catch( Exception e )
         {
             ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
         }
 
         return ret;
@@ -532,7 +540,7 @@ public class BatteryStatsProxy
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getWifiRunningTime(Context context, long batteryRealtime, int iStatsType)
+    public Long getWifiRunningTime(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -581,6 +589,7 @@ public class BatteryStatsProxy
 	        {
 	        	Log.e(TAG, "getWifiRunning threw an Exception: " + e.getMessage());
 	            ret = new Long(0);
+	            throw new BatteryInfoUnavailableException();
 	        }
 		}
         return ret;
@@ -592,7 +601,7 @@ public class BatteryStatsProxy
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getFullWifiLockTime(Context context, long batteryRealtime, int iStatsType)
+    public Long getFullWifiLockTime(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -636,6 +645,7 @@ public class BatteryStatsProxy
 	        catch( Exception e )
 	        {
 	            ret = new Long(0);
+	            throw new BatteryInfoUnavailableException();
 	        }
 		}
         return ret;
@@ -647,7 +657,7 @@ public class BatteryStatsProxy
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getScanWifiLockTime(Context context, long batteryRealtime, int iStatsType)
+    public Long getScanWifiLockTime(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -691,6 +701,7 @@ public class BatteryStatsProxy
 	        catch( Exception e )
 	        {
 	            ret = new Long(0);
+	            throw new BatteryInfoUnavailableException();
 	        }
 		}
         return ret;
@@ -702,7 +713,7 @@ public class BatteryStatsProxy
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getWifiMulticastTime(Context context, long batteryRealtime, int iStatsType)
+    public Long getWifiMulticastTime(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -746,6 +757,7 @@ public class BatteryStatsProxy
 	        catch( Exception e )
 	        {
 	            ret = new Long(0);
+	            throw new BatteryInfoUnavailableException();
 	        }
 		}
         return ret;
@@ -758,7 +770,7 @@ public class BatteryStatsProxy
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getPhoneDataConnectionTime(int dataType, long batteryRealtime, int iStatsType)
+    public Long getPhoneDataConnectionTime(int dataType, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -791,6 +803,7 @@ public class BatteryStatsProxy
         catch( Exception e )
         {
             ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
         }
 
         return ret;
@@ -805,7 +818,7 @@ public class BatteryStatsProxy
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getPhoneSignalStrengthTime(int signalStrength, long batteryRealtime, int iStatsType)
+    public Long getPhoneSignalStrengthTime(int signalStrength, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -838,6 +851,7 @@ public class BatteryStatsProxy
         catch( Exception e )
         {
             ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
         }
 
         return ret;
@@ -851,7 +865,7 @@ public class BatteryStatsProxy
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getAudioTurnedOnTime(Context context, long batteryRealtime, int iStatsType)
+    public Long getAudioTurnedOnTime(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -895,6 +909,7 @@ public class BatteryStatsProxy
 	        catch( Exception e )
 	        {
 	            ret = new Long(0);
+	            throw new BatteryInfoUnavailableException();
 	        }
 		}
         return ret;
@@ -906,7 +921,7 @@ public class BatteryStatsProxy
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getVideoTurnedOnTime(Context context, long batteryRealtime, int iStatsType)
+    public Long getVideoTurnedOnTime(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -950,6 +965,7 @@ public class BatteryStatsProxy
 	        catch( Exception e )
 	        {
 	            ret = new Long(0);
+	            throw new BatteryInfoUnavailableException();
 	        }
 		}
         return ret;
@@ -961,7 +977,7 @@ public class BatteryStatsProxy
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
-    public Long getBluetoothOnTime(long batteryRealtime, int iStatsType)
+    public Long getBluetoothOnTime(long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
 
@@ -991,6 +1007,7 @@ public class BatteryStatsProxy
         catch( Exception e )
         {
             ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
         }
 
         return ret;
@@ -1001,7 +1018,7 @@ public class BatteryStatsProxy
     /**
      * Return whether we are currently running on battery.
      */	    
-	public boolean getIsOnBattery(Context context)
+	public boolean getIsOnBattery(Context context) throws BatteryInfoUnavailableException
 	{
     	boolean ret = false;
 
@@ -1021,6 +1038,7 @@ public class BatteryStatsProxy
         catch( Exception e )
         {
             ret = false;
+            throw new BatteryInfoUnavailableException();
         }    
         
         return ret;
@@ -1030,7 +1048,7 @@ public class BatteryStatsProxy
      * Returns the current battery percentage level if we are in a discharge cycle, otherwise
      * returns the level at the last plug event.
      */
-    public int getDischargeCurrentLevel()
+    public int getDischargeCurrentLevel() throws BatteryInfoUnavailableException
     {
     	int ret = 0;
 
@@ -1050,6 +1068,7 @@ public class BatteryStatsProxy
         catch( Exception e )
         {
             ret = 0;
+            throw new BatteryInfoUnavailableException();
         }    
         
         return ret;
@@ -1058,7 +1077,7 @@ public class BatteryStatsProxy
 	/**
      * Initalizes the collection of history items
      */
-    public boolean startIteratingHistoryLocked()
+    public boolean startIteratingHistoryLocked() throws BatteryInfoUnavailableException
 	{
     	Boolean ret = false;
 
@@ -1078,6 +1097,7 @@ public class BatteryStatsProxy
         catch( Exception e )
         {
             ret = false;
+            throw new BatteryInfoUnavailableException();
         }
 
         return ret;
