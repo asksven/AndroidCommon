@@ -77,13 +77,19 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 					Misc myRef = (Misc) myList.get(i);
 					if ( (this.getName().equals(myRef.getName())) && (this.getuid() == myRef.getuid()) )
 					{
-						if (this.getName().equals("Deep Sleep"))
-						{
-							Log.d(TAG, "Substracting " + myRef.getName() + " " + myRef.getData()
-									+ " from " + this.getName() + " " + this.getData());
-						}
+//						if (this.getName().equals("Deep Sleep"))
+//						{
+							Log.d(TAG, "Substracting " + myRef.getName() + " " + myRef.getVals()
+									+ " from " + this.getName() + " " + this.getVals());
+//						}
 						this.m_timeOn		-= myRef.getTimeOn();
 						this.m_timeRunning	-= myRef.getTimeRunning();
+						
+						if (this.m_timeOn > this.m_timeRunning)
+						{
+							Log.i(TAG, "Fixed rounding difference: " + this.m_timeOn + " -> " + this.m_timeRunning);
+							this.m_timeOn = this.m_timeRunning;
+						}
 
 						if ((m_timeOn < 0) || (m_timeRunning < 0))
 						{
@@ -155,9 +161,20 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 	{
 		
 		return this.formatDuration(getTimeOn()) + " (" + getTimeOn()/1000 + " s)"
-		+ " Ratio: " + formatRatio(getTimeOn(), getTimeRunning());
+		+ " Ratio: " + formatRatio(getTimeOn()/1000, getTimeRunning()/1000);
 	}
 	
+	/**
+	 * returns a string representation of the data
+	 */
+	String getVals()
+	{
+		
+		return this.formatDuration(getTimeOn()) + " (" + getTimeOn()/1000 + " s)"
+				+ " in " + this.formatDuration(getTimeRunning()) + " (" + getTimeRunning()/1000 + " s)"
+		+ " Ratio: " + formatRatio(getTimeOn()/1000, getTimeRunning()/1000);
+	}
+
 	/** 
 	 * returns the values of the data
 	 */	
