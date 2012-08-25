@@ -38,6 +38,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.asksven.andoid.common.CommonLogSettings;
 import com.asksven.android.common.nameutils.UidInfo;
 import com.asksven.android.common.nameutils.UidNameResolver;
 import com.asksven.android.common.utils.DateUtils;
@@ -1490,7 +1491,10 @@ public class BatteryStatsProxy
 					{
 					    for (Map.Entry<String, ? extends Object> ent : processStats.entrySet())
 					    {
-					    	Log.d(TAG, "Process name = " + ent.getKey());
+					    	if (CommonLogSettings.TRACE)
+					    	{
+					    		Log.d(TAG, "Process name = " + ent.getKey());
+					    	}
 						    // Object is a BatteryStatsTypes.Uid.Proc
 						    Object ps = ent.getValue();
 							@SuppressWarnings("rawtypes")
@@ -1513,9 +1517,12 @@ public class BatteryStatsProxy
 							Long systemTime = (Long) methodGetSystemTime.invoke(ps, paramsGetXxxTime);
 							Integer starts = (Integer) methodGetStarts.invoke(ps, paramsGetXxxTime);
 							
-							Log.d(TAG, "UserTime = " + userTime);
-							Log.d(TAG, "SystemTime = " + systemTime);
-							Log.d(TAG, "Starts = " + starts);
+							if (CommonLogSettings.TRACE)
+							{
+								Log.d(TAG, "UserTime = " + userTime);
+								Log.d(TAG, "SystemTime = " + systemTime);
+								Log.d(TAG, "Starts = " + starts);
+							}
 							
 							// take only the processes with CPU time
 							if ((userTime + systemTime) > 1000)
@@ -1530,7 +1537,10 @@ public class BatteryStatsProxy
 							}
 							else
 							{
-								Log.d(TAG, "Process " + ent.getKey() + " was discarded (CPU time =0)");
+								if (CommonLogSettings.TRACE)
+								{
+									Log.d(TAG, "Process " + ent.getKey() + " was discarded (CPU time =0)");
+								}
 							}
 					    }		
 		            }

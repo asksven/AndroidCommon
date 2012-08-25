@@ -170,6 +170,13 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 						if ((m_count < 0) || (m_sleepTime < 0) || (this.getTotal() < 0))
 						{
 							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
+//							this.m_count		= Math.max(0, this.m_count);
+//							this.m_expireCount	= Math.max(0, this.m_expireCount);
+//							this.m_wakeCount	= Math.max(0, this.m_wakeCount);
+//							this.m_activeSince	= Math.max(0, this.m_activeSince);
+//							this.m_ttlTime		= Math.max(0, this.m_ttlTime);
+//							this.m_sleepTime	= Math.max(0, this.m_sleepTime);
+//							this.m_maxTime		= Math.max(0, this.m_maxTime);
 						}
 					}
 				}
