@@ -94,7 +94,7 @@ public class Util {
 
             String line;
             while ((line = shellOutput.readLine()) != null) {
-                Log.d(TAG, "command output: " + line);
+//                Log.d(TAG, "command output: " + line);
                 output.add(line);
             }
 
