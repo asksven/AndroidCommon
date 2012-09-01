@@ -402,6 +402,46 @@ public class BatteryStatsProxy
 	}
 
 	/**
+     * Returns if phone is on battery.
+     *
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public boolean getIsOnBattery() throws BatteryInfoUnavailableException
+	{
+    	boolean ret = true;
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[2];
+          paramTypes[0]= long.class;
+          paramTypes[1]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getIsOnBattery", paramTypes);
+
+
+          ret= (Boolean) method.invoke(m_Instance);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = true;
+            throw new BatteryInfoUnavailableException();
+        }
+
+        return ret;
+
+	
+	}
+
+	/**
      * Returns the total, last, or current phone on time in microseconds.
      *
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
