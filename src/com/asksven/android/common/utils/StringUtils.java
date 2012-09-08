@@ -16,7 +16,10 @@
 
 package com.asksven.android.common.utils;
 
+import java.util.ArrayList;
 import java.util.Formatter;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 
 /**
  * @author sven
@@ -44,7 +47,7 @@ public class StringUtils
 		String ret = "";
 		for (int i = 0; i < array.length; i++)
 		{
-			if (ret.isEmpty())
+			if (ret.equals(""))
 			{
 				ret = array[i];
 			}
@@ -67,6 +70,39 @@ public class StringUtils
 		}
 		return ret;
 	}
+	
+	public static void splitLine(String line, ArrayList<String> outSplit)
+	{
+		outSplit.clear();
+		final StringTokenizer t = new StringTokenizer(line, " \t\n\r\f:");
+		while (t.hasMoreTokens())
+		{
+			outSplit.add(t.nextToken());
+		}
+	}	
+	
+	public static void parseLine(ArrayList<String> keys, ArrayList<String> values, HashMap<String, String> outParsed)
+	{
+		outParsed.clear();
+		final int size = Math.min(keys.size(), values.size());
+		for (int i = 0; i < size; i++)
+		{
+			outParsed.put(keys.get(i), values.get(i));
+		}
+	}
+	
+	public static int getParsedInt(HashMap<String, String> parsed, String key)
+	{
+		final String value = parsed.get(key);
+		return value != null ? Integer.parseInt(value) : 0;
+	}
+	
+	public static long getParsedLong(HashMap<String, String> parsed, String key)
+	{
+		final String value = parsed.get(key);
+		return value != null ? Long.parseLong(value) : 0;
+	}
+
 
 
 }

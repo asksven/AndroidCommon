@@ -25,6 +25,7 @@ import com.asksven.andoid.common.contrib.Util;
 import com.asksven.android.common.privateapiproxies.NetworkUsage;
 import com.asksven.android.common.shellutils.Exec;
 import com.asksven.android.common.shellutils.ExecResult;
+import com.asksven.android.common.utils.StringUtils;
 
 /**
  * Parses the content of /proc/net/xt_qtaguid/stats
@@ -103,15 +104,15 @@ public class Netstats
 				for (int i=1; i < res.size(); i++)
 				{
 					String line = res.get(i);
-					splitLine(line, values);
-					parseLine(keys, values, parsed);
+					StringUtils.splitLine(line, values);
+					StringUtils.parseLine(keys, values, parsed);
 					
 					//Netstat entry = new Netstat();
 					NetworkUsage entry = new NetworkUsage(
-							getParsedInt(parsed, KEY_UID),
+							StringUtils.getParsedInt(parsed, KEY_UID),
 							parsed.get(KEY_IFACE),
-							getParsedLong(parsed, KEY_RX_BYTES),
-							getParsedLong(parsed, KEY_TX_BYTES));
+							StringUtils.getParsedLong(parsed, KEY_RX_BYTES),
+							StringUtils.getParsedLong(parsed, KEY_TX_BYTES));
 					
 //					entry.iface = parsed.get(KEY_IFACE);
 //					entry.setUid(getParsedInt(parsed, KEY_UID));
@@ -138,37 +139,6 @@ public class Netstats
 		return myStats;
 	}
 	
-	private static void splitLine(String line, ArrayList<String> outSplit)
-	{
-		outSplit.clear();
-		final StringTokenizer t = new StringTokenizer(line, " \t\n\r\f:");
-		while (t.hasMoreTokens())
-		{
-			outSplit.add(t.nextToken());
-		}
-	}	
-	
-	private static void parseLine(ArrayList<String> keys, ArrayList<String> values, HashMap<String, String> outParsed)
-	{
-		outParsed.clear();
-		final int size = Math.min(keys.size(), values.size());
-		for (int i = 0; i < size; i++)
-		{
-			outParsed.put(keys.get(i), values.get(i));
-		}
-	}
-	
-	private static int getParsedInt(HashMap<String, String> parsed, String key)
-	{
-		final String value = parsed.get(key);
-		return value != null ? Integer.parseInt(value) : 0;
-	}
-	
-	private static long getParsedLong(HashMap<String, String> parsed, String key)
-	{
-		final String value = parsed.get(key);
-		return value != null ? Long.parseLong(value) : 0;
-	}
 	
 	/**
 	 * Stats may be duplicate for one uid+iface so we sum them up
