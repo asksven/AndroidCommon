@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.asksven.andoid.common.CommonLogSettings;
+import com.asksven.andoid.common.contrib.Util;
 import com.asksven.android.common.privateapiproxies.NetworkUsage;
 import com.asksven.android.common.shellutils.Exec;
 import com.asksven.android.common.shellutils.ExecResult;
+import com.asksven.android.common.utils.StringUtils;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
@@ -184,4 +186,33 @@ public class Wakelocks
     	}
 		return ret;
 	}
+	
+    public static boolean hasWakelocks(Context context)
+    {
+    	boolean myRet = false;
+       	String filePath = "/sys/power/wake_lock";
+		ArrayList<String> res = Util.run("su", "wc -w " + filePath);
+		// Format: 0 /sys/power/wake_lock
+		final ArrayList<String> values = new ArrayList<String>();
+		if (res.size() != 0)
+		{
+			String line = res.get(0);
+			StringUtils.splitLine(line, values);
+			try
+			{
+				// try accessing first digit
+				int count = Integer.valueOf(values.get(0));
+				myRet = (count != 0);
+				Log.i(TAG, "Detected " + count + " wakelocks in line " + line);
+			}
+			catch (Exception e)
+			{
+				// something went wrong
+				Log.e(TAG, "Exeception processsing " + filePath + ": " + e.getMessage());
+				myRet = false;
+			}
+		}
+    	return myRet;
+    }
+
 }
