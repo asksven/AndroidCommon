@@ -191,19 +191,23 @@ public class Wakelocks
     {
     	boolean myRet = false;
        	String filePath = "/sys/power/wake_lock";
-		ArrayList<String> res = Util.run("su", "wc -w " + filePath);
+		ArrayList<String> res = Util.run("su", "cat " + filePath);
 		// Format: 0 /sys/power/wake_lock
 		final ArrayList<String> values = new ArrayList<String>();
 		if (res.size() != 0)
 		{
 			String line = res.get(0);
-			StringUtils.splitLine(line, values);
 			try
 			{
-				// try accessing first digit
-				int count = Integer.valueOf(values.get(0));
-				myRet = (count != 0);
-				Log.i(TAG, "Detected " + count + " wakelocks in line " + line);
+				myRet = line.contains("PowerManagerService");
+				if (myRet)
+				{
+					Log.i(TAG, "Detected userland wakelock in line " + line);
+				}
+				else
+				{
+					Log.i(TAG, "No userland wakelock detected in line " + line);
+				}
 			}
 			catch (Exception e)
 			{
