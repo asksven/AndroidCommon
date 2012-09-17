@@ -150,8 +150,8 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 	 */
 	@Override
 	public String toString() {
-		return "Misc [m_name=" + m_name + ", m_timeOn=" + m_timeOn
-				+ ", m_timeRunning=" + m_timeRunning + "]";
+		return "Misc [m_name=" + m_name + ", m_timeOn=" + formatDuration(getTimeOn())
+				+ ", m_timeRunning=" + formatDuration(getTimeRunning()) + "]";
 	}
 
 	/**
