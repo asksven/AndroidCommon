@@ -23,98 +23,76 @@ import java.util.StringTokenizer;
 
 /**
  * @author sven
- *
  */
-public class StringUtils
-{
-	public static final String formatRatio(long num, long den)
-	{
-		StringBuilder mFormatBuilder = new StringBuilder(8);
-	    Formatter mFormatter = new Formatter(mFormatBuilder);
-        if (den == 0L)
-        {
+public class StringUtils {
+    public static String formatRatio(long num, long den) {
+        StringBuilder mFormatBuilder = new StringBuilder(8);
+        Formatter mFormatter = new Formatter(mFormatBuilder);
+        if (den == 0L) {
             return "---%";
         }
-        
-        float perc = ((float)num) / ((float)den) * 100;
+
+        float perc = ((float) num) / ((float) den) * 100;
         mFormatBuilder.setLength(0);
         mFormatter.format("%.1f%%", perc);
         return mFormatBuilder.toString();
     }
-	
-	public static String join(String[] array, String sep, boolean merge)
-	{
-		String ret = "";
-		for (int i = 0; i < array.length; i++)
-		{
-			if (ret.equals(""))
-			{
-				ret = array[i];
-			}
-			else
-			{
-				if (merge)
-				{
-					// check if the string is alread present
-					if (ret.indexOf(array[i]) == -1)
-					{
-						// add
-						ret += sep + array[i];
-					}
-				}
-				else
-				{
-					ret += sep + array[i];
-				}
-			}
-		}
-		return ret;
-	}
-	
-	public static void splitLine(String line, ArrayList<String> outSplit)
-	{
-		outSplit.clear();
-		final StringTokenizer t = new StringTokenizer(line, " \t\n\r\f:");
-		while (t.hasMoreTokens())
-		{
-			outSplit.add(t.nextToken());
-		}
-	}	
-	
-	public static void parseLine(ArrayList<String> keys, ArrayList<String> values, HashMap<String, String> outParsed)
-	{
-		outParsed.clear();
-		final int size = Math.min(keys.size(), values.size());
-		for (int i = 0; i < size; i++)
-		{
-			outParsed.put(keys.get(i), values.get(i));
-		}
-	}
-	
-	public static int getParsedInt(HashMap<String, String> parsed, String key)
-	{
-		final String value = parsed.get(key);
-		return value != null ? Integer.parseInt(value) : 0;
-	}
-	
-	public static long getParsedLong(HashMap<String, String> parsed, String key)
-	{
-		final String value = parsed.get(key);
-		return value != null ? Long.parseLong(value) : 0;
-	}
 
-	public static String stripLeadingAndTrailingQuotes(String str)
-	  {
-	      if (str.startsWith("\""))
-	      {
-	          str = str.substring(1, str.length());
-	      }
-	      if (str.endsWith("\""))
-	      {
-	          str = str.substring(0, str.length() - 1);
-	      }
-	      return str;
-	  }
+    public static String join(String[] array, String sep, boolean merge) {
+        String ret = "";
+        for (String anArray : array) {
+            if (ret.equals("")) {
+                ret = anArray;
+            } else {
+                if (merge) {
+                    // check if the string is alread present
+                    if (!ret.contains(anArray)) {
+                        // add
+                        ret += sep + anArray;
+                    }
+                } else {
+                    ret += sep + anArray;
+                }
+            }
+        }
+        return ret;
+    }
+
+    public static void splitLine(String line, ArrayList<String> outSplit) {
+        outSplit.clear();
+        final StringTokenizer t = new StringTokenizer(line, " \t\n\r\f:");
+        while (t.hasMoreTokens()) {
+            outSplit.add(t.nextToken());
+        }
+    }
+
+    public static void parseLine(ArrayList<String> keys, ArrayList<String> values, HashMap<String, String> outParsed) {
+        outParsed.clear();
+        final int size = Math.min(keys.size(), values.size());
+        for (int i = 0; i < size; i++) {
+            outParsed.put(keys.get(i), values.get(i));
+        }
+    }
+
+    public static int getParsedInt(HashMap<String, String> parsed, String key) {
+        final String value = parsed.get(key);
+        return value != null ? Integer.parseInt(value) : 0;
+    }
+
+    public static long getParsedLong(HashMap<String, String> parsed, String key) {
+        final String value = parsed.get(key);
+        return value != null ? Long.parseLong(value) : 0;
+    }
+
+    public static String stripLeadingAndTrailingQuotes(String str) {
+        if (str.startsWith("\"")) {
+            str = str.substring(1, str.length());
+        }
+        if (str.endsWith("\"")) {
+            str = str.substring(0, str.length() - 1);
+        }
+        return str;
+    }
 
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.asksven.android.common.nameutils;
 
 import android.content.Context;
@@ -24,166 +24,145 @@ import android.content.pm.PackageManager.NameNotFoundException;
 
 /**
  * @author sven
- *
+ *         Complemented by pedronveloso@androidpt.com
  */
-public class UidNameResolver 
-{
-	
-	protected String[] m_packages;
-	protected String[] m_packageNames;
-    
-	public String getLabel(Context context, String packageName)
-	{
-		String ret = packageName;
-		PackageManager pm = context.getPackageManager();
-        try
-        {
+public class UidNameResolver {
+
+    protected String[] m_packages;
+    protected String[] m_packageNames;
+
+    public String getLabel(Context context, String packageName) {
+        String ret = packageName;
+        PackageManager pm = context.getPackageManager();
+        try {
             ApplicationInfo ai = pm.getApplicationInfo(packageName, 0);
             CharSequence label = ai.loadLabel(pm);
-            if (label != null)
-            {
+            if (label != null) {
                 ret = label.toString();
             }
-        }
-        catch (NameNotFoundException e)
-        {
+        } catch (NameNotFoundException e) {
             ret = packageName;
         }
-        
+
         return ret;
     }
-	
-	// Side effects: sets mName and mUniqueName
-	// Sets mNamePackage, mName and mUniqueName
-    public UidInfo getNameForUid(Context context, int uid)
-    {
-    	String uidName = "";
-    	String uidNamePackage = "";
-    	boolean uidUniqueName = false;
-    	
-    	UidInfo myInfo = new UidInfo();
-    	myInfo.setUid(uid);
-    	myInfo.setName(uidName);
-    	myInfo.setNamePackage(uidNamePackage);
-    	myInfo.setUniqueName(uidUniqueName);
 
-        
+    // Side effects: sets mName and mUniqueName
+    // Sets mNamePackage, mName and mUniqueName
+    public UidInfo getNameForUid(Context context, int uid) {
+        String uidName = "";
+        String uidNamePackage = "";
+        boolean uidUniqueName = false;
+
+        UidInfo myInfo = new UidInfo();
+        myInfo.setUid(uid);
+        myInfo.setName(uidName);
+        myInfo.setNamePackage(uidNamePackage);
+        myInfo.setUniqueName(uidUniqueName);
+
+
         PackageManager pm = context.getPackageManager();
         m_packages = pm.getPackagesForUid(uid);
-        
-        if (m_packages == null)
-        {
+
+        if (m_packages == null) {
             uidName = Integer.toString(uid);
 
-        	myInfo.setName(uidName);
+            myInfo.setName(uidName);
             return myInfo;
         }
-        
+
         m_packageNames = new String[m_packages.length];
         System.arraycopy(m_packages, 0, m_packageNames, 0, m_packages.length);
-        
+
         // Convert package names to user-facing labels where possible
-        for (int i = 0; i < m_packageNames.length; i++)
-        {
+        for (int i = 0; i < m_packageNames.length; i++) {
             m_packageNames[i] = getLabel(context, m_packageNames[i]);
         }
 
-        if (m_packageNames.length == 1)
-        {
+        if (m_packageNames.length == 1) {
             uidNamePackage = m_packages[0];
             uidName = m_packageNames[0];
             uidUniqueName = true;
-        }
-        else
-        {
+        } else {
             uidName = "UID"; // Default name
             // Look for an official name for this UID.
-            for (String name : m_packages)
-            {
-                try
-                {
+            for (String name : m_packages) {
+                try {
                     PackageInfo pi = pm.getPackageInfo(name, 0);
-                    if (pi.sharedUserLabel != 0)
-                    {
+                    if (pi.sharedUserLabel != 0) {
                         CharSequence nm = pm.getText(name,
                                 pi.sharedUserLabel, pi.applicationInfo);
-                        if (nm != null)
-                        {
+                        if (nm != null) {
                             uidName = nm.toString();
                             break;
                         }
                     }
-                }
-                catch (PackageManager.NameNotFoundException e)
-                {
+                } catch (PackageManager.NameNotFoundException ignored) {
                 }
             }
         }
-    	myInfo.setName(uidName);
-    	myInfo.setNamePackage(uidNamePackage);
-    	myInfo.setUniqueName(uidUniqueName);
+        myInfo.setName(uidName);
+        myInfo.setNamePackage(uidNamePackage);
+        myInfo.setUniqueName(uidUniqueName);
 
-    	return myInfo;
+        return myInfo;
     }
-    
+
     /**
-     * Returns the name for UIDs < 2000
-     * @param uid
-     * @return
+     * @param uid process UID
+     * @return name for UIDs < 2000
      */
-    String getName(int uid)
-    {
-    	String ret = "";
-    	switch (uid)
-    	{
-    		case 0:
-    			ret = "root";
-    			break;
-    		case 1000:
-    			ret = "system";
-    			break;
-    		case 1001:
-    			ret = "radio";
-    			break;
-    		case 1002:
-    			ret = "bluetooth";
-    			break;
-    		case 1003:
-    			ret = "graphics";
-    			break;
-    		case 1004:
-    			ret = "input";
-    			break;
-    		case 1005:
-    			ret = "audio";
-    			break;
-    		case 1006:
-    			ret = "camera";
-    			break;
-    		case 1007:
-    			ret = "log";
-    			break;
-    		case 1008:
-    			ret = "compass";
-    			break;
-    		case 1009:
-    			ret = "mount";
-    			break;
-    		case 1010:
-    			ret = "wifi";
-    			break;
-    		case 1011:
-    			ret = "adb";
-    			break;
-    		case 1013:
-    			ret = "media";
-    			break;
-    		case 1014:
-    			ret = "dhcp";
-    			break;
-    			
-    	}
-    	return ret;
+    String getName(int uid) {
+        String ret = "";
+        switch (uid) {
+            case 0:
+                ret = "root";
+                break;
+            case 1000:
+                ret = "system";
+                break;
+            case 1001:
+                ret = "radio";
+                break;
+            case 1002:
+                ret = "bluetooth";
+                break;
+            case 1003:
+                ret = "graphics";
+                break;
+            case 1004:
+                ret = "input";
+                break;
+            case 1005:
+                ret = "audio";
+                break;
+            case 1006:
+                ret = "camera";
+                break;
+            case 1007:
+                ret = "log";
+                break;
+            case 1008:
+                ret = "compass";
+                break;
+            case 1009:
+                ret = "mount";
+                break;
+            case 1010:
+                ret = "wifi";
+                break;
+            case 1011:
+                ret = "adb";
+                break;
+            case 1013:
+                ret = "media";
+                break;
+            case 1014:
+                ret = "dhcp";
+                break;
+
+        }
+        return ret;
     }
 
 }

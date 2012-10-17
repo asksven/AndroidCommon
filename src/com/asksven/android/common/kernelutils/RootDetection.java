@@ -38,8 +38,8 @@ public class RootDetection {
     /**
      * Checks for su with a specific command
      *
-     * @param command
-     * @return
+     * @param command command to execute as su
+     * @return True if has su, else otherwise
      */
     public static boolean hasSuRights(String command) {
 //		ExecResult res = Exec.execPrint(new String[]{"su", "-c", command});

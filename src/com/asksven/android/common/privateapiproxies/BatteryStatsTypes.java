@@ -16,18 +16,15 @@
 package com.asksven.android.common.privateapiproxies;
 
 
-
-
 /**
  * This class holds the required constants from BatteryStats
  * Copyright (C) 2008 The Android Open Source Project applies
- * @see android.os.BatteryStats
- * @author sven
  *
+ * @author sven
+ * @see android.os.BatteryStats
  */
-public class BatteryStatsTypes
-{
-	/**
+public class BatteryStatsTypes {
+    /**
      * A constant indicating a partial wake lock timer.
      */
     public static final int WAKE_TYPE_PARTIAL = 0;
@@ -41,12 +38,12 @@ public class BatteryStatsTypes
      * A constant indicating a window wake lock timer.
      */
     public static final int WAKE_TYPE_WINDOW = 2;
-    
+
     /**
      * Constants for data connection type
      */
     public static final int DATA_CONNECTION_NONE = 0;
-    
+
     /**
      * Constants for signal strength
      */
@@ -55,30 +52,28 @@ public class BatteryStatsTypes
     public static final int SIGNAL_STRENGTH_MODERATE = 2;
     public static final int SIGNAL_STRENGTH_GOOD = 3;
     public static final int SIGNAL_STRENGTH_GREAT = 4;
-    
+
     /**
      * Enum of valid wakelock types
      */
-    public static final boolean assertValidWakeType(int iWakeType)
-    {
-    	boolean ret = false;
-    	switch (iWakeType)
-    	{
-    		case WAKE_TYPE_PARTIAL:
-    			ret = true;
-    			break;
-    		case WAKE_TYPE_FULL:
-    			ret = true;
-    			break;
-    		case WAKE_TYPE_WINDOW:
-    			ret = true;
-    			break;
-    		default: 
-    			ret = false;
-    			break;
-    			
-    	}
-    	return ret;
+    public static boolean assertValidWakeType(int iWakeType) {
+        boolean ret = false;
+        switch (iWakeType) {
+            case WAKE_TYPE_PARTIAL:
+                ret = true;
+                break;
+            case WAKE_TYPE_FULL:
+                ret = true;
+                break;
+            case WAKE_TYPE_WINDOW:
+                ret = true;
+                break;
+            default:
+                ret = false;
+                break;
+
+        }
+        return ret;
     }
 
     /**
@@ -100,58 +95,54 @@ public class BatteryStatsTypes
      * Include only the run since the last time the device was unplugged in the stats.
      */
     public static final int STATS_SINCE_UNPLUGGED = 3;
-    
-    /**
-     * Enum of valid stat types
-     */
-    public static final boolean assertValidStatType(int iStatType)
-    {
-    	boolean ret = false;
-    	switch (iStatType)
-    	{
-    		case STATS_SINCE_CHARGED:
-    			ret = true;
-    			break;
-    		case STATS_LAST:
-    			ret = true;
-    			break;
-    		case STATS_CURRENT:
-    			ret = true;
-    			break;
-    		case STATS_SINCE_UNPLUGGED:
-    			ret = true;
-    			break;
 
-    		default: 
-    			ret = false;
-    			break;
-    			
-    	}
-    	return ret;
-    }
-    
     /**
      * Enum of valid stat types
      */
-    public static final boolean assertValidWakelockPctRef(int iPctType)
-    {
-    	boolean ret = false;
-    	switch (iPctType)
-    	{
-    		case 0: 	// % of battery time
-    			ret = true;
-    			break;
-    		case 1: 	// % of awake time
-    			ret = true;
-    			break;
-    		case 2:		// % of time awake - time with screen on
-    			ret = true;
-    			break;
-    		default: 
-    			ret = false;
-    			break;
-    			
-    	}
-    	return ret;
+    public static boolean assertValidStatType(int iStatType) {
+        boolean ret = false;
+        switch (iStatType) {
+            case STATS_SINCE_CHARGED:
+                ret = true;
+                break;
+            case STATS_LAST:
+                ret = true;
+                break;
+            case STATS_CURRENT:
+                ret = true;
+                break;
+            case STATS_SINCE_UNPLUGGED:
+                ret = true;
+                break;
+
+            default:
+                ret = false;
+                break;
+
+        }
+        return ret;
+    }
+
+    /**
+     * Enum of valid stat types
+     */
+    public static boolean assertValidWakelockPctRef(int iPctType) {
+        boolean ret = false;
+        switch (iPctType) {
+            case 0:     // % of battery time
+                ret = true;
+                break;
+            case 1:     // % of awake time
+                ret = true;
+                break;
+            case 2:        // % of time awake - time with screen on
+                ret = true;
+                break;
+            default:
+                ret = false;
+                break;
+
+        }
+        return ret;
     }
 }

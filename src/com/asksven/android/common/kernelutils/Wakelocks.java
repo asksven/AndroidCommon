@@ -78,20 +78,19 @@ public class Wakelocks {
 
                     if (proc != 0) {
                         // search for the process in the task list
-                        for (int psCount = 0; psCount < procInfos.size(); psCount++) {
-                            int id = procInfos.get(psCount).pid;
+                        for (RunningAppProcessInfo procInfo : procInfos) {
+                            int id = procInfo.pid;
                             if (id == proc) {
-                                String processName = procInfos.get(psCount).processName;
 
-                                details = processName;
+                                details = procInfo.processName;
                                 String appName = "";
 
                                 String[] pkgList = procInfos.get(count).pkgList;
-                                for (int j = 0; j < pkgList.length; j++) {
+                                for (String aPkgList : pkgList) {
                                     if (details.length() > 0) {
                                         details += ", ";
                                     }
-                                    details += pkgList[j];
+                                    details += aPkgList;
                                 }
 
                                 if (CommonLogSettings.DEBUG) {
@@ -123,8 +122,7 @@ public class Wakelocks {
             while ((currentRecord = br.readLine()) != null)
                 rows.add(currentRecord.split(delimiter));
             br.close();
-        } catch (Exception e) {
-
+        } catch (Exception ignored) {
         }
         return rows;
     }
@@ -144,8 +142,7 @@ public class Wakelocks {
                 ret = true;
             }
             br.close();
-        } catch (Exception e) {
-
+        } catch (Exception ignored) {
         }
         return ret;
     }

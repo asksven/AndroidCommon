@@ -48,7 +48,6 @@ import java.util.HashMap;
  */
 public class Netstats {
     static final String TAG = "AlarmsDumpsys";
-    static final String PERMISSION_DENIED = "su rights required to access alarms are not available / were not granted";
 
     private static final String KEY_IDX = "idx";
     private static final String KEY_IFACE = "iface";
@@ -62,10 +61,7 @@ public class Netstats {
 
 
     /**
-     * Returns a list of alarm value objects
-     *
-     * @return
-     * @throws Exception
+     * @return list of alarm value objects
      */
     public static ArrayList<NetworkUsage> parseNetstats() {
         ArrayList<NetworkUsage> myStats = new ArrayList<NetworkUsage>();
@@ -121,8 +117,8 @@ public class Netstats {
                 }
 
                 // set the total so that we can calculate the ratio
-                for (int i = 0; i < myStats.size(); i++) {
-                    myStats.get(i).setTotal(totalBytes);
+                for (NetworkUsage myStat : myStats) {
+                    myStat.setTotal(totalBytes);
                 }
 
             }
@@ -135,15 +131,13 @@ public class Netstats {
     /**
      * Stats may be duplicate for one uid+iface so we sum them up
      *
-     * @param stats
-     * @param entry
-     * @return
+     * @param stats stats which should add to
+     * @param entry entry to add
+     * @return stats with added entry if applicable
      */
     static ArrayList<NetworkUsage> addToStats(ArrayList<NetworkUsage> stats, NetworkUsage entry) {
         boolean merged = false;
-        for (int i = 0; i < stats.size(); i++) {
-            NetworkUsage current = stats.get(i);
-
+        for (NetworkUsage current : stats) {
             if ((current.getuid() == entry.getuid()) && (current.getInterface().equals(entry.getInterface()))) {
                 current.addBytesReceived(entry.getBytesReceived());
                 current.addBytesSent(entry.getBytesSent());

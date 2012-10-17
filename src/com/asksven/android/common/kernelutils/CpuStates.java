@@ -25,70 +25,61 @@ package com.asksven.android.common.kernelutils;
  * @author sven
  *
  */
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
+import android.os.SystemClock;
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.util.List;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import com.asksven.android.common.privateapiproxies.StatElement;
+public class CpuStates {
+    private static final String TAG = "CpuStates";
 
-import android.util.Log;
-import android.os.SystemClock;
-
-public class CpuStates
-{
-	private static final String TAG = "CpuStates";
-	
     // path to sysfs
     public static final String TIME_IN_STATE_PATH = "/sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state";
     public static final String VERSION_PATH = "/proc/version";
 
 
-    public static ArrayList<State> getTimesInStates()
-    {
-    	ArrayList<State> states = new ArrayList<State>();
-    	long totalTime = 0;
-        try
-        {
+    public static ArrayList<State> getTimesInStates() {
+        ArrayList<State> states = new ArrayList<State>();
+        long totalTime = 0;
+        try {
             // create a buffered reader to read in the time-in-states log
-            InputStream is = new FileInputStream (TIME_IN_STATE_PATH);
-            InputStreamReader ir = new InputStreamReader (is);
-            BufferedReader br = new BufferedReader (ir);
+            InputStream is = new FileInputStream(TIME_IN_STATE_PATH);
+            InputStreamReader ir = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(ir);
 
             String line;
-            while ( (line = br.readLine ()) != null )
-            {
+            while ((line = br.readLine()) != null) {
                 // split open line and convert to Integers
-                String[] nums = line.split (" ");
-                
+                String[] nums = line.split(" ");
+
                 // duration x 10 to store ms
-                State myState = new State(Integer.parseInt(nums[0]), Long.parseLong(nums[1])*10);
+                State myState = new State(Integer.parseInt(nums[0]), Long.parseLong(nums[1]) * 10);
                 totalTime += myState.m_duration;
                 states.add(myState);
             }
 
-            is.close ();
+            is.close();
 
-        }
-        catch (Exception e)
-        {
-            Log.e (TAG, e.getMessage() );
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
             return null;
         }
 
         // add in sleep state
         long sleepTime = SystemClock.elapsedRealtime() - SystemClock.uptimeMillis();
-        states.add( new State(0, sleepTime));
+        states.add(new State(0, sleepTime));
         totalTime += sleepTime;
-        
+
         // store the total time in order to be able to calculate ratio
-        for (int i = 0; i < states.size(); i++ )
-        {
-        	states.get(i).setTotal(totalTime);
+        for (State state : states) {
+            state.setTotal(totalTime);
         }
-        
+
         return states;
     }
 }

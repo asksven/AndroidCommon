@@ -24,10 +24,7 @@ public class AlarmsDumpsys {
     static final String PERMISSION_DENIED = "su rights required to access alarms are not available / were not granted";
 
     /**
-     * Returns a list of alarm value objects
-     *
-     * @return
-     * @throws Exception
+     * @return list of alarm value objects
      */
     public static ArrayList<Alarm> getAlarms() {
         ArrayList<Alarm> myAlarms = null;
@@ -58,14 +55,13 @@ public class AlarmsDumpsys {
                 Alarm myAlarm = null;
 
                 // process the file
-                for (int i = 0; i < res.size(); i++) {
+                for (String re : res) {
                     // skip till start mark found
                     if (bParsing) {
                         // parse the alarms by block
-                        String line = res.get(i);
-                        Matcher mPackage = packagePattern.matcher(line);
-                        Matcher mTime = timePattern.matcher(line);
-                        Matcher mNumber = numberPattern.matcher(line);
+                        Matcher mPackage = packagePattern.matcher(re);
+                        Matcher mTime = timePattern.matcher(re);
+                        Matcher mNumber = numberPattern.matcher(re);
 
                         // first line
                         if (mPackage.find()) {
@@ -78,7 +74,7 @@ public class AlarmsDumpsys {
                                 String strPackageName = mPackage.group(1);
                                 myAlarm = new Alarm(strPackageName);
                             } catch (Exception e) {
-                                Log.e(TAG, "Error: parsing error in package line (" + line + ")");
+                                Log.e(TAG, "Error: parsing error in package line (" + re + ")");
                             }
                         }
 
@@ -90,13 +86,13 @@ public class AlarmsDumpsys {
                                 long nWakeups = Long.parseLong(strWakeups);
 
                                 if (myAlarm == null) {
-                                    Log.e(TAG, "Error: time line found but without alarm object (" + line + ")");
+                                    Log.e(TAG, "Error: time line found but without alarm object (" + re + ")");
                                 } else {
                                     myAlarm.setWakeups(nWakeups);
                                     nTotalCount += nWakeups;
                                 }
                             } catch (Exception e) {
-                                Log.e(TAG, "Error: parsing error in time line (" + line + ")");
+                                Log.e(TAG, "Error: parsing error in time line (" + re + ")");
                             }
                         }
 
@@ -109,17 +105,17 @@ public class AlarmsDumpsys {
                                 long nNumber = Long.parseLong(strNumber);
 
                                 if (myAlarm == null) {
-                                    Log.e(TAG, "Error: number line found but without alarm object (" + line + ")");
+                                    Log.e(TAG, "Error: number line found but without alarm object (" + re + ")");
                                 } else {
                                     myAlarm.addItem(nNumber, strIntent);
                                 }
                             } catch (Exception e) {
-                                Log.e(TAG, "Error: parsing error in number line (" + line + ")");
+                                Log.e(TAG, "Error: parsing error in number line (" + re + ")");
                             }
                         }
                     } else {
                         // look for beginning
-                        Matcher line = begin.matcher(res.get(i));
+                        Matcher line = begin.matcher(re);
                         if (line.find()) {
                             bParsing = true;
                         }
@@ -143,14 +139,15 @@ public class AlarmsDumpsys {
         }
 
 
-        for (int i = 0; i < myAlarms.size(); i++) {
-            myAlarms.get(i).setTotalCount(nTotalCount);
+        for (Alarm myAlarm : myAlarms) {
+            myAlarm.setTotalCount(nTotalCount);
         }
         return myAlarms;
     }
 
     static ArrayList<String> getTestData() {
-        ArrayList<String> myRet = new ArrayList<String>() {{
+
+        return new ArrayList<String>() {{
             add("Alarm Stats:");
             add("  com.google.android.gsf");
             add("  8417ms running, 204 wakeups");
@@ -199,7 +196,5 @@ public class AlarmsDumpsys {
             add("  446486ms running, 5584 wakeups");
             add("  5584 alarms: act=com.carl.trafficcounter.UPDATE_RUN flg=0x4");
         }};
-
-        return myRet;
     }
 }

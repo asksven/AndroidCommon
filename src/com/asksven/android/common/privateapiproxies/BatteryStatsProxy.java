@@ -81,7 +81,7 @@ public class BatteryStatsProxy {
      * Default cctor
      */
     private BatteryStatsProxy(Context context) {        /*
-		 * As BatteryStats is a service we need to get a binding using the IBatteryStats.Stub.getStatistics()
+         * As BatteryStats is a service we need to get a binding using the IBatteryStats.Stub.getStatistics()
 		 * method (using reflection).
 		 * If we would be using a public API the code would look like:
 		 * @see com.android.settings.fuelgauge.PowerUsageSummary.java 
@@ -215,7 +215,7 @@ public class BatteryStatsProxy {
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
     public Long computeBatteryRealtime(long curTime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret;
 
         try {
             //Parameters Types
@@ -229,15 +229,15 @@ public class BatteryStatsProxy {
 
             //Parameters
             Object[] params = new Object[2];
-            params[0] = new Long(curTime);
-            params[1] = new Integer(iStatsType);
+            params[0] = curTime;
+            params[1] = iStatsType;
 
             ret = (Long) method.invoke(m_Instance, params);
 
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            ret = new Long(0);
+            ret = (long) 0;
             throw new BatteryInfoUnavailableException();
         }
 
@@ -252,7 +252,7 @@ public class BatteryStatsProxy {
      * @param curTime the current elapsed realtime in microseconds.
      */
     public Long getBatteryRealtime(long curTime) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret;
 
         try {
             //Parameters Types
@@ -266,7 +266,7 @@ public class BatteryStatsProxy {
 
             //Parameters
             Object[] params = new Object[1];
-            params[0] = new Long(curTime);
+            params[0] = curTime;
 
 
             ret = (Long) method.invoke(m_Instance, params);
@@ -274,7 +274,7 @@ public class BatteryStatsProxy {
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            ret = new Long(0);
+            ret = (long) 0;
             throw new BatteryInfoUnavailableException();
         }
 
@@ -290,7 +290,7 @@ public class BatteryStatsProxy {
      * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
     public Long computeBatteryUptime(long curTime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret;
 
         try {
             //Parameters Types
@@ -304,15 +304,15 @@ public class BatteryStatsProxy {
 
             //Parameters
             Object[] params = new Object[2];
-            params[0] = new Long(curTime);
-            params[1] = new Integer(iStatsType);
+            params[0] = curTime;
+            params[1] = iStatsType;
 
             ret = (Long) method.invoke(m_Instance, params);
 
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            ret = new Long(0);
+            ret = (long) 0;
             throw new BatteryInfoUnavailableException();
         }
 
@@ -328,7 +328,7 @@ public class BatteryStatsProxy {
      * @param iStatsType      one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
     public Long getScreenOnTime(long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret;
 
         try {
             //Parameters Types
@@ -342,21 +342,19 @@ public class BatteryStatsProxy {
 
             //Parameters
             Object[] params = new Object[2];
-            params[0] = new Long(batteryRealtime);
-            params[1] = new Integer(iStatsType);
+            params[0] = batteryRealtime;
+            params[1] = iStatsType;
 
             ret = (Long) method.invoke(m_Instance, params);
 
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            ret = new Long(0);
+            ret = (long) 0;
             throw new BatteryInfoUnavailableException();
         }
 
         return ret;
-
-
     }
 
     /**
@@ -386,8 +384,6 @@ public class BatteryStatsProxy {
         }
 
         return ret;
-
-
     }
 
     /**
@@ -397,7 +393,7 @@ public class BatteryStatsProxy {
      * @param iStatsType      one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
     public Long getPhoneOnTime(long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret;
 
         try {
             //Parameters Types
@@ -411,21 +407,19 @@ public class BatteryStatsProxy {
 
             //Parameters
             Object[] params = new Object[2];
-            params[0] = new Long(batteryRealtime);
-            params[1] = new Integer(iStatsType);
+            params[0] = batteryRealtime;
+            params[1] = iStatsType;
 
             ret = (Long) method.invoke(m_Instance, params);
 
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            ret = new Long(0);
+            ret = (long) 0;
             throw new BatteryInfoUnavailableException();
         }
 
         return ret;
-
-
     }
 
     /**
@@ -435,7 +429,7 @@ public class BatteryStatsProxy {
      * @param iStatsType      one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
     public Long getWifiOnTime(long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret;
 
         try {
             //Parameters Types
@@ -449,8 +443,8 @@ public class BatteryStatsProxy {
 
             //Parameters
             Object[] params = new Object[2];
-            params[0] = new Long(batteryRealtime);
-            params[1] = new Integer(iStatsType);
+            params[0] = batteryRealtime;
+            params[1] = iStatsType;
 
             ret = (Long) method.invoke(m_Instance, params);
             Log.i("TAG", "getWifiOnTime with params " + params[0] + " and " + params[1] + " returned " + ret);
@@ -458,13 +452,11 @@ public class BatteryStatsProxy {
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            ret = new Long(0);
+            ret = (long) 0;
             throw new BatteryInfoUnavailableException();
         }
 
         return ret;
-
-
     }
 
     /**
@@ -474,7 +466,7 @@ public class BatteryStatsProxy {
      * @param iStatsType      one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
     public Long getGlobalWifiRunningTime(long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret;
 
         try {
             //Parameters Types
@@ -488,8 +480,8 @@ public class BatteryStatsProxy {
 
             //Parameters
             Object[] params = new Object[2];
-            params[0] = new Long(batteryRealtime);
-            params[1] = new Integer(iStatsType);
+            params[0] = batteryRealtime;
+            params[1] = iStatsType;
 
             ret = (Long) method.invoke(m_Instance, params);
             Log.i("TAG", "getGlobalWifiRunningTime with params " + params[0] + " and " + params[1] + " returned " + ret);
@@ -497,13 +489,11 @@ public class BatteryStatsProxy {
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            ret = new Long(0);
+            ret = (long) 0;
             throw new BatteryInfoUnavailableException();
         }
 
         return ret;
-
-
     }
 
     /**
@@ -513,7 +503,7 @@ public class BatteryStatsProxy {
      * @param iStatsType      one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
     public Long getWifiRunningTime(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret = (long) 0;
 
         this.collectUidStats();
         if (m_uidStats != null) {
@@ -538,8 +528,8 @@ public class BatteryStatsProxy {
 
                     //Parameters
                     Object[] params = new Object[2];
-                    params[0] = new Long(batteryRealtime);
-                    params[1] = new Integer(iStatsType);
+                    params[0] = batteryRealtime;
+                    params[1] = iStatsType;
 
                     ret += (Long) method.invoke(myUid, params);
 
@@ -552,7 +542,7 @@ public class BatteryStatsProxy {
                 throw e;
             } catch (Exception e) {
                 Log.e(TAG, "getWifiRunning threw an Exception: " + e.getMessage());
-                ret = new Long(0);
+                ret = (long) 0;
                 throw new BatteryInfoUnavailableException();
             }
         }
@@ -566,7 +556,7 @@ public class BatteryStatsProxy {
      * @param iStatsType      one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
     public Long getFullWifiLockTime(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret = (long) 0;
 
         this.collectUidStats();
         if (m_uidStats != null) {
@@ -591,8 +581,8 @@ public class BatteryStatsProxy {
 
                     //Parameters
                     Object[] params = new Object[2];
-                    params[0] = new Long(batteryRealtime);
-                    params[1] = new Integer(iStatsType);
+                    params[0] = batteryRealtime;
+                    params[1] = iStatsType;
 
                     ret += (Long) method.invoke(myUid, params);
 
@@ -600,7 +590,7 @@ public class BatteryStatsProxy {
             } catch (IllegalArgumentException e) {
                 throw e;
             } catch (Exception e) {
-                ret = new Long(0);
+                ret = (long) 0;
                 throw new BatteryInfoUnavailableException();
             }
         }
@@ -614,7 +604,7 @@ public class BatteryStatsProxy {
      * @param iStatsType      one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
     public Long getScanWifiLockTime(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret = (long) 0;
 
         this.collectUidStats();
         if (m_uidStats != null) {
@@ -639,8 +629,8 @@ public class BatteryStatsProxy {
 
                     //Parameters
                     Object[] params = new Object[2];
-                    params[0] = new Long(batteryRealtime);
-                    params[1] = new Integer(iStatsType);
+                    params[0] = batteryRealtime;
+                    params[1] = iStatsType;
 
                     ret += (Long) method.invoke(myUid, params);
 
@@ -648,7 +638,7 @@ public class BatteryStatsProxy {
             } catch (IllegalArgumentException e) {
                 throw e;
             } catch (Exception e) {
-                ret = new Long(0);
+                ret = (long) 0;
                 throw new BatteryInfoUnavailableException();
             }
         }
@@ -662,7 +652,7 @@ public class BatteryStatsProxy {
      * @param iStatsType      one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
     public Long getWifiMulticastTime(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret = (long) 0;
 
         this.collectUidStats();
         if (m_uidStats != null) {
@@ -687,8 +677,8 @@ public class BatteryStatsProxy {
 
                     //Parameters
                     Object[] params = new Object[2];
-                    params[0] = new Long(batteryRealtime);
-                    params[1] = new Integer(iStatsType);
+                    params[0] = batteryRealtime;
+                    params[1] = iStatsType;
 
                     ret += (Long) method.invoke(myUid, params);
 
@@ -696,7 +686,7 @@ public class BatteryStatsProxy {
             } catch (IllegalArgumentException e) {
                 throw e;
             } catch (Exception e) {
-                ret = new Long(0);
+                ret = (long) 0;
                 throw new BatteryInfoUnavailableException();
             }
         }
@@ -708,10 +698,10 @@ public class BatteryStatsProxy {
      *
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType      one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
-     * @params dataType the given data connection type (@see http://www.netmite.com/android/mydroid/donut/frameworks/base/core/java/android/os/BatteryStats.java)
+     * @param dataType        the given data connection type (@see http://www.netmite.com/android/mydroid/donut/frameworks/base/core/java/android/os/BatteryStats.java)
      */
     public Long getPhoneDataConnectionTime(int dataType, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret;
 
         try {
             //Parameters Types
@@ -726,9 +716,9 @@ public class BatteryStatsProxy {
 
             //Parameters
             Object[] params = new Object[3];
-            params[0] = new Integer(dataType);
-            params[1] = new Long(batteryRealtime);
-            params[2] = new Integer(iStatsType);
+            params[0] = dataType;
+            params[1] = batteryRealtime;
+            params[2] = iStatsType;
 
             ret = (Long) method.invoke(m_Instance, params);
             Log.i("TAG", "getPhoneDataConnectionTime with params " + params[0] + ", " + params[1] + "and " + params[2] + " returned " + ret);
@@ -736,7 +726,7 @@ public class BatteryStatsProxy {
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            ret = new Long(0);
+            ret = (long) 0;
             throw new BatteryInfoUnavailableException();
         }
 
@@ -750,10 +740,10 @@ public class BatteryStatsProxy {
      *
      * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
      * @param iStatsType      one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
-     * @params signalStrength the given data connection type (@see http://www.netmite.com/android/mydroid/donut/frameworks/base/core/java/android/os/BatteryStats.java)
+     * @param signalStrength  the given data connection type (@see http://www.netmite.com/android/mydroid/donut/frameworks/base/core/java/android/os/BatteryStats.java)
      */
     public Long getPhoneSignalStrengthTime(int signalStrength, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret;
 
         try {
             //Parameters Types
@@ -768,9 +758,9 @@ public class BatteryStatsProxy {
 
             //Parameters
             Object[] params = new Object[3];
-            params[0] = new Integer(signalStrength);
-            params[1] = new Long(batteryRealtime);
-            params[2] = new Integer(iStatsType);
+            params[0] = signalStrength;
+            params[1] = batteryRealtime;
+            params[2] = iStatsType;
 
             ret = (Long) method.invoke(m_Instance, params);
             Log.i("TAG", "getPhoneSignalStrengthTime with params " + params[0] + ", " + params[1] + "and " + params[2] + " returned " + ret);
@@ -778,7 +768,7 @@ public class BatteryStatsProxy {
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            ret = new Long(0);
+            ret = (long) 0;
             throw new BatteryInfoUnavailableException();
         }
 
@@ -794,7 +784,7 @@ public class BatteryStatsProxy {
      * @param iStatsType      one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
     public Long getAudioTurnedOnTime(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret = (long) 0;
 
         this.collectUidStats();
         if (m_uidStats != null) {
@@ -819,8 +809,8 @@ public class BatteryStatsProxy {
 
                     //Parameters
                     Object[] params = new Object[2];
-                    params[0] = new Long(batteryRealtime);
-                    params[1] = new Integer(iStatsType);
+                    params[0] = batteryRealtime;
+                    params[1] = iStatsType;
 
                     ret += (Long) method.invoke(myUid, params);
 
@@ -828,7 +818,7 @@ public class BatteryStatsProxy {
             } catch (IllegalArgumentException e) {
                 throw e;
             } catch (Exception e) {
-                ret = new Long(0);
+                ret = (long) 0;
                 throw new BatteryInfoUnavailableException();
             }
         }
@@ -842,7 +832,7 @@ public class BatteryStatsProxy {
      * @param iStatsType      one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
     public Long getVideoTurnedOnTime(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret = (long) 0;
 
         this.collectUidStats();
         if (m_uidStats != null) {
@@ -867,8 +857,8 @@ public class BatteryStatsProxy {
 
                     //Parameters
                     Object[] params = new Object[2];
-                    params[0] = new Long(batteryRealtime);
-                    params[1] = new Integer(iStatsType);
+                    params[0] = batteryRealtime;
+                    params[1] = iStatsType;
 
                     ret += (Long) method.invoke(myUid, params);
 
@@ -876,7 +866,7 @@ public class BatteryStatsProxy {
             } catch (IllegalArgumentException e) {
                 throw e;
             } catch (Exception e) {
-                ret = new Long(0);
+                ret = (long) 0;
                 throw new BatteryInfoUnavailableException();
             }
         }
@@ -890,7 +880,7 @@ public class BatteryStatsProxy {
      * @param iStatsType      one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
      */
     public Long getBluetoothOnTime(long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException {
-        Long ret = new Long(0);
+        Long ret;
 
         try {
             //Parameters Types
@@ -904,15 +894,15 @@ public class BatteryStatsProxy {
 
             //Parameters
             Object[] params = new Object[2];
-            params[0] = new Long(batteryRealtime);
-            params[1] = new Integer(iStatsType);
+            params[0] = batteryRealtime;
+            params[1] = iStatsType;
 
             ret = (Long) method.invoke(m_Instance, params);
 
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            ret = new Long(0);
+            ret = (long) 0;
             throw new BatteryInfoUnavailableException();
         }
 
@@ -931,8 +921,7 @@ public class BatteryStatsProxy {
             @SuppressWarnings("unchecked")
             Method method = m_ClassDefinition.getMethod("getIsOnBattery");
 
-            Boolean oRet = (Boolean) method.invoke(m_Instance);
-            ret = oRet.booleanValue();
+            ret = (Boolean) method.invoke(m_Instance);
 
         } catch (IllegalArgumentException e) {
             throw e;
@@ -955,8 +944,7 @@ public class BatteryStatsProxy {
             @SuppressWarnings("unchecked")
             Method method = m_ClassDefinition.getMethod("getDischargeCurrentLevel");
 
-            Integer oRet = (Integer) method.invoke(m_Instance);
-            ret = oRet.intValue();
+            ret = (Integer) method.invoke(m_Instance);
 
         } catch (IllegalArgumentException e) {
             throw e;
@@ -1084,7 +1072,7 @@ public class BatteryStatsProxy {
                         // are the ones that should normally be of interest but
                         // WAKE_TYPE_PARTIAL, WAKE_TYPE_FULL, WAKE_TYPE_WINDOW
                         // are possible
-                        paramsGetWakeTime[0] = Integer.valueOf(iWakeType);
+                        paramsGetWakeTime[0] = iWakeType;
 
                         // BatteryStats.Timer
                         Object wakeTimer = methodGetWakeTime.invoke(wakelock, paramsGetWakeTime);
@@ -1102,8 +1090,8 @@ public class BatteryStatsProxy {
 
                             //Parameters
                             Object[] paramsGetTotalTimeLocked = new Object[2];
-                            paramsGetTotalTimeLocked[0] = new Long(uSecBatteryTime);
-                            paramsGetTotalTimeLocked[1] = Integer.valueOf(iStatType);
+                            paramsGetTotalTimeLocked[0] = uSecBatteryTime;
+                            paramsGetTotalTimeLocked[1] = iStatType;
 
                             Long wake = (Long) methodGetTotalTimeLocked.invoke(wakeTimer, paramsGetTotalTimeLocked);
 //							Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " wakelock [s] " + wake);
@@ -1118,7 +1106,7 @@ public class BatteryStatsProxy {
 
                             //Parameters
                             Object[] paramsGetCountLocked = new Object[1];
-                            paramsGetCountLocked[0] = new Integer(iStatType);
+                            paramsGetCountLocked[0] = iStatType;
 
                             Integer count = (Integer) methodGetCountLocked.invoke(wakeTimer, paramsGetCountLocked);
 //							Log.d(TAG, "Wakelocks inner: Process = " + wakelockEntry.getKey() + " count " + count);
@@ -1260,8 +1248,8 @@ public class BatteryStatsProxy {
 
                 //Parameters
                 Object[] paramGetTotalTimeLocked = new Object[2];
-                paramGetTotalTimeLocked[0] = new Long(uSecBatteryTime);
-                paramGetTotalTimeLocked[1] = new Integer(iStatType);
+                paramGetTotalTimeLocked[0] = uSecBatteryTime;
+                paramGetTotalTimeLocked[1] = iStatType;
 
 
                 Method methodGetTotalTimeLocked = classSamplingTimer
@@ -1274,7 +1262,7 @@ public class BatteryStatsProxy {
 
                 //Parameters
                 Object[] paramGetCountLocked = new Object[1];
-                paramGetCountLocked[0] = new Integer(iStatType);
+                paramGetCountLocked[0] = iStatType;
 
                 Method methodGetCountLocked = classSamplingTimer
                         .getMethod("getCountLocked", paramTypesGetCountLocked);
@@ -1367,7 +1355,7 @@ public class BatteryStatsProxy {
 
                             //Parameters
                             Object[] paramsGetXxxTime = new Object[1];
-                            paramsGetXxxTime[0] = new Integer(iStatType);
+                            paramsGetXxxTime[0] = iStatType;
 
                             Long userTime = (Long) methodGetUserTime.invoke(ps, paramsGetXxxTime);
                             Long systemTime = (Long) methodGetSystemTime.invoke(ps, paramsGetXxxTime);
@@ -1444,7 +1432,7 @@ public class BatteryStatsProxy {
 
                     //Parameters
                     Object[] paramGetTcpBytesXxx = new Object[1];
-                    paramGetTcpBytesXxx[0] = new Integer(iStatType);
+                    paramGetTcpBytesXxx[0] = iStatType;
 
                     Long tcpBytesReceived = (Long) methodGetTcpBytesReceived.invoke(myUid, paramGetTcpBytesXxx);
                     Long tcpBytesSent = (Long) methodGetTcpBytesSent.invoke(myUid, paramGetTcpBytesXxx);
@@ -1473,7 +1461,6 @@ public class BatteryStatsProxy {
      *
      * @param iStatsType a type of stat @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes
      * @return a List of NetworkUsage s
-     * @throws Exception
      */
     public ArrayList<NetworkUsage> getKernelNetworkStats(int iStatsType) {
 
@@ -1529,13 +1516,13 @@ public class BatteryStatsProxy {
             // while (stats.getNextHistoryLocked(rec)) {
 
             // read the time of query for history
-            Long statTimeRef = Long.valueOf(this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000,
-                    BatteryStatsTypes.STATS_SINCE_CHARGED));
+            Long statTimeRef;
+            this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000, BatteryStatsTypes.STATS_SINCE_CHARGED);
             statTimeRef = System.currentTimeMillis();
 
             Log.d(TAG, "Reference time (" + statTimeRef + ": " + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeRef));
             // statTimeLast stores the timestamp of the last sample
-            Long statTimeLast = Long.valueOf(0);
+            Long statTimeLast = (long) 0;
 
             if (this.startIteratingHistoryLocked()) {
                 params[0] = myHistoryItem;
@@ -1622,15 +1609,14 @@ public class BatteryStatsProxy {
                 Log.d(TAG, "Last sample (" + statTimeLast + ")" + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeLast));
 
                 Log.d(TAG, "Correcting all HistoryItem times by an offset of (" + offset + ")" + DateUtils.formatDuration(offset * 1000));
-                for (int i = 0; i < myStats.size(); i++) {
-                    myStats.get(i).setOffset(offset);
+                for (HistoryItem myStat : myStats) {
+                    myStat.setOffset(offset);
                 }
             }
         } catch (Exception e) {
             Log.e("TAG", "An exception occured in getHistory(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
             throw e;
         }
-
         return myStats;
     }
 
