@@ -16,44 +16,55 @@
 package com.asksven.android.system;
 
 import android.os.Build;
+
 /**
- * Handles android version detection
- * @author sven
+ * Handles android version detection with proper backwards compatibility older SDK Target Versions
  *
+ * @author sven
+ * @author pedronveloso@androidpt.com
  */
-public class AndroidVersion
-{
-	public static boolean isFroyo()
-	{
-		boolean bRet = false;
-		if (Build.VERSION.SDK_INT == Build.VERSION_CODES.FROYO)
-		{
-			bRet = true;
-		}
-		
-		return bRet;
-	}
+public class AndroidVersion {
+    public static boolean isFroyo() {
+        boolean bRet = false;
+        if (Build.VERSION.SDK_INT == 8) {
+            bRet = true;
+        }
 
-	public static boolean isGingerbread()
-	{
-		boolean bRet = false;
-		if (Build.VERSION.SDK_INT == Build.VERSION_CODES.GINGERBREAD)
-		{
-			bRet = true;
-		}
-		
-		return bRet;
-	}
+        return bRet;
+    }
 
-	public static boolean isIcs()
-	{
-		boolean bRet = false;
-		if (Build.VERSION.SDK_INT >= 14) // Build.VERSION_ICE_CREAM_SANDWICH
-		{
-			bRet = true;
-		}
-		
-		return bRet;
-	}
-	
+    public static boolean isGingerbread() {
+        boolean bRet = false;
+        // GINGERBREAD_MR1 = 10, GINGERBREAD = 9
+        if (Build.VERSION.SDK_INT == 9 || Build.VERSION.SDK_INT == 10) {
+            bRet = true;
+        }
+
+        return bRet;
+    }
+
+    public static boolean isIcs() {
+        boolean bRet = false;
+        if (Build.VERSION.SDK_INT == 14 || Build.VERSION.SDK_INT == 15) {
+            bRet = true;
+        }
+        return bRet;
+    }
+
+    public static boolean isIcsOrAbove() {
+        boolean bRet = false;
+        if (Build.VERSION.SDK_INT >= 14) {
+            bRet = true;
+        }
+        return bRet;
+    }
+
+    public static boolean isJellyBean() {
+        boolean bRet = false;
+        if (Build.VERSION.SDK_INT >= 16) {
+            bRet = true;
+        }
+        return bRet;
+    }
+
 }

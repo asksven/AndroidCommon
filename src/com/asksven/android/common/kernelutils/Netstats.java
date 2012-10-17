@@ -15,21 +15,16 @@
  */
 package com.asksven.android.common.kernelutils;
 
+import com.asksven.android.common.contrib.Util;
+import com.asksven.android.common.privateapiproxies.NetworkUsage;
+import com.asksven.android.common.utils.StringUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.StringTokenizer;
-
-import android.util.Log;
-
-import com.asksven.andoid.common.contrib.Util;
-import com.asksven.android.common.privateapiproxies.NetworkUsage;
-import com.asksven.android.common.shellutils.Exec;
-import com.asksven.android.common.shellutils.ExecResult;
-import com.asksven.android.common.utils.StringUtils;
 
 /**
  * Parses the content of /proc/net/xt_qtaguid/stats
- * instead of using the API functions NetworkStats stats = new NetworkStatsFactory().readNetworkStatsDetail(uid-here) because http://stackoverflow.com/questions/9080229/why-i-cant-read-proc-net-xt-qtaguid-stats-correctly-by-filereader-in-android-i                                  
+ * instead of using the API functions NetworkStats stats = new NetworkStatsFactory().readNetworkStatsDetail(uid-here) because http://stackoverflow.com/questions/9080229/why-i-cant-read-proc-net-xt-qtaguid-stats-correctly-by-filereader-in-android-i
  * format is:
  * idx iface acct_tag_hex uid_tag_int cnt_set rx_bytes rx_packets tx_bytes tx_packets rx_tcp_bytes rx_tcp_packets rx_udp_bytes rx_udp_packets rx_other_bytes rx_other_packets tx_tcp_bytes tx_tcp_packets tx_udp_bytes tx_udp_packets tx_other_bytes tx_other_packets
  * example data:
@@ -48,72 +43,70 @@ import com.asksven.android.common.utils.StringUtils;
  * 14 wlan0 0x0 10003 0 697215 713 84843 848 697215 713 0 0 0 0 84371 840 472 8 0 0
  * 15 wlan0 0x0 10003 1 1938719 2030 321314 2437 1938719 2030 0 0 0 0 321314 2437 0 0 0 0
  * value holder is Netstat
+ *
  * @author sven
  */
-public class Netstats
-{
-	static final String TAG = "AlarmsDumpsys";
-	static final String PERMISSION_DENIED = "su rights required to access alarms are not available / were not granted";
+public class Netstats {
+    static final String TAG = "AlarmsDumpsys";
+    static final String PERMISSION_DENIED = "su rights required to access alarms are not available / were not granted";
 
-	private static final String KEY_IDX = "idx";
-	private static final String KEY_IFACE = "iface";
-	private static final String KEY_UID = "uid_tag_int";
-	private static final String KEY_COUNTER_SET = "cnt_set";
-	private static final String KEY_TAG_HEX = "acct_tag_hex";
-	private static final String KEY_RX_BYTES = "rx_bytes";
-	private static final String KEY_RX_PACKETS = "rx_packets";
-	private static final String KEY_TX_BYTES = "tx_bytes";
-	private static final String KEY_TX_PACKETS = "tx_packets";
-	
+    private static final String KEY_IDX = "idx";
+    private static final String KEY_IFACE = "iface";
+    private static final String KEY_UID = "uid_tag_int";
+    private static final String KEY_COUNTER_SET = "cnt_set";
+    private static final String KEY_TAG_HEX = "acct_tag_hex";
+    private static final String KEY_RX_BYTES = "rx_bytes";
+    private static final String KEY_RX_PACKETS = "rx_packets";
+    private static final String KEY_TX_BYTES = "tx_bytes";
+    private static final String KEY_TX_PACKETS = "tx_packets";
 
-	/**
-	 * Returns a list of alarm value objects
-	 * @return
-	 * @throws Exception
-	 */
-	public static ArrayList<NetworkUsage> parseNetstats()
-	{
-		ArrayList<NetworkUsage> myStats = new ArrayList<NetworkUsage>();
+
+    /**
+     * Returns a list of alarm value objects
+     *
+     * @return
+     * @throws Exception
+     */
+    public static ArrayList<NetworkUsage> parseNetstats() {
+        ArrayList<NetworkUsage> myStats = new ArrayList<NetworkUsage>();
 //		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "cat /proc/net/xt_qtaguid/stats"});
-		ArrayList<String> res = Util.run("su", "cat /proc/net/xt_qtaguid/stats");
+        ArrayList<String> res = Util.run("su", "cat /proc/net/xt_qtaguid/stats");
 //		if (res.getSuccess())
-		if (res.size() != 0)
-		{
+        if (res.size() != 0) {
 //			String strRes = res.getResultLine(); 
-			if (true) //(!strRes.contains("Permission Denial"))
-			{
-				ArrayList<String> keys = new ArrayList<String>();
-				keys.add(KEY_IDX);
-				keys.add(KEY_IFACE);
-				keys.add(KEY_TAG_HEX);
-				keys.add(KEY_UID);
-				keys.add(KEY_COUNTER_SET);
-				keys.add(KEY_RX_BYTES);
-				keys.add(KEY_RX_PACKETS);
-				keys.add(KEY_TX_BYTES);
-				keys.add(KEY_TX_PACKETS);
-				
-				final ArrayList<String> values = new ArrayList<String>();
-				final HashMap<String, String> parsed = new HashMap<String, String>();
+            if (true) //(!strRes.contains("Permission Denial"))
+            {
+                ArrayList<String> keys = new ArrayList<String>();
+                keys.add(KEY_IDX);
+                keys.add(KEY_IFACE);
+                keys.add(KEY_TAG_HEX);
+                keys.add(KEY_UID);
+                keys.add(KEY_COUNTER_SET);
+                keys.add(KEY_RX_BYTES);
+                keys.add(KEY_RX_PACKETS);
+                keys.add(KEY_TX_BYTES);
+                keys.add(KEY_TX_PACKETS);
+
+                final ArrayList<String> values = new ArrayList<String>();
+                final HashMap<String, String> parsed = new HashMap<String, String>();
 
 //				ArrayList<String> myRes = res.getResult(); // getTestData();
 
-				
-				// process the file, starting on line 2
-				long totalBytes = 0;
-				for (int i=1; i < res.size(); i++)
-				{
-					String line = res.get(i);
-					StringUtils.splitLine(line, values);
-					StringUtils.parseLine(keys, values, parsed);
-					
-					//Netstat entry = new Netstat();
-					NetworkUsage entry = new NetworkUsage(
-							StringUtils.getParsedInt(parsed, KEY_UID),
-							parsed.get(KEY_IFACE),
-							StringUtils.getParsedLong(parsed, KEY_RX_BYTES),
-							StringUtils.getParsedLong(parsed, KEY_TX_BYTES));
-					
+
+                // process the file, starting on line 2
+                long totalBytes = 0;
+                for (int i = 1; i < res.size(); i++) {
+                    String line = res.get(i);
+                    StringUtils.splitLine(line, values);
+                    StringUtils.parseLine(keys, values, parsed);
+
+                    //Netstat entry = new Netstat();
+                    NetworkUsage entry = new NetworkUsage(
+                            StringUtils.getParsedInt(parsed, KEY_UID),
+                            parsed.get(KEY_IFACE),
+                            StringUtils.getParsedLong(parsed, KEY_RX_BYTES),
+                            StringUtils.getParsedLong(parsed, KEY_TX_BYTES));
+
 //					entry.iface = parsed.get(KEY_IFACE);
 //					entry.setUid(getParsedInt(parsed, KEY_UID));
 //					entry.set = getParsedInt(parsed, KEY_COUNTER_SET);
@@ -122,51 +115,47 @@ public class Netstats
 //					entry.rxPackets	= getParsedLong(parsed, KEY_RX_PACKETS);
 //					entry.txBytes 	= getParsedLong(parsed, KEY_TX_BYTES);
 //					entry.txPackets = getParsedLong(parsed, KEY_TX_PACKETS);
-					
-					myStats = addToStats(myStats, entry);
-					totalBytes += entry.getTotalBytes();
-				}
-				
-				// set the total so that we can calculate the ratio
-				for (int i = 0; i < myStats.size(); i++)
-				{
-					myStats.get(i).setTotal(totalBytes);
-				}
-				
-			}
-		}
-		
-		return myStats;
-	}
-	
-	
-	/**
-	 * Stats may be duplicate for one uid+iface so we sum them up
-	 * @param stats
-	 * @param entry
-	 * @return
-	 */
-	static ArrayList<NetworkUsage> addToStats(ArrayList<NetworkUsage> stats, NetworkUsage entry)
-	{
-		boolean merged = false;
-		for (int i=0; i < stats.size(); i++)
-		{
-			NetworkUsage current = stats.get(i);
-			
-			if ( (current.getuid() == entry.getuid()) && (current.getInterface().equals(entry.getInterface())) )
-			{
-				current.addBytesReceived(entry.getBytesReceived());
-				current.addBytesSent(entry.getBytesSent());
-				merged = true;
-				break;
-			}
-		}
-		
-		// if not summed up add normally
-		if (!merged)
-		{
-			stats.add(entry);
-		}
-		return stats;
-	}
+
+                    myStats = addToStats(myStats, entry);
+                    totalBytes += entry.getTotalBytes();
+                }
+
+                // set the total so that we can calculate the ratio
+                for (int i = 0; i < myStats.size(); i++) {
+                    myStats.get(i).setTotal(totalBytes);
+                }
+
+            }
+        }
+
+        return myStats;
+    }
+
+
+    /**
+     * Stats may be duplicate for one uid+iface so we sum them up
+     *
+     * @param stats
+     * @param entry
+     * @return
+     */
+    static ArrayList<NetworkUsage> addToStats(ArrayList<NetworkUsage> stats, NetworkUsage entry) {
+        boolean merged = false;
+        for (int i = 0; i < stats.size(); i++) {
+            NetworkUsage current = stats.get(i);
+
+            if ((current.getuid() == entry.getuid()) && (current.getInterface().equals(entry.getInterface()))) {
+                current.addBytesReceived(entry.getBytesReceived());
+                current.addBytesSent(entry.getBytesSent());
+                merged = true;
+                break;
+            }
+        }
+
+        // if not summed up add normally
+        if (!merged) {
+            stats.add(entry);
+        }
+        return stats;
+    }
 }
