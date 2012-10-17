@@ -15,46 +15,42 @@
  */
 package com.asksven.android.common.kernelutils;
 
-import java.util.ArrayList;
+import com.asksven.android.common.contrib.Util;
 
-import com.asksven.andoid.common.contrib.Util;
-import com.asksven.android.common.shellutils.Exec;
-import com.asksven.android.common.shellutils.ExecResult;
+import java.util.ArrayList;
 
 /**
  * This class provides methods for detecting if the phone is rooted
- * @author sven
  *
+ * @author sven
  */
-public class RootDetection
-{
-	
-	/**
-	 * Tests whether su can be executed.
-	 * @return 0 if 
-	 */
-	public static boolean hasSuRights()
-	{
-		return hasSuRights("ls /");
-	}
+public class RootDetection {
 
-	/**
-	 * Checks for su with a specific command
-	 * @param command
-	 * @return
-	 */
-	public static boolean hasSuRights(String command)
-	{
+    /**
+     * Tests whether su can be executed.
+     *
+     * @return 0 if
+     */
+    public static boolean hasSuRights() {
+        return hasSuRights("ls /");
+    }
+
+    /**
+     * Checks for su with a specific command
+     *
+     * @param command command to execute as su
+     * @return True if has su, else otherwise
+     */
+    public static boolean hasSuRights(String command) {
 //		ExecResult res = Exec.execPrint(new String[]{"su", "-c", command});
-		ArrayList<String> res = Util.run("su", command);
-		boolean bRet = false;
-		
-		if (res.size() != 0)
-		{
-			bRet = true;
-		}
-		
-		return bRet;
-	}
+        ArrayList<String> res = Util.run("su", command);
+        boolean bRet = false;
+
+        if (res.size() != 0) {
+            bRet = true;
+        }
+
+        return bRet;
+    }
 
 }

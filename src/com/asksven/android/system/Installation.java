@@ -24,47 +24,35 @@ import android.os.Build.VERSION;
 
 /**
  * @author sven
- * 
  */
-public class Installation
-{
-	public static boolean isInstalledOnSdCard(Context context)
-	{
+public class Installation {
+    public static boolean isInstalledOnSdCard(Context context) {
 
-		// check for API level 8 and higher
-		if (VERSION.SDK_INT > android.os.Build.VERSION_CODES.ECLAIR_MR1)
-		{
-			PackageManager pm = context.getPackageManager();
-			try
-			{
-				PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
-				ApplicationInfo ai = pi.applicationInfo;
-				return (ai.flags & ApplicationInfo.FLAG_EXTERNAL_STORAGE) == ApplicationInfo.FLAG_EXTERNAL_STORAGE;
-			}
-			catch (NameNotFoundException e)
-			{
-				// ignore
-			}
-		}
+        // check for API level 8 and higher
+        if (VERSION.SDK_INT > 7) {
+            PackageManager pm = context.getPackageManager();
+            try {
+                PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
+                ApplicationInfo ai = pi.applicationInfo;
+                return (ai.flags & ApplicationInfo.FLAG_EXTERNAL_STORAGE) == ApplicationInfo.FLAG_EXTERNAL_STORAGE;
+            } catch (NameNotFoundException e) {
+                // ignore
+            }
+        }
 
-		// check for API level 7 - check files dir
-		try
-		{
-			String filesDir = context.getFilesDir().getAbsolutePath();
-			if (filesDir.startsWith("/data/"))
-			{
-				return false;
-			} else if (filesDir.contains("/mnt/")
-					|| filesDir.contains("/sdcard/"))
-			{
-				return true;
-			}
-		}
-		catch (Throwable e)
-		{
-			// ignore
-		}
+        // check for API level 7 - check files dir
+        try {
+            String filesDir = context.getFilesDir().getAbsolutePath();
+            if (filesDir.startsWith("/data/")) {
+                return false;
+            } else if (filesDir.contains("/mnt/")
+                    || filesDir.contains("/sdcard/")) {
+                return true;
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
 
-		return false;
-	}
+        return false;
+    }
 }

@@ -22,21 +22,20 @@ import android.os.BatteryManager;
 
 /**
  * Helper to detect if charger is plugged
- * @author sven
  *
+ * @author sven
  */
-public class ChargerUtil
-{
-	/**
-	 * Returns true if the charger is currently connected
-	 * @param context
-	 * @return true if the charger is connected
-	 */
-	public static boolean isConnected(Context context)
-	{
-		// make a synchronous call
-		Intent intent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-		int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-		return plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB;
-	}
+public class ChargerUtil {
+    /**
+     * Returns true if the charger is currently connected
+     *
+     * @param context application context
+     * @return true if the charger is connected
+     */
+    public static boolean isConnected(Context context) {
+        // make a synchronous call
+        Intent intent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+        return plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB;
+    }
 }

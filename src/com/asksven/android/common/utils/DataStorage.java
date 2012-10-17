@@ -15,144 +15,111 @@
  */
 package com.asksven.android.common.utils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
+import java.io.*;
+
 /**
  * @author sven
- *
  */
-public class DataStorage
-{
-	/**
-	 * 
-	 * The logging TAG
-	 */
-	private static final String TAG = "DataStorage";
-	
-	public static boolean isExternalStorageWritable()
-	{
-		boolean mExternalStorageAvailable = false;
-		boolean mExternalStorageWriteable = false;
-		String state = Environment.getExternalStorageState();
+public class DataStorage {
+    /**
+     * The logging TAG
+     */
+    private static final String TAG = "DataStorage";
 
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-		    // We can read and write the media
-		    mExternalStorageAvailable = mExternalStorageWriteable = true;
-		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-		    // We can only read the media
-		    mExternalStorageAvailable = true;
-		    mExternalStorageWriteable = false;
-		} else {
-		    // Something else is wrong. It may be one of many other states, but all we need
-		    //  to know is we can neither read nor write
-		    mExternalStorageAvailable = mExternalStorageWriteable = false;
-		}
-		
-		return ( mExternalStorageAvailable && mExternalStorageWriteable );
-	}
-	
-	public static void LogToFile(String fileName, StackTraceElement[] stack)
-	{
-		LogToFile(fileName, "---- Begin Callstack ----");
-		for (int i = 0; i < stack.length; i++)
-		{
-			LogToFile(fileName, stack[i].toString());
-		}
-		LogToFile(fileName, "---- End Callstack ----");
-	}
-	
-	public static void LogToFile(String fileName, String strText)
-	{
-		
-		try
-    	{		
-			// open file for writing
-			File root = Environment.getExternalStorageDirectory();
-		    if (root.canWrite())
-		    {
-		    	File dumpFile = new File(root, fileName);
-		    	// append
-		        FileWriter fw = new FileWriter(dumpFile, true);
-		        BufferedWriter out = new BufferedWriter(fw);
-			  
-				// write header
-		        out.write(DateUtils.now() + " " + strText + "\n");
-						
-				// close file
-				out.close();
-		    }
-    	}
-    	catch (Exception e)
-    	{
-    		Log.e(TAG, "Exception: " + e.getMessage());
-    	}		
-	}
-	
-	public static boolean objectToFile(Context context, String fileName, Object serializableObject)
-	{
-		boolean bRet = true;
-		
-		 if (!(serializableObject instanceof java.io.Serializable))
-		 {
-			 Log.e(TAG, "The object is not serializable: " + fileName);
-		     return false;
-		 }
-		try
-		{
-			FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-			ObjectOutputStream os = new ObjectOutputStream(fos);
-			os.writeObject(serializableObject);
-			os.close();
-		}
-		catch (Exception e)
-		{
-			 Log.e(TAG, "An error occured while writing " + fileName + " " + e.getMessage());
+    public static boolean isExternalStorageWritable() {
+        boolean mExternalStorageAvailable = false;
+        boolean mExternalStorageWriteable = false;
+        String state = Environment.getExternalStorageState();
 
-			bRet = false;
-		}
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            // We can read and write the media
+            mExternalStorageAvailable = mExternalStorageWriteable = true;
+        } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            // We can only read the media
+            mExternalStorageAvailable = true;
+            mExternalStorageWriteable = false;
+        } else {
+            // Something else is wrong. It may be one of many other states, but all we need
+            //  to know is we can neither read nor write
+            mExternalStorageAvailable = mExternalStorageWriteable = false;
+        }
 
-		return bRet;
-	}
-	
-	public static Object fileToObject(Context context, String fileName)
-	{
-		FileInputStream fis;
-		Object myRet = null;
-		try
-		{
-			fis = context.openFileInput(fileName);
-			ObjectInputStream is = new ObjectInputStream(fis);
-			myRet = is.readObject();
-			is.close();
+        return (mExternalStorageAvailable && mExternalStorageWriteable);
+    }
 
-		}
-		catch (FileNotFoundException e)
-		{
-			myRet = null;
-		}
-		catch (IOException e)
-		{
-			myRet = null;
-		}
-		catch (ClassNotFoundException e)
-		{
-			myRet = null;
-		}
+    public static void LogToFile(String fileName, StackTraceElement[] stack) {
+        LogToFile(fileName, "---- Begin Callstack ----");
+        for (StackTraceElement aStack : stack) {
+            LogToFile(fileName, aStack.toString());
+        }
+        LogToFile(fileName, "---- End Callstack ----");
+    }
 
-		return myRet;
-	}
-	
+    public static void LogToFile(String fileName, String strText) {
+
+        try {
+            // open file for writing
+            File root = Environment.getExternalStorageDirectory();
+            if (root.canWrite()) {
+                File dumpFile = new File(root, fileName);
+                // append
+                FileWriter fw = new FileWriter(dumpFile, true);
+                BufferedWriter out = new BufferedWriter(fw);
+
+                // write header
+                out.write(DateUtils.now() + " " + strText + "\n");
+
+                // close file
+                out.close();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Exception: " + e.getMessage());
+        }
+    }
+
+    public static boolean objectToFile(Context context, String fileName, Object serializableObject) {
+        boolean bRet = true;
+
+        if (!(serializableObject instanceof java.io.Serializable)) {
+            Log.e(TAG, "The object is not serializable: " + fileName);
+            return false;
+        }
+        try {
+            FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+            ObjectOutputStream os = new ObjectOutputStream(fos);
+            os.writeObject(serializableObject);
+            os.close();
+        } catch (Exception e) {
+            Log.e(TAG, "An error occured while writing " + fileName + " " + e.getMessage());
+
+            bRet = false;
+        }
+
+        return bRet;
+    }
+
+    public static Object fileToObject(Context context, String fileName) {
+        FileInputStream fis;
+        Object myRet = null;
+        try {
+            fis = context.openFileInput(fileName);
+            ObjectInputStream is = new ObjectInputStream(fis);
+            myRet = is.readObject();
+            is.close();
+
+        } catch (FileNotFoundException e) {
+            myRet = null;
+        } catch (IOException e) {
+            myRet = null;
+        } catch (ClassNotFoundException e) {
+            myRet = null;
+        }
+
+        return myRet;
+    }
+
 }

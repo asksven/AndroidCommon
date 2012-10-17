@@ -1,194 +1,158 @@
 /**
- * 
+ *
  */
 package com.asksven.android.common.kernelutils;
+
+import android.util.Log;
+import com.asksven.android.common.contrib.Util;
+import com.asksven.android.common.privateapiproxies.Alarm;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.util.Log;
-
-import com.asksven.andoid.common.contrib.Util;
-import com.asksven.android.common.privateapiproxies.Alarm;
-import com.asksven.android.common.shellutils.Exec;
-import com.asksven.android.common.shellutils.ExecResult;
 
 /**
  * Parses the content of 'dumpsys alarm'
  * processes the result of 'dumpsys alarm' as explained in KB article
  * https://github.com/asksven/BetterBatteryStats-Knowledge-Base/wiki/AlarmManager
+ *
  * @author sven
  */
-public class AlarmsDumpsys
-{
-	static final String TAG = "AlarmsDumpsys";
-	static final String PERMISSION_DENIED = "su rights required to access alarms are not available / were not granted";
+public class AlarmsDumpsys {
+    static final String TAG = "AlarmsDumpsys";
+    static final String PERMISSION_DENIED = "su rights required to access alarms are not available / were not granted";
 
-	/**
-	 * Returns a list of alarm value objects
-	 * @return
-	 * @throws Exception
-	 */
-	public static ArrayList<Alarm> getAlarms()
-	{
-		ArrayList<Alarm> myAlarms = null;
-		long nTotalCount = 0;
-		// ExecResult res = Exec.execPrint(new String[]{"/system/bin/su", "-c", "/system/bin/dumpsys alarm"});
+    /**
+     * @return list of alarm value objects
+     */
+    public static ArrayList<Alarm> getAlarms() {
+        ArrayList<Alarm> myAlarms = null;
+        long nTotalCount = 0;
+        // ExecResult res = Exec.execPrint(new String[]{"/system/bin/su", "-c", "/system/bin/dumpsys alarm"});
 //		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "dumpsys alarm"});
-		ArrayList<String> res = Util.run("su", "dumpsys alarm");
+        ArrayList<String> res = Util.run("su", "dumpsys alarm");
 //		if (res.getSuccess())
-		if (res.size() != 0)
+        if (res.size() != 0)
 
-		{
+        {
 //			String strRes = res.getResultLine(); 
-			if (true) //strRes.contains("Permission Denial"))
-			{
-				Pattern begin = Pattern.compile("Alarm Stats");
-				boolean bParsing = false;
+            if (true) //strRes.contains("Permission Denial"))
+            {
+                Pattern begin = Pattern.compile("Alarm Stats");
+                boolean bParsing = false;
 //				ArrayList<String> myRes = res.getResult(); // getTestData();
 
-				// we are looking for multiline entries in the format
-				// ' <package name>
-				// '  <time> ms running, <number> wakeups
-				// '  <number> alarms: act=<intent name> flg=<flag> (repeating 1..n times)
-				Pattern packagePattern 	= Pattern.compile("\\s\\s([a-z][a-zA-Z0-9\\.]+)");
-				Pattern timePattern 	= Pattern.compile("\\s\\s(\\d+)ms running, (\\d+) wakeups");
-				Pattern numberPattern	= Pattern.compile("\\s\\s(\\d+) alarms: act=([A-Za-z0-9\\-\\_\\.]+)");
-				
-				myAlarms = new ArrayList<Alarm>();
-				Alarm myAlarm = null;
-				
-				// process the file
-				for (int i=0; i < res.size(); i++)
-				{
-					// skip till start mark found
-					if (bParsing)
-					{
-						// parse the alarms by block 
-						String line = res.get(i);
-						Matcher mPackage 	= packagePattern.matcher(line);
-						Matcher mTime 		= timePattern.matcher(line);
-						Matcher mNumber 	= numberPattern.matcher(line);
-						
-						// first line
-						if ( mPackage.find() )
-						{
-							try
-							{
-								// if there was a previous Alarm populated store it
-								if (myAlarm != null)
-								{
-									myAlarms.add(myAlarm);
-								}
-								// we are interested in the first token 
-								String strPackageName = mPackage.group(1);
-								myAlarm = new Alarm(strPackageName);
-							}
-							catch (Exception e)
-							{
-								Log.e(TAG, "Error: parsing error in package line (" + line + ")");
-							}
-						}
+                // we are looking for multiline entries in the format
+                // ' <package name>
+                // '  <time> ms running, <number> wakeups
+                // '  <number> alarms: act=<intent name> flg=<flag> (repeating 1..n times)
+                Pattern packagePattern = Pattern.compile("\\s\\s([a-z][a-zA-Z0-9\\.]+)");
+                Pattern timePattern = Pattern.compile("\\s\\s(\\d+)ms running, (\\d+) wakeups");
+                Pattern numberPattern = Pattern.compile("\\s\\s(\\d+) alarms: act=([A-Za-z0-9\\-\\_\\.]+)");
 
-						// second line
-						if ( mTime.find() )
-						{
-							try
-							{
-								// we are interested in the second token
-								String strWakeups = mTime.group(2);
-								long nWakeups = Long.parseLong(strWakeups);
-	
-								if (myAlarm == null)
-								{
-									Log.e(TAG, "Error: time line found but without alarm object (" + line + ")");
-								}
-								else
-								{
-									myAlarm.setWakeups(nWakeups);
-									nTotalCount += nWakeups;
-								}
-							}
-							catch (Exception e)
-							{
-								Log.e(TAG, "Error: parsing error in time line (" + line + ")");
-							}
-						}
+                myAlarms = new ArrayList<Alarm>();
+                Alarm myAlarm = null;
 
-						// third line (and following till next package
-						if ( mNumber.find() )
-						{
-							try
-							{
-								// we are interested in the first and second token
-								String strNumber = mNumber.group(1);
-								String strIntent = mNumber.group(2);
-								long nNumber = Long.parseLong(strNumber);
-	
-								if (myAlarm == null)
-								{
-									Log.e(TAG, "Error: number line found but without alarm object (" + line + ")");
-								}
-								else
-								{
-									myAlarm.addItem(nNumber, strIntent);
-								}
-							}
-							catch (Exception e)
-							{
-								Log.e(TAG, "Error: parsing error in number line (" + line + ")");
-							}
-						}
-					}
-					else
-					{
-						// look for beginning
-						Matcher line = begin.matcher(res.get(i));
-						if (line.find())
-						{
-							bParsing = true;
-						}
-					}
-				}
-				// the last populated alarms has not been added to the list yet
-				myAlarms.add(myAlarm);
-				
-			}
-			else
-			{
-				myAlarms = new ArrayList<Alarm>();
-				Alarm myAlarm = new Alarm(PERMISSION_DENIED);
-				myAlarm.setWakeups(1);
-				myAlarms.add(myAlarm);
-			}
-		}
-		else
-		{
-			myAlarms = new ArrayList<Alarm>();
-			Alarm myAlarm = new Alarm(PERMISSION_DENIED);
-			myAlarm.setWakeups(1);
-			myAlarms.add(myAlarm);
+                // process the file
+                for (String re : res) {
+                    // skip till start mark found
+                    if (bParsing) {
+                        // parse the alarms by block
+                        Matcher mPackage = packagePattern.matcher(re);
+                        Matcher mTime = timePattern.matcher(re);
+                        Matcher mNumber = numberPattern.matcher(re);
 
-		}
-		
-		
-		for (int i=0; i < myAlarms.size(); i++)
-		{
-			myAlarms.get(i).setTotalCount(nTotalCount);
-		}
-		return myAlarms;
-	}
-	
-	static ArrayList<String> getTestData()
-	{
-		ArrayList<String> myRet = new ArrayList<String>()
-				{{
-					add("Alarm Stats:");
-					add("  com.google.android.gsf");
-					add("  8417ms running, 204 wakeups");
-					add("  17 alarms: act=com.google.android.intent.action.GTALK_RECONNECT flg=0x4");
-					add("  187 alarms: flg=0x4");
+                        // first line
+                        if (mPackage.find()) {
+                            try {
+                                // if there was a previous Alarm populated store it
+                                if (myAlarm != null) {
+                                    myAlarms.add(myAlarm);
+                                }
+                                // we are interested in the first token
+                                String strPackageName = mPackage.group(1);
+                                myAlarm = new Alarm(strPackageName);
+                            } catch (Exception e) {
+                                Log.e(TAG, "Error: parsing error in package line (" + re + ")");
+                            }
+                        }
+
+                        // second line
+                        if (mTime.find()) {
+                            try {
+                                // we are interested in the second token
+                                String strWakeups = mTime.group(2);
+                                long nWakeups = Long.parseLong(strWakeups);
+
+                                if (myAlarm == null) {
+                                    Log.e(TAG, "Error: time line found but without alarm object (" + re + ")");
+                                } else {
+                                    myAlarm.setWakeups(nWakeups);
+                                    nTotalCount += nWakeups;
+                                }
+                            } catch (Exception e) {
+                                Log.e(TAG, "Error: parsing error in time line (" + re + ")");
+                            }
+                        }
+
+                        // third line (and following till next package
+                        if (mNumber.find()) {
+                            try {
+                                // we are interested in the first and second token
+                                String strNumber = mNumber.group(1);
+                                String strIntent = mNumber.group(2);
+                                long nNumber = Long.parseLong(strNumber);
+
+                                if (myAlarm == null) {
+                                    Log.e(TAG, "Error: number line found but without alarm object (" + re + ")");
+                                } else {
+                                    myAlarm.addItem(nNumber, strIntent);
+                                }
+                            } catch (Exception e) {
+                                Log.e(TAG, "Error: parsing error in number line (" + re + ")");
+                            }
+                        }
+                    } else {
+                        // look for beginning
+                        Matcher line = begin.matcher(re);
+                        if (line.find()) {
+                            bParsing = true;
+                        }
+                    }
+                }
+                // the last populated alarms has not been added to the list yet
+                myAlarms.add(myAlarm);
+
+            } else {
+                myAlarms = new ArrayList<Alarm>();
+                Alarm myAlarm = new Alarm(PERMISSION_DENIED);
+                myAlarm.setWakeups(1);
+                myAlarms.add(myAlarm);
+            }
+        } else {
+            myAlarms = new ArrayList<Alarm>();
+            Alarm myAlarm = new Alarm(PERMISSION_DENIED);
+            myAlarm.setWakeups(1);
+            myAlarms.add(myAlarm);
+
+        }
+
+
+        for (Alarm myAlarm : myAlarms) {
+            myAlarm.setTotalCount(nTotalCount);
+        }
+        return myAlarms;
+    }
+
+    static ArrayList<String> getTestData() {
+
+        return new ArrayList<String>() {{
+            add("Alarm Stats:");
+            add("  com.google.android.gsf");
+            add("  8417ms running, 204 wakeups");
+            add("  17 alarms: act=com.google.android.intent.action.GTALK_RECONNECT flg=0x4");
+            add("  187 alarms: flg=0x4");
 //						  com.anod.calendar
 //						    311ms running, 0 wakeups
 //						    4 alarms: act=android.appwidget.action.APPWIDGET_UPDATE dat=com.anod.calendar://widget/id/45 flg=0x4
@@ -228,11 +192,9 @@ public class AlarmsDumpsys
 //						  com.android.deskclock
 //						    1219ms running, 4 wakeups
 //						    4 alarms: act=com.android.deskclock.ALARM_ALERT flg=0x4
-						add("  com.carl.trafficcounter");
-						add("  446486ms running, 5584 wakeups");
-						add("  5584 alarms: act=com.carl.trafficcounter.UPDATE_RUN flg=0x4");
-				}};
-
-		return myRet;
-	}
+            add("  com.carl.trafficcounter");
+            add("  446486ms running, 5584 wakeups");
+            add("  5584 alarms: act=com.carl.trafficcounter.UPDATE_RUN flg=0x4");
+        }};
+    }
 }

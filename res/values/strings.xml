@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World!</string>
     <string name="app_name">AndroidCommon</string>
+    <string name="no_superuser_perms">su rights required to access alarms are not available / were not granted</string>
 </resources>
