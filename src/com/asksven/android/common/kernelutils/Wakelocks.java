@@ -15,6 +15,7 @@ import java.util.Map;
 import com.asksven.andoid.common.CommonLogSettings;
 import com.asksven.andoid.common.contrib.Util;
 import com.asksven.android.common.privateapiproxies.NetworkUsage;
+import com.asksven.android.common.privateapiproxies.StatElement;
 import com.asksven.android.common.shellutils.Exec;
 import com.asksven.android.common.shellutils.ExecResult;
 import com.asksven.android.common.utils.StringUtils;
@@ -35,11 +36,11 @@ public class Wakelocks
 {
     private final static String TAG ="Wakelocks";
     
-    public static ArrayList<NativeKernelWakelock> parseProcWakelocks(Context context)
+    public static ArrayList<StatElement> parseProcWakelocks(Context context)
     {
        	String filePath = "/proc/wakelocks";
     	String delimiter = String.valueOf('\t');
-    	ArrayList<NativeKernelWakelock> myRet = new ArrayList<NativeKernelWakelock>();
+    	ArrayList<StatElement> myRet = new ArrayList<StatElement>();
     	// format 
     	// [name, count, expire_count, wake_count, active_since, total_time, sleep_time, max_time, last_change]
     	ArrayList<String[]> rows = parseDelimitedFile(filePath, delimiter);

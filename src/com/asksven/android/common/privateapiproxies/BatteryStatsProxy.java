@@ -1180,7 +1180,7 @@ public class BatteryStatsProxy
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public ArrayList<Wakelock> getWakelockStats(Context context, int iWakeType, int iStatType, int iWlPctRef) throws Exception
+	public ArrayList<StatElement> getWakelockStats(Context context, int iWakeType, int iStatType, int iWlPctRef) throws Exception
 	{
 		// type checks
 		boolean validTypes = (BatteryStatsTypes.assertValidWakeType(iWakeType)
@@ -1192,7 +1192,7 @@ public class BatteryStatsProxy
 			throw new Exception("Invalid WakeType of StatType");
 		}
 		
-		ArrayList<Wakelock> myStats = new ArrayList<Wakelock>();
+		ArrayList<StatElement> myStats = new ArrayList<StatElement>();
 		
 		this.collectUidStats();
 		if (m_uidStats != null)
@@ -1493,7 +1493,7 @@ public class BatteryStatsProxy
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public ArrayList<Process> getProcessStats(Context context, int iStatType) throws Exception
+	public ArrayList<StatElement> getProcessStats(Context context, int iStatType) throws Exception
 	{
 		// type checks
 		boolean validTypes = BatteryStatsTypes.assertValidStatType(iStatType);
@@ -1503,7 +1503,7 @@ public class BatteryStatsProxy
 			throw new Exception("Invalid StatType");
 		}
 		
-		ArrayList<Process> myStats = new ArrayList<Process>();
+		ArrayList<StatElement> myStats = new ArrayList<StatElement>();
 		
 		this.collectUidStats();
 		if (m_uidStats != null)

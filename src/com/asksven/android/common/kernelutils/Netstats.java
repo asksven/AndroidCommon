@@ -23,6 +23,7 @@ import android.util.Log;
 
 import com.asksven.andoid.common.contrib.Util;
 import com.asksven.android.common.privateapiproxies.NetworkUsage;
+import com.asksven.android.common.privateapiproxies.StatElement;
 import com.asksven.android.common.shellutils.Exec;
 import com.asksven.android.common.shellutils.ExecResult;
 import com.asksven.android.common.utils.StringUtils;
@@ -71,9 +72,9 @@ public class Netstats
 	 * @return
 	 * @throws Exception
 	 */
-	public static ArrayList<NetworkUsage> parseNetstats()
+	public static ArrayList<StatElement> parseNetstats()
 	{
-		ArrayList<NetworkUsage> myStats = new ArrayList<NetworkUsage>();
+		ArrayList<StatElement> myStats = new ArrayList<StatElement>();
 //		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "cat /proc/net/xt_qtaguid/stats"});
 		ArrayList<String> res = Util.run("su", "cat /proc/net/xt_qtaguid/stats");
 //		if (res.getSuccess())
@@ -146,12 +147,12 @@ public class Netstats
 	 * @param entry
 	 * @return
 	 */
-	static ArrayList<NetworkUsage> addToStats(ArrayList<NetworkUsage> stats, NetworkUsage entry)
+	static ArrayList<StatElement> addToStats(ArrayList<StatElement> stats, NetworkUsage entry)
 	{
 		boolean merged = false;
 		for (int i=0; i < stats.size(); i++)
 		{
-			NetworkUsage current = stats.get(i);
+			NetworkUsage current = (NetworkUsage) stats.get(i);
 			
 			if ( (current.getuid() == entry.getuid()) && (current.getInterface().equals(entry.getInterface())) )
 			{

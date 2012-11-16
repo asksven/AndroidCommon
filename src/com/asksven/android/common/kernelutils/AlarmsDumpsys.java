@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.asksven.andoid.common.contrib.Util;
 import com.asksven.android.common.privateapiproxies.Alarm;
+import com.asksven.android.common.privateapiproxies.StatElement;
 import com.asksven.android.common.shellutils.Exec;
 import com.asksven.android.common.shellutils.ExecResult;
 
@@ -30,9 +31,9 @@ public class AlarmsDumpsys
 	 * @return
 	 * @throws Exception
 	 */
-	public static ArrayList<Alarm> getAlarms()
+	public static ArrayList<StatElement> getAlarms()
 	{
-		ArrayList<Alarm> myAlarms = null;
+		ArrayList<StatElement> myAlarms = null;
 		long nTotalCount = 0;
 		// ExecResult res = Exec.execPrint(new String[]{"/system/bin/su", "-c", "/system/bin/dumpsys alarm"});
 //		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "dumpsys alarm"});
@@ -56,7 +57,7 @@ public class AlarmsDumpsys
 				Pattern timePattern 	= Pattern.compile("\\s\\s(\\d+)ms running, (\\d+) wakeups");
 				Pattern numberPattern	= Pattern.compile("\\s\\s(\\d+) alarms: act=([A-Za-z0-9\\-\\_\\.]+)");
 				
-				myAlarms = new ArrayList<Alarm>();
+				myAlarms = new ArrayList<StatElement>();
 				Alarm myAlarm = null;
 				
 				// process the file
@@ -157,7 +158,7 @@ public class AlarmsDumpsys
 			}
 			else
 			{
-				myAlarms = new ArrayList<Alarm>();
+				myAlarms = new ArrayList<StatElement>();
 				Alarm myAlarm = new Alarm(PERMISSION_DENIED);
 				myAlarm.setWakeups(1);
 				myAlarms.add(myAlarm);
@@ -165,7 +166,7 @@ public class AlarmsDumpsys
 		}
 		else
 		{
-			myAlarms = new ArrayList<Alarm>();
+			myAlarms = new ArrayList<StatElement>();
 			Alarm myAlarm = new Alarm(PERMISSION_DENIED);
 			myAlarm.setWakeups(1);
 			myAlarms.add(myAlarm);
@@ -175,7 +176,7 @@ public class AlarmsDumpsys
 		
 		for (int i=0; i < myAlarms.size(); i++)
 		{
-			myAlarms.get(i).setTotalCount(nTotalCount);
+			((Alarm)myAlarms.get(i)).setTotalCount(nTotalCount);
 		}
 		return myAlarms;
 	}
