@@ -122,6 +122,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 						{
 							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
 						}
+						break;
 					}
 				}
 				catch (ClassCastException e)

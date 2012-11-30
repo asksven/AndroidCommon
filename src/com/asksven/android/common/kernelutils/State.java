@@ -135,6 +135,7 @@ public class State extends StatElement implements Comparable<State>, Serializabl
 						{
 							Log.e(TAG, "substractFromRef generated negative values (" + this.m_duration + " - " + myRef.m_duration + ")");
 						}
+						break;
 					}
 				}
 				catch (ClassCastException e)

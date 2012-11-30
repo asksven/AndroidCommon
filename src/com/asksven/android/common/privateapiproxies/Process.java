@@ -95,6 +95,7 @@ public class Process extends StatElement implements Comparable<Process>, Seriali
 						{
 							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
 						}
+						break;
 					}
 				}
 				catch (ClassCastException e)

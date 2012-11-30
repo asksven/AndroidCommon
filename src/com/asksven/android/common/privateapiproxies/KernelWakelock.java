@@ -89,6 +89,7 @@ public class KernelWakelock extends StatElement implements Comparable<KernelWake
 						{
 							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
 						}
+						break;
 					}
 				}
 				catch (ClassCastException e)

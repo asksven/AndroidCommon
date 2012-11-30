@@ -77,11 +77,9 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 					Misc myRef = (Misc) myList.get(i);
 					if ( (this.getName().equals(myRef.getName())) && (this.getuid() == myRef.getuid()) )
 					{
-//						if (this.getName().equals("Deep Sleep"))
-//						{
-							Log.d(TAG, "Substracting " + myRef.getName() + " " + myRef.getVals()
-									+ " from " + this.getName() + " " + this.getVals());
-//						}
+//						Log.d(TAG, "Substracting " + myRef.getName() + " " + myRef.getVals()
+//								+ " from " + this.getName() + " " + this.getVals());
+						
 						this.m_timeOn		-= myRef.getTimeOn();
 						this.m_timeRunning	-= myRef.getTimeRunning();
 						
@@ -95,6 +93,7 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 						{
 							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
 						}
+						break;
 					}
 				}
 				catch (ClassCastException e)

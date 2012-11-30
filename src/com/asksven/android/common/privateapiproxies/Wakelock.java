@@ -101,6 +101,7 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 						{
 							Log.e(TAG, "substractFromRef generated negative values (" + this.toString() + " - " + myRef.toString() + ")");
 						}
+						break;
 					}
 				}
 				catch (ClassCastException e)
