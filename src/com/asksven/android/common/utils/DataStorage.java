@@ -101,7 +101,7 @@ public class DataStorage
     	}		
 	}
 	
-	public static boolean objectToFile(Context context, String fileName, Object serializableObject)
+	public static synchronized boolean objectToFile(Context context, String fileName, Object serializableObject)
 	{
 		boolean bRet = true;
 		
@@ -127,7 +127,7 @@ public class DataStorage
 		return bRet;
 	}
 	
-	public static Object fileToObject(Context context, String fileName)
+	public static synchronized Object fileToObject(Context context, String fileName)
 	{
 		FileInputStream fis;
 		Object myRet = null;
