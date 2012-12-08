@@ -62,8 +62,20 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	{
 		m_strPackageName = strName;
 		m_items = new ArrayList<AlarmItem>();
+		
 	}
 	
+	public Alarm clone()
+	{
+		Alarm clone = new Alarm(m_strPackageName);
+		clone.setWakeups(getWakeups());
+		clone.setTotalCount(m_nTotalCount);
+		for (int i=0; i < m_items.size(); i++)
+		{
+			clone.m_items.add(m_items.get(i).clone());
+		}
+		return clone;
+	}
 	/**
 	 * Store the number of wakeups 
 	 * @param nCount
@@ -265,6 +277,11 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 		long m_nNumber;
 		String m_strIntent;
 		
+		public AlarmItem clone()
+		{
+			AlarmItem clone = new AlarmItem(m_nNumber, m_strIntent);
+			return clone;
+		}
 		/**
 		 * Default cctor
 		 * @param nCount
@@ -319,7 +336,6 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 						if (this.getIntent().equals(myRef.getIntent()))
 						{
 							// process main values
-							Log.i(TAG, "Substracting " + myRef.toString() + " from " + this.toString());
 							this.m_nNumber		-= myRef.getCount();
 							Log.i(TAG, "Result: " + this.toString());
 						}

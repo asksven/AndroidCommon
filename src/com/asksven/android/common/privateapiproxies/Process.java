@@ -70,6 +70,12 @@ public class Process extends StatElement implements Comparable<Process>, Seriali
 		m_systemTime	= systemTime;
 		m_starts		= starts;
 	}
+	
+	public Process clone()
+	{
+		Process clone = new Process(m_name, m_userTime, m_systemTime, m_starts);
+		return clone;
+	}
 
 	/**
 	 * Substracts the values from a previous object

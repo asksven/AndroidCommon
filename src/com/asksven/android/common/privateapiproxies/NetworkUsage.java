@@ -66,6 +66,12 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 		m_bytesReceived	= bytesReceived;
 		m_bytesSent		= bytesSent;
 	}
+	
+	public NetworkUsage clone()
+	{
+		NetworkUsage clone = new NetworkUsage(getuid(), m_iface, m_bytesReceived, m_bytesSent);
+		return clone;
+	}
 
 	/**
 	 * 

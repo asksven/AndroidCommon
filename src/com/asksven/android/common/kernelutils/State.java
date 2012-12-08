@@ -50,6 +50,11 @@ public class State extends StatElement implements Comparable<State>, Serializabl
     	m_duration 	= duration;
     }
     
+    public State clone()
+    {
+    	State clone = new State(m_freq, m_duration);
+    	return clone;
+    }
     public String getName()
     {
     	String ret = formatFreq(m_freq);

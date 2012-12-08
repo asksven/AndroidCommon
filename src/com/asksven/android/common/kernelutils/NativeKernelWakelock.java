@@ -122,6 +122,13 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 		m_lastChange	= last_change;
 		setTotal(time);
 	}
+	
+	public NativeKernelWakelock clone()
+	{
+		NativeKernelWakelock clone = new NativeKernelWakelock(m_name, m_details, m_count, m_expireCount, m_wakeCount, m_activeSince, m_ttlTime,
+				m_sleepTime, m_maxTime, m_lastChange, getTotal());
+		return clone;
+	}
 
 	/**
 	 * Substracts the values from a previous object

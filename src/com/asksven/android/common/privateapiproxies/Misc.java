@@ -59,6 +59,12 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 		m_timeOn		= timeOn;
 		m_timeRunning	= timeRunning;
 	}
+	
+	public Misc clone()
+	{
+		Misc clone = new Misc(m_name, m_timeOn, m_timeRunning);
+		return clone;
+	}
 
 	/**
 	 * Substracts the values from a previous object

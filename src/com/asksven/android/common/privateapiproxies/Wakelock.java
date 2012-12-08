@@ -74,6 +74,12 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 		setTotal(time);
 		m_count		= count;
 	}
+	
+	public Wakelock clone()
+	{
+		Wakelock clone = new Wakelock(m_wakeType, m_name, m_duration, getTotal(), m_count);
+		return clone;
+	}
 
 	/**
 	 * Substracts the values from a previous object
