@@ -17,10 +17,12 @@ package com.asksven.android.common.kernelutils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import android.util.Log;
 
+import com.asksven.andoid.common.contrib.Shell;
 import com.asksven.andoid.common.contrib.Util;
 import com.asksven.android.common.privateapiproxies.NetworkUsage;
 import com.asksven.android.common.privateapiproxies.StatElement;
@@ -76,13 +78,14 @@ public class Netstats
 	{
 		ArrayList<StatElement> myStats = new ArrayList<StatElement>();
 //		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "cat /proc/net/xt_qtaguid/stats"});
-		ArrayList<String> res = Util.run("su", "cat /proc/net/xt_qtaguid/stats");
+		List<String> res = Shell.SU.run("cat /proc/net/xt_qtaguid/stats");
+				//Util.run("su", "cat /proc/net/xt_qtaguid/stats");
 //		if (res.getSuccess())
 		if (res.size() != 0)
 		{
 //			String strRes = res.getResultLine(); 
 			if (true) //(!strRes.contains("Permission Denial"))
-			{
+			{	
 				ArrayList<String> keys = new ArrayList<String>();
 				keys.add(KEY_IDX);
 				keys.add(KEY_IFACE);
