@@ -900,6 +900,50 @@ public class BatteryStatsProxy
 	
 	}
 
+	/**
+     * Returns the time in microseconds the screen has been running with the given brightness
+     */
+    public Long getScreenBrightnessTime(int brightness, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[3];
+          paramTypes[0]= int.class;
+          paramTypes[1]= long.class;
+          paramTypes[2]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getScreenBrightnessTime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[3];
+          params[0]= new Integer(brightness);
+          params[1]= new Long(batteryRealtime);
+          params[2]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+          Log.i("TAG", "getScreenBrightnessTime with params " + params[0] + ", " + params[1] + "and " + params[2] + " returned " + ret);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
+        }
+
+        return ret;
+
+	
+	}
+
     /**
      * Returns the total, last, or current audio on time in microseconds.
      *

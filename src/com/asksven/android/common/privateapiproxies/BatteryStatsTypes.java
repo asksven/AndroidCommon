@@ -57,6 +57,16 @@ public class BatteryStatsTypes
     public static final int SIGNAL_STRENGTH_GREAT = 4;
     
     /**
+     * Constants for screen brightness
+     */
+
+    public static final int SCREEN_BRIGHTNESS_DARK = 0;
+    public static final int SCREEN_BRIGHTNESS_DIM = 1;
+	public static final int SCREEN_BRIGHTNESS_MEDIUM = 2;
+	public static final int SCREEN_BRIGHTNESS_LIGHT = 3;
+	public static final int SCREEN_BRIGHTNESS_BRIGHT = 4;
+	
+    /**
      * Enum of valid wakelock types
      */
     public static final boolean assertValidWakeType(int iWakeType)
