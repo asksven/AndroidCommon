@@ -57,10 +57,10 @@ public class Shell {
 			// check if we're running in the main thread, and if so, crash if we're in debug mode,
 			// to let the developer know attention is needed here.
 			
-//			if (Looper.myLooper() == Looper.getMainLooper()) {
-//				Debug.log("Application attempted to run a shell command from the main thread");
-//				throw new ShellOnMainThreadException();
-//			}
+			if (Looper.myLooper() == Looper.getMainLooper()) {
+				Debug.log("Application attempted to run a shell command from the main thread");
+				throw new ShellOnMainThreadException();
+			}
 				
 			Debug.log(String.format("[%s%%] START", shell.toUpperCase()));			
 	
