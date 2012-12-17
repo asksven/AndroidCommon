@@ -127,6 +127,10 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 	{
 		NativeKernelWakelock clone = new NativeKernelWakelock(m_name, m_details, m_count, m_expireCount, m_wakeCount, m_activeSince, m_ttlTime,
 				m_sleepTime, m_maxTime, m_lastChange, getTotal());
+		clone.m_icon = m_icon;
+		clone.m_uidInfo = m_uidInfo;
+		clone.setUid(getuid());
+
 		return clone;
 	}
 

@@ -78,6 +78,10 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 	public Wakelock clone()
 	{
 		Wakelock clone = new Wakelock(m_wakeType, m_name, m_duration, getTotal(), m_count);
+		clone.m_icon = m_icon;
+		clone.m_uidInfo = m_uidInfo;
+		clone.setUid(getuid());
+
 		return clone;
 	}
 
