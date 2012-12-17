@@ -4,11 +4,13 @@
 package com.asksven.android.common.kernelutils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.util.Log;
 
+import com.asksven.andoid.common.contrib.Shell;
 import com.asksven.andoid.common.contrib.Util;
 import com.asksven.android.common.privateapiproxies.Alarm;
 import com.asksven.android.common.privateapiproxies.StatElement;
@@ -37,7 +39,7 @@ public class AlarmsDumpsys
 		long nTotalCount = 0;
 		// ExecResult res = Exec.execPrint(new String[]{"/system/bin/su", "-c", "/system/bin/dumpsys alarm"});
 //		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "dumpsys alarm"});
-		ArrayList<String> res = Util.run("su", "dumpsys alarm");
+		List<String> res = Shell.SU.run("dumpsys alarm");
 //		if (res.getSuccess())
 		if (res.size() != 0)
 
