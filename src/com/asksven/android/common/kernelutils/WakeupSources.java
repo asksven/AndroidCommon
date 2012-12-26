@@ -32,18 +32,20 @@ import android.util.Log;
  * @author sven
  *
  */
-public class Wakelocks
+public class WakeupSources extends Wakelocks
 {
-    private final static String TAG ="Wakelocks";
-    private static String FILE_PATH = "/proc/wakelocks";
+    private final static String TAG ="WakeupSources";
+    private static String FILE_PATH = "/sys/kernel/debug/wakeup_sources";
     
-    public static ArrayList<StatElement> parseProcWakelocks(Context context)
+    public static ArrayList<StatElement> parseWakeupSources(Context context)
     {
-       	Log.i(TAG, "Parsing " + FILE_PATH);
+    	Log.i(TAG, "Parsing " + FILE_PATH);
+       	
     	String delimiter = String.valueOf('\t');
+    	delimiter = delimiter + "+";
     	ArrayList<StatElement> myRet = new ArrayList<StatElement>();
     	// format 
-    	// [name, count, expire_count, wake_count, active_since, total_time, sleep_time, max_time, last_change]
+    	// new [name	active_count	event_count		wakeup_count	expire_count	active_since	total_time	max_time	last_change	prevent_suspend_time]
     	ArrayList<String[]> rows = parseDelimitedFile(FILE_PATH, delimiter);
 
     	long msSinceBoot = SystemClock.elapsedRealtime();
@@ -51,7 +53,6 @@ public class Wakelocks
 		// list the running processes
 		ActivityManager actvityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 		List<RunningAppProcessInfo> procInfos = actvityManager.getRunningAppProcesses();
-		PackageManager pack=context.getPackageManager();
 
     	// start with 1
     	for (int i=1; i < rows.size(); i++ )
@@ -59,19 +60,19 @@ public class Wakelocks
     		try
     		{
     			String[] data = (String[]) rows.get(i);
-    			String name = data[0];
-    			int count = Integer.valueOf(data[1]);
-    			int expire_count = Integer.valueOf(data[2]);
-    			int wake_count = Integer.valueOf(data[3]);
-    			long active_since = Long.valueOf(data[4]);
-    			long total_time = Long.valueOf(data[5]) / 1000000;
-    			long sleep_time = Long.valueOf(data[6]) / 1000000;
-    			long max_time = Long.valueOf(data[7]) / 1000000;
-    			long last_change = Long.valueOf(data[8]);
+    			String name = data[0]; 								// name
+    			int count = Integer.valueOf(data[1]);				// active_count
+    			int expire_count = Integer.valueOf(data[4]);		// expire_count
+    			int wake_count = Integer.valueOf(data[3]);			// wakeup_count
+    			long active_since = Long.valueOf(data[5]);			// active_since
+    			long total_time = Long.valueOf(data[6]) / 1000000;	// total_time
+    			long sleep_time = 0;								// sleep_time (does not exist)
+    			long max_time = Long.valueOf(data[7]) / 1000000;	// max_time
+    			long last_change = Long.valueOf(data[8]);			// last_change
     			
 				// post-processing of eventX-YYYY processes
 				String details = "";
-//				name = "event3-30240";
+
 				// we start with a " here as that is the way the data comes from /proc
 				if (name.startsWith("\"event"))
 				{
@@ -144,96 +145,4 @@ public class Wakelocks
     	}
     	return myRet;
     }
-    protected static ArrayList<String[]> parseDelimitedFile(String filePath, String delimiter)
-    {
-		ArrayList<String[]> rows = new ArrayList<String[]>();
-    	try
-    	{
-			FileReader fr = new FileReader(filePath);
-			BufferedReader br = new BufferedReader(fr);
-			String currentRecord;
-			while ((currentRecord = br.readLine()) != null)
-				rows.add(currentRecord.split(delimiter));
-			br.close();
-    	}
-    	catch (Exception e)
-    	{
-    		
-    	}
-		return rows;
-    }
-
-    public static boolean fileExists()
-    {
-    	boolean exists = false;
-    	try
-    	{
-			FileReader fr = new FileReader(FILE_PATH);
-			exists = true;
-    	}
-    	catch (Exception e)
-    	{
-    		exists = false;
-    	}
-		return false; //exists;
-    }
-
-	public static boolean isDiscreteKwlPatch()
-	{
-		boolean ret = false;
-		
-		String filePath = "/sys/module/wakelock/parameters/default_stats";
-    	try
-    	{
-			FileReader fr = new FileReader(filePath);
-			BufferedReader br = new BufferedReader(fr);
-
-			// read first line
-			String currentRecord = br.readLine();
-			
-			if (!currentRecord.equals("0"))
-			{
-				ret = true;
-			}
-			br.close();
-    	}
-    	catch (Exception e)
-    	{
-    		
-    	}
-		return ret;
-	}
-	
-    public static boolean hasWakelocks(Context context)
-    {
-    	boolean myRet = false;
-       	String filePath = "/sys/power/wake_lock";
-		ArrayList<String> res = Util.run("su", "cat " + filePath);
-		// Format: 0 /sys/power/wake_lock
-		final ArrayList<String> values = new ArrayList<String>();
-		if (res.size() != 0)
-		{
-			String line = res.get(0);
-			try
-			{
-				myRet = line.contains("PowerManagerService");
-				if (myRet)
-				{
-					Log.i(TAG, "Detected userland wakelock in line " + line);
-				}
-				else
-				{
-					Log.i(TAG, "No userland wakelock detected in line " + line);
-				}
-			}
-			catch (Exception e)
-			{
-				// something went wrong
-				Log.e(TAG, "Exeception processsing " + filePath + ": " + e.getMessage());
-				myRet = false;
-			}
-		}
-    	return myRet;
-    }
-
 }
