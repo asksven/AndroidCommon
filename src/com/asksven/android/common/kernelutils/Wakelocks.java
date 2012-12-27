@@ -58,6 +58,7 @@ public class Wakelocks
     	{
     		try
     		{
+    			// times in file are microseconds
     			String[] data = (String[]) rows.get(i);
     			String name = data[0];
     			int count = Integer.valueOf(data[1]);
@@ -175,7 +176,7 @@ public class Wakelocks
     	{
     		exists = false;
     	}
-		return false; //exists;
+		return exists;
     }
 
 	public static boolean isDiscreteKwlPatch()

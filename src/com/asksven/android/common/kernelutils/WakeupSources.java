@@ -36,6 +36,7 @@ public class WakeupSources extends Wakelocks
 {
     private final static String TAG ="WakeupSources";
     private static String FILE_PATH = "/sys/kernel/debug/wakeup_sources";
+    //private static String FILE_PATH = "/sdcard/wakeup_sources.txt";
     
     public static ArrayList<StatElement> parseWakeupSources(Context context)
     {
@@ -59,15 +60,16 @@ public class WakeupSources extends Wakelocks
     	{
     		try
     		{
+    			// times in file are milliseconds
     			String[] data = (String[]) rows.get(i);
     			String name = data[0]; 								// name
     			int count = Integer.valueOf(data[1]);				// active_count
     			int expire_count = Integer.valueOf(data[4]);		// expire_count
     			int wake_count = Integer.valueOf(data[3]);			// wakeup_count
     			long active_since = Long.valueOf(data[5]);			// active_since
-    			long total_time = Long.valueOf(data[6]) / 1000000;	// total_time
-    			long sleep_time = 0;								// sleep_time (does not exist)
-    			long max_time = Long.valueOf(data[7]) / 1000000;	// max_time
+    			long total_time = Long.valueOf(data[6]) / 1000;	// total_time
+    			long sleep_time = Long.valueOf(data[9]) / 1000;	// prevent_suspend_time
+    			long max_time = Long.valueOf(data[7]) / 1000;	// max_time
     			long last_change = Long.valueOf(data[8]);			// last_change
     			
 				// post-processing of eventX-YYYY processes
