@@ -30,6 +30,17 @@ import android.util.Log;
 
 /**
  * @author sven
+ * 
+ * Parsing of /proc/wakelocks
+ * 
+ * Fields:
+ * total_time: accumulates the total amount of time that the corresponding suspend blocker has been held.
+ * active_since: tracks how long a suspend blocker has been held since it was last acquired, or (presumably) zero if it is not currently held.
+ * count: the number of times that the suspend blocker has been acquired. This is useful in combination with total_time, as it allows you to calculate the average hold time for the suspend blocker.
+ * expire_count: the number of times that the suspend blocker has timed out. This indicates that some application has an input device open, but is not reading from it, which is a bug, as noted earlier.
+ * max_time: the longest hold time for the suspend blocker. This allows finding cases where suspend blockers are held for too long, but are eventually released. (In contrast, active_since is more useful in the held-forever case.)
+ * sleep_time: the total time that the suspend blocker was held while the display was powered off.
+ * wake_count: the number of times that the suspend blocker was the first to be acquired in the resume path.
  *
  */
 public class Wakelocks
