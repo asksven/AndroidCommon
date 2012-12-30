@@ -38,7 +38,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.asksven.andoid.common.CommonLogSettings;
+import com.asksven.android.common.CommonLogSettings;
 import com.asksven.android.common.nameutils.UidInfo;
 import com.asksven.android.common.nameutils.UidNameResolver;
 import com.asksven.android.common.utils.DateUtils;

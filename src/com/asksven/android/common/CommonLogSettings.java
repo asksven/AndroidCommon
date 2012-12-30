@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asksven.andoid.common;
+package com.asksven.android.common;
 
 /**
  * @author sven

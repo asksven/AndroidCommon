@@ -12,8 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.asksven.andoid.common.CommonLogSettings;
 import com.asksven.andoid.common.contrib.Util;
+import com.asksven.android.common.CommonLogSettings;
 import com.asksven.android.common.privateapiproxies.NetworkUsage;
 import com.asksven.android.common.privateapiproxies.StatElement;
 import com.asksven.android.common.shellutils.Exec;

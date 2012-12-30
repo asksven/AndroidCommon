@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     <string name="hello">Hello World!</string>
+    
     <string name="app_name">AndroidCommon</string>
+    <string name="app_pname">com.asksven.androidcommon</string>
+    <string name="label_button_remind">Remind me later</string>
+    <string name="label_button_rate">Rate</string>
+    <string name="label_button_no">No, thanks</string>
+    <string name="text_dialog_rate">If you enjoy using %s, please take a moment to rate it. Thanks for your support!</string>
+    <string name="twitter_link">https://twitter.com/#!/asksven</string>
+    <string name="market_link">market://search?q=com.asksven</string>
+    <string name="dialog_apps">Other Apps</string>
+    <string name="dialog_dismiss">Dismiss</string>
+    <string name="dialog_follow_me">Follow me</string>
+    
 </resources>
