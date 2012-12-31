@@ -103,9 +103,9 @@ public class WakeupSources extends Wakelocks
     			int expire_count = Integer.valueOf(data[4]);		// expire_count
     			int wake_count = Integer.valueOf(data[3]);			// wakeup_count
     			long active_since = Long.valueOf(data[5]);			// active_since
-    			long total_time = Long.valueOf(data[6]) / 1000;	// total_time
-    			long sleep_time = Long.valueOf(data[9]) / 1000;	// prevent_suspend_time
-    			long max_time = Long.valueOf(data[7]) / 1000;	// max_time
+    			long total_time = Long.valueOf(data[6]);			// total_time
+    			long sleep_time = Long.valueOf(data[9]);			// prevent_suspend_time
+    			long max_time = Long.valueOf(data[7]);				// max_time
     			long last_change = Long.valueOf(data[8]);			// last_change
     			
 				// post-processing of eventX-YYYY processes
