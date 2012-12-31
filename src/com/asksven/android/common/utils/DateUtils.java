@@ -27,6 +27,7 @@ public class DateUtils
 {
 	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd HH:mm:ss";
 	public static final String DATE_FORMAT_SHORT = "HH:mm:ss";
+	private static final Calendar m_cal = Calendar.getInstance();
 
 	/**
 	 * Returns the current date in the default format.
@@ -34,9 +35,8 @@ public class DateUtils
 	 */
 	public static String now()
 	{
-		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
-		return sdf.format(cal.getTime());
+		return sdf.format(m_cal.getTime());
 	}
 	
 	/**
@@ -50,9 +50,8 @@ public class DateUtils
 	 */
 	public static String now(String dateFormat)
 	{
-		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
-		return sdf.format(cal.getTime());
+		return sdf.format(m_cal.getTime());
 	}
 	
 	public static String format(String dateFormat, Date time)
@@ -97,9 +96,7 @@ public class DateUtils
 	 * @return the formated string
 	 */
 	public static String formatDuration(long millis)
-	{
-		String ret = "";
-		
+	{		
         int seconds = (int) Math.floor(millis / 1000);
         
         int days = 0, hours = 0, minutes = 0;
@@ -115,26 +112,29 @@ public class DateUtils
             minutes = seconds / 60;
             seconds -= minutes * 60;
         }
-        ret = "";
+
+        // use StringBuilder for better performance
+        StringBuilder builder = new StringBuilder();
         if (days > 0)
         {
-            ret += days + " d ";
+            builder.append(days + " d ");
         }
         
         if (hours > 0)
         {
-        	ret += hours + " h ";
+        	builder.append(hours + " h ");
         }
         
         if (minutes > 0)
         { 
-        	ret += minutes + " m ";
+        	builder.append(minutes + " m ");
         }
         if (seconds > 0)
         {
-        	ret += seconds + " s ";
+        	builder.append(seconds + " s ");
         }
         
+        String ret = builder.toString();
         if (ret.equals(""))
         {
         	ret = "0 s";

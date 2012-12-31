@@ -207,9 +207,9 @@ public class BatteryStatsProxy
 		catch( Exception e )
 		{
 			if (e instanceof InvocationTargetException && e.getCause() != null) {
-				Log.e("TAG", "An exception occured in BatteryStatsProxy(). Message: " + e.getCause().getMessage());
+				Log.e(TAG, "An exception occured in BatteryStatsProxy(). Message: " + e.getCause().getMessage());
 			} else {
-				Log.e("TAG", "An exception occured in BatteryStatsProxy(). Message: " + e.getMessage());
+				Log.e(TAG, "An exception occured in BatteryStatsProxy(). Message: " + e.getMessage());
 			}
 	    	m_Instance = null;
 	    	
@@ -512,7 +512,7 @@ public class BatteryStatsProxy
           params[1]= new Integer(iStatsType);
 
           ret= (Long) method.invoke(m_Instance, params);
-          Log.i("TAG", "getWifiOnTime with params " + params[0] + " and " + params[1] +  " returned " + ret);
+          Log.i(TAG, "getWifiOnTime with params " + params[0] + " and " + params[1] +  " returned " + ret);
 
         }
         catch( IllegalArgumentException e )
@@ -557,7 +557,7 @@ public class BatteryStatsProxy
           params[1]= new Integer(iStatsType);
 
           ret= (Long) method.invoke(m_Instance, params);
-          Log.i("TAG", "getGlobalWifiRunningTime with params " + params[0] + " and " + params[1] +  " returned " + ret);
+          Log.i(TAG, "getGlobalWifiRunningTime with params " + params[0] + " and " + params[1] +  " returned " + ret);
 
         }
         catch( IllegalArgumentException e )
@@ -834,8 +834,10 @@ public class BatteryStatsProxy
           params[2]= new Integer(iStatsType);
 
           ret= (Long) method.invoke(m_Instance, params);
-          Log.i("TAG", "getPhoneDataConnectionTime with params " + params[0] + ", " + params[1] + "and " + params[2] + " returned " + ret);
-
+	      if (CommonLogSettings.DEBUG)
+	      {
+	    	  Log.i(TAG, "getPhoneDataConnectionTime with params " + params[0] + ", " + params[1] + "and " + params[2] + " returned " + ret);
+	      }
         }
         catch( IllegalArgumentException e )
         {
@@ -882,7 +884,10 @@ public class BatteryStatsProxy
           params[2]= new Integer(iStatsType);
 
           ret= (Long) method.invoke(m_Instance, params);
-          Log.i("TAG", "getPhoneSignalStrengthTime with params " + params[0] + ", " + params[1] + "and " + params[2] + " returned " + ret);
+	      if (CommonLogSettings.DEBUG)
+	      {
+	    	  Log.i(TAG, "getPhoneSignalStrengthTime with params " + params[0] + ", " + params[1] + "and " + params[2] + " returned " + ret);
+	      }
 
         }
         catch( IllegalArgumentException e )
@@ -926,7 +931,10 @@ public class BatteryStatsProxy
           params[2]= new Integer(iStatsType);
 
           ret= (Long) method.invoke(m_Instance, params);
-          Log.i("TAG", "getScreenBrightnessTime with params " + params[0] + ", " + params[1] + "and " + params[2] + " returned " + ret);
+	      if (CommonLogSettings.DEBUG)
+	      {
+	    	  Log.i(TAG, "getScreenBrightnessTime with params " + params[0] + ", " + params[1] + "and " + params[2] + " returned " + ret);
+	      }
 
         }
         catch( IllegalArgumentException e )
@@ -1176,7 +1184,7 @@ public class BatteryStatsProxy
         }
         catch( IllegalArgumentException e )
         {
-        	Log.e("TAG", "An exception occured in startIteratingHistoryLocked(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
+        	Log.e(TAG, "An exception occured in startIteratingHistoryLocked(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
             throw e;
         }
         catch( Exception e )
@@ -1205,7 +1213,7 @@ public class BatteryStatsProxy
         }
         catch( IllegalArgumentException e )
         {
-        	Log.e("TAG", "An exception occured in collectUidStats(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
+        	Log.e(TAG, "An exception occured in collectUidStats(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
             throw e;
         }
         catch( Exception e )
@@ -1232,7 +1240,7 @@ public class BatteryStatsProxy
 				&& BatteryStatsTypes.assertValidWakelockPctRef(iWlPctRef));
 		if (!validTypes)
 		{
-			Log.e("TAG", "Invalid WakeType or StatType");
+			Log.e(TAG, "Invalid WakeType or StatType");
 			throw new Exception("Invalid WakeType of StatType");
 		}
 		
@@ -1367,7 +1375,7 @@ public class BatteryStatsProxy
             }
             catch( Exception e )
             {
-            	Log.e("TAG", "An exception occured in getWakelockStats(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
+            	Log.e(TAG, "An exception occured in getWakelockStats(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
                 throw e;
             }
 		}	
@@ -1390,7 +1398,7 @@ public class BatteryStatsProxy
 				&& BatteryStatsTypes.assertValidWakelockPctRef(iWlPctRef));
 		if (!validTypes)
 		{
-			Log.e("TAG", "Invalid WakeType or StatType");
+			Log.e(TAG, "Invalid WakeType or StatType");
 			throw new Exception("Invalid WakeType or StatType");
 		}
 		
@@ -1522,7 +1530,7 @@ public class BatteryStatsProxy
         }
         catch( Exception e )
         {
-        	Log.e("TAG", "An exception occured in getKernelWakelockStats(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
+        	Log.e(TAG, "An exception occured in getKernelWakelockStats(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
             throw e;
         }
 
@@ -1543,7 +1551,7 @@ public class BatteryStatsProxy
 		boolean validTypes = BatteryStatsTypes.assertValidStatType(iStatType);
 		if (!validTypes)
 		{
-			Log.e("TAG", "Invalid WakeType or StatType");
+			Log.e(TAG, "Invalid WakeType or StatType");
 			throw new Exception("Invalid StatType");
 		}
 		
@@ -1632,7 +1640,7 @@ public class BatteryStatsProxy
             }
             catch( Exception e )
             {
-            	Log.e("TAG", "An exception occured in getProcessStats(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
+            	Log.e(TAG, "An exception occured in getProcessStats(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
                 throw e;
             }
 		}	
@@ -1653,7 +1661,7 @@ public class BatteryStatsProxy
 		boolean validTypes = BatteryStatsTypes.assertValidStatType(iStatType);
 		if (!validTypes)
 		{
-			Log.e("TAG", "Invalid WakeType or StatType");
+			Log.e(TAG, "Invalid WakeType or StatType");
 			throw new Exception("Invalid StatType");
 		}
 		
@@ -1889,7 +1897,7 @@ public class BatteryStatsProxy
         }
         catch( Exception e )
         {
-        	Log.e("TAG", "An exception occured in getHistory(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
+        	Log.e(TAG, "An exception occured in getHistory(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
             throw e;
         }
 			
