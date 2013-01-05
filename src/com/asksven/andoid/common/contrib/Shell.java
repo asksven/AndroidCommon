@@ -1,7 +1,6 @@
 /**
  * Contrib by Chainfire (see https://raw.github.com/Chainfire/libsuperuser/master/libsuperuser/src/eu/chainfire/libsuperuser/Shell.java)
  */
-package com.asksven.andoid.common.contrib;
 
 /*
  * Copyright (C) 2012 Jorrit "Chainfire" Jongma
@@ -19,12 +18,15 @@ package com.asksven.andoid.common.contrib;
  * limitations under the License.
  */
 
-import java.io.BufferedReader;
+package com.asksven.andoid.common.contrib;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import com.asksven.android.common.privateapiproxies.BuildConfig;
 
 import android.os.Looper;
 
@@ -48,12 +50,20 @@ public class Shell {
 	 * When in debug mode, the code will also excessively log the commands passed to
 	 * and the output returned from the shell.
 	 * 
+	 * Though this function uses background threads to gobble STDOUT and STDERR so
+	 * a deadlock does not occur if the shell produces massive output, the output is
+	 * still stored in a List<String>, and as such doing something like "ls -lR /"
+	 * will probably have you run out of memory.
+	 * 
 	 * @param shell The shell to use for executing the commands
 	 * @param commands The commands to execute
 	 * @param wantSTDERR Return STDERR in the output ? 
 	 * @return Output of the commands, or null in case of an error
 	 */
 	public static List<String> run(String shell, String[] commands, boolean wantSTDERR) {
+		String shellUpper = shell.toUpperCase();
+		
+		if (BuildConfig.DEBUG) {
 			// check if we're running in the main thread, and if so, crash if we're in debug mode,
 			// to let the developer know attention is needed here.
 			
@@ -61,49 +71,58 @@ public class Shell {
 				Debug.log("Application attempted to run a shell command from the main thread");
 				throw new ShellOnMainThreadException();
 			}
-				
-			Debug.log(String.format("[%s%%] START", shell.toUpperCase()));			
-	
-		List<String> res = new ArrayList<String>();
 			
-		try {						
+			Debug.log(String.format("[%s%%] START", shellUpper));			
+		}
+		
+		List<String> res = Collections.synchronizedList(new ArrayList<String>());
+		
+		try {
+			// setup our process, retrieve STDIN stream, and STDOUT/STDERR gobblers
 			Process process = Runtime.getRuntime().exec(shell);
 			DataOutputStream STDIN = new DataOutputStream(process.getOutputStream());
-			BufferedReader STDOUT = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			BufferedReader STDERR = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+			StreamGobbler STDOUT = new StreamGobbler(shellUpper + "-", process.getInputStream(), res);
+			StreamGobbler STDERR = new StreamGobbler(shellUpper + "*", process.getErrorStream(), wantSTDERR ? res : null);
+			
+			// start gobbling and write our commands to the shell
+			STDOUT.start();
+			STDERR.start();
 			for (String write : commands) {
+				if (BuildConfig.DEBUG) Debug.log(String.format("[%s+] %s", shellUpper, write));
 				STDIN.writeBytes(write + "\n");
-		   		STDIN.flush();
+				STDIN.flush();
 			}
 			STDIN.writeBytes("exit\n");
 			STDIN.flush();
-				
+			
+			// wait for our process to finish, while we gobble away in the background
 			process.waitFor();
-			if (process.exitValue() == 255) {
-				// in case of su, probably denied
-				return null;
+			
+			// make sure our threads are done gobbling, our streams are closed, and the process is 
+			// destroyed - while the latter two shouldn't be needed in theory, and may even produce 
+			// warnings, in "normal" Java they are required for guaranteed cleanup of resources, so
+			// lets be safe and do this on Android as well
+			try { 
+				STDIN.close();
+			} catch (IOException e) { 				
 			}
-				
-	   		while (STDOUT.ready()) {
-	   			String read = STDOUT.readLine();
-	   			res.add(read);
-	   		}
-			while (STDERR.ready()) {
-				String read = STDERR.readLine();
-				Debug.log(String.format("[%s*] %s", shell.toUpperCase(), read));
-				if (wantSTDERR) res.add(read);
-			}	 
-				
+			STDOUT.join();
+			STDERR.join();
 			process.destroy();
+			
+			// in case of su, 255 usually indicates access denied
+			if (shell.equals("su") && (process.exitValue() == 255)) {
+				res = null;
+			}			
 		} catch (IOException e) {
 			// shell probably not found
-			return null;
+			res = null;
 		} catch (InterruptedException e) {
 			// this should really be re-thrown
-			return null;
+			res = null;
 		}
 			
-		Debug.log(String.format("[%s%%] END", shell.toUpperCase()));
+		if (BuildConfig.DEBUG) Debug.log(String.format("[%s%%] END", shell.toUpperCase()));
 		return res;
 	}
 	
@@ -139,7 +158,7 @@ public class Shell {
 		 */
 		public static List<String> run(String[] commands) {
 			return Shell.run("sh", commands, false);
-		}		
+		}
 	}
 
 	/**
@@ -241,7 +260,7 @@ public class Shell {
 				}
 			}
 			return null;
-		}		
+		}
 	}
 }
 
