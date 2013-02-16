@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.os.Build;
 import android.util.Log;
 
 import com.asksven.andoid.common.contrib.Shell;
@@ -28,12 +29,38 @@ public class AlarmsDumpsys
 	static final String TAG = "AlarmsDumpsys";
 	static final String PERMISSION_DENIED = "su rights required to access alarms are not available / were not granted";
 
+	public static ArrayList<StatElement> getAlarms()
+	{
+		String release = Build.VERSION.RELEASE;
+		int sdk = Build.VERSION.SDK_INT;
+		
+		if (sdk < 17) // Build.VERSION_CODES.JELLY_BEAN_MR1)
+		{
+			return getAlarmsPriorTo_4_2_2();
+		}
+		else if (sdk == 17) // Build.VERSION_CODES.JELLY_BEAN_MR1)
+		{
+			if (release.equals("4.2.2"))
+			{
+				return getAlarmsFrom_4_2_2();
+			}
+			else
+			{
+				return getAlarmsPriorTo_4_2_2();
+			}
+		}
+
+		else
+		{
+			return getAlarmsFrom_4_2_2();
+		}
+	}
 	/**
 	 * Returns a list of alarm value objects
 	 * @return
 	 * @throws Exception
 	 */
-	public static ArrayList<StatElement> getAlarms()
+	private static ArrayList<StatElement> getAlarmsPriorTo_4_2_2()
 	{
 		ArrayList<StatElement> myAlarms = null;
 		long nTotalCount = 0;
@@ -182,7 +209,121 @@ public class AlarmsDumpsys
 		}
 		return myAlarms;
 	}
-	
+
+	private static ArrayList<StatElement> getAlarmsFrom_4_2_2()
+	{
+		ArrayList<StatElement> myAlarms = null;
+		long nTotalCount = 0;
+		List<String> res = Shell.SU.run("dumpsys alarm");
+
+		if (res.size() != 0)
+
+		{
+			Pattern begin = Pattern.compile("Alarm Stats");
+			boolean bParsing = false;
+
+			// we are looking for multiline entries in the format
+			// ' <package name> +<time>ms running, <number> wakeups
+			// '  +<time>ms <number> wakes <number> alarms: act=<intern> (repeating 1..n times)
+			Pattern packagePattern 	= Pattern.compile("\\s\\s([a-z][a-zA-Z0-9\\.]+)\\s\\+(.*), (\\d+) wakeups:");
+			Pattern numberPattern	= Pattern.compile("\\s\\s\\s\\s\\+(\\d+)ms (\\d+) wakes (\\d+) alarms: act=([A-Za-z0-9\\-\\_\\.]+)");
+			
+			myAlarms = new ArrayList<StatElement>();
+			Alarm myAlarm = null;
+			
+			// process the file
+			for (int i=0; i < res.size(); i++)
+			{
+				// skip till start mark found
+				if (bParsing)
+				{
+					// parse the alarms by block 
+					String line = res.get(i);
+					Matcher mPackage 	= packagePattern.matcher(line);
+					Matcher mNumber 	= numberPattern.matcher(line);
+					
+					// first line
+					if ( mPackage.find() )
+					{
+						try
+						{
+							// if there was a previous Alarm populated store it
+							if (myAlarm != null)
+							{
+								myAlarms.add(myAlarm);
+							}
+							// we are interested in the first token 
+							String strPackageName = mPackage.group(1);
+							myAlarm = new Alarm(strPackageName);
+
+							String strWakeups = mPackage.group(3);
+							long nWakeups = Long.parseLong(strWakeups);
+							myAlarm.setWakeups(nWakeups);
+							nTotalCount += nWakeups;
+
+						}
+						catch (Exception e)
+						{
+							Log.e(TAG, "Error: parsing error in package line (" + line + ")");
+						}
+					}
+
+					// second line (and following till next package)
+					if ( mNumber.find() )
+					{
+						try
+						{
+							// we are interested in the first and second token
+							String strNumber = mNumber.group(2);
+							String strIntent = mNumber.group(4);
+							long nNumber = Long.parseLong(strNumber);
+
+							if (myAlarm == null)
+							{
+								Log.e(TAG, "Error: number line found but without alarm object (" + line + ")");
+							}
+							else
+							{
+								myAlarm.addItem(nNumber, strIntent);
+							}
+						}
+						catch (Exception e)
+						{
+							Log.e(TAG, "Error: parsing error in number line (" + line + ")");
+						}
+					}
+				}
+				else
+				{
+					// look for beginning
+					Matcher line = begin.matcher(res.get(i));
+					if (line.find())
+					{
+						bParsing = true;
+					}
+				}
+			}
+			// the last populated alarms has not been added to the list yet
+			myAlarms.add(myAlarm);
+			
+		}
+		else
+		{
+			myAlarms = new ArrayList<StatElement>();
+			Alarm myAlarm = new Alarm(PERMISSION_DENIED);
+			myAlarm.setWakeups(1);
+			myAlarms.add(myAlarm);
+
+		}
+		
+		
+		for (int i=0; i < myAlarms.size(); i++)
+		{
+			((Alarm)myAlarms.get(i)).setTotalCount(nTotalCount);
+		}
+		return myAlarms;
+	}
+
 	static ArrayList<String> getTestData()
 	{
 		ArrayList<String> myRet = new ArrayList<String>()
