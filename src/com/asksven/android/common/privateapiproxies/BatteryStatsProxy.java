@@ -150,11 +150,18 @@ public class BatteryStatsProxy
 	          // parameters
 	          Object[] paramsGetService= new Object[1];
 	          paramsGetService[0] = "batteryinfo";
-	     
-	          Log.i(TAG, "invoking android.os.ServiceManager.getService(\"batteryinfo\")");
+	          
+	          if (CommonLogSettings.DEBUG)
+	          {
+	        	  Log.i(TAG, "invoking android.os.ServiceManager.getService(\"batteryinfo\")");
+	          }
 	          IBinder serviceBinder = (IBinder) methodGetService.invoke(serviceManagerClass, paramsGetService); 
 
-	          Log.i(TAG, "android.os.ServiceManager.getService(\"batteryinfo\") returned a service binder");
+	          if (CommonLogSettings.DEBUG)
+	          {
+	        	  Log.i(TAG, "android.os.ServiceManager.getService(\"batteryinfo\") returned a service binder");
+	          }
+	          
 	          // now we have a binder. Let's us that on IBatteryStats.Stub.asInterface
 	          // to get an IBatteryStats
 	          // Note the $-syntax here as Stub is a nested class
@@ -172,8 +179,11 @@ public class BatteryStatsProxy
 	          // Parameters
 	          Object[] paramsAsInterface= new Object[1];
 	          paramsAsInterface[0] = serviceBinder;
-	          	          
-	          Log.i(TAG, "invoking com.android.internal.app.IBatteryStats$Stub.asInterface");
+	          
+	          if (CommonLogSettings.DEBUG)
+	          {
+	        	  Log.i(TAG, "invoking com.android.internal.app.IBatteryStats$Stub.asInterface");
+	          }
 	          Object iBatteryStatsInstance = methodAsInterface.invoke(iBatteryStatsStub, paramsAsInterface);
 	          
 	          // and finally we call getStatistics from that IBatteryStats to obtain a Parcel
@@ -183,10 +193,16 @@ public class BatteryStatsProxy
 	          @SuppressWarnings("unchecked")
 	          Method methodGetStatistics = iBatteryStats.getMethod("getStatistics");
 	          
-	          Log.i(TAG, "invoking getStatistics");
+	          if (CommonLogSettings.DEBUG)
+	          {
+	        	  Log.i(TAG, "invoking getStatistics");
+	          }
 	          byte[] data = (byte[]) methodGetStatistics.invoke(iBatteryStatsInstance);
 	          
-	          Log.i(TAG, "retrieving parcel");
+	          if (CommonLogSettings.DEBUG)
+	          {
+	        	  Log.i(TAG, "retrieving parcel");
+	          }
 	          
 	          Parcel parcel = Parcel.obtain();
 	          parcel.unmarshall(data, 0, data.length);
@@ -195,7 +211,10 @@ public class BatteryStatsProxy
 	          @SuppressWarnings("rawtypes")
 			  Class batteryStatsImpl = cl.loadClass("com.android.internal.os.BatteryStatsImpl");
 
-	          Log.i(TAG, "reading CREATOR field");
+	          if (CommonLogSettings.DEBUG)
+	          {
+	        	  Log.i(TAG, "reading CREATOR field");
+	          }
 	          Field creatorField = batteryStatsImpl.getField("CREATOR");
 	          
 	          // From here on we don't need reflection anymore
@@ -512,7 +531,11 @@ public class BatteryStatsProxy
           params[1]= new Integer(iStatsType);
 
           ret= (Long) method.invoke(m_Instance, params);
-          Log.i(TAG, "getWifiOnTime with params " + params[0] + " and " + params[1] +  " returned " + ret);
+          
+          if (CommonLogSettings.DEBUG)
+          {
+        	  Log.i(TAG, "getWifiOnTime with params " + params[0] + " and " + params[1] +  " returned " + ret);
+          }
 
         }
         catch( IllegalArgumentException e )
@@ -557,7 +580,11 @@ public class BatteryStatsProxy
           params[1]= new Integer(iStatsType);
 
           ret= (Long) method.invoke(m_Instance, params);
-          Log.i(TAG, "getGlobalWifiRunningTime with params " + params[0] + " and " + params[1] +  " returned " + ret);
+          
+          if (CommonLogSettings.DEBUG)
+          {
+        	  Log.i(TAG, "getGlobalWifiRunningTime with params " + params[0] + " and " + params[1] +  " returned " + ret);
+          }
 
         }
         catch( IllegalArgumentException e )
@@ -615,8 +642,11 @@ public class BatteryStatsProxy
 		        	params[1]= new Integer(iStatsType);
 		        	
 		        	ret += (Long) method.invoke(myUid, params);
-		        	
-		        	Log.i(TAG, "getWifiRunningTime with params " + params[0] + " and " + params[1] + " returned " + ret);
+		   
+		        	if (CommonLogSettings.DEBUG)
+		        	{
+		        		Log.i(TAG, "getWifiRunningTime with params " + params[0] + " and " + params[1] + " returned " + ret);
+		        	}
 		        	
 	    	
 		        }
@@ -1463,14 +1493,17 @@ public class BatteryStatsProxy
             	Boolean inDischargeVal 				= (Boolean) inDischarge.get(params[0]);
             	Boolean trackingReportedValuesVal 	= (Boolean) trackingReportedValues.get(params[0]);
             	
-            	Log.d(TAG, "Kernel wakelock '" + wakelockEntry.getKey() + "'"
-            			+ " : reading fields from SampleTimer: " 
-            			+ " [currentReportedCountVal] = " + currentReportedCountVal
-            			+ " [currentReportedTotalTimeVal] = " + currentReportedTotalTimeVal
-            			+ " [unpluggedReportedCountVal] = " + unpluggedReportedCountVal
-            			+ " [mUnpluggedReportedTotalTimeVal] = " + unpluggedReportedTotalTimeVal
-            			+ " [mInDischarge] = " + inDischargeVal
-            			+ " [mTrackingReportedValues] = " + trackingReportedValuesVal);
+            	if (CommonLogSettings.DEBUG)
+            	{
+	            	Log.d(TAG, "Kernel wakelock '" + wakelockEntry.getKey() + "'"
+	            			+ " : reading fields from SampleTimer: " 
+	            			+ " [currentReportedCountVal] = " + currentReportedCountVal
+	            			+ " [currentReportedTotalTimeVal] = " + currentReportedTotalTimeVal
+	            			+ " [unpluggedReportedCountVal] = " + unpluggedReportedCountVal
+	            			+ " [mUnpluggedReportedTotalTimeVal] = " + unpluggedReportedTotalTimeVal
+	            			+ " [mInDischarge] = " + inDischargeVal
+	            			+ " [mTrackingReportedValues] = " + trackingReportedValuesVal);
+            	}
             	
 //            	
 //            	@SuppressWarnings("rawtypes")
@@ -1508,8 +1541,11 @@ public class BatteryStatsProxy
 				
 				Integer count = (Integer) methodGetCountLocked.invoke(samplingTimer, paramGetCountLocked);
 				
-				Log.d(TAG, "Kernel wakelock: " + wakelockEntry.getKey() + " wakelock [s] " + wake / 1000
-						+ " count " + count);
+				if (CommonLogSettings.DEBUG)
+				{
+					Log.d(TAG, "Kernel wakelock: " + wakelockEntry.getKey() + " wakelock [s] " + wake / 1000
+							+ " count " + count);
+				}
 
 				// return the data depending on the method 
 				if (!bAlternate)
@@ -1698,8 +1734,11 @@ public class BatteryStatsProxy
 
 					Method methodGetUid	= iBatteryStatsUid.getMethod("getUid");
 					Integer uid 		= (Integer) methodGetUid.invoke(myUid);
-					
-					Log.d(TAG, "Uid = " + uid + ": received:" + tcpBytesReceived + ", sent: " + tcpBytesSent);
+				
+					if (CommonLogSettings.DEBUG)
+					{
+						Log.d(TAG, "Uid = " + uid + ": received:" + tcpBytesReceived + ", sent: " + tcpBytesSent);
+					}
 
 					NetworkUsage myData = new NetworkUsage(uid, tcpBytesReceived, tcpBytesSent);
 					// try resolving names
@@ -1788,7 +1827,10 @@ public class BatteryStatsProxy
 	                BatteryStatsTypes.STATS_SINCE_CHARGED));
 	        statTimeRef = System.currentTimeMillis(); 
 	        
-	        Log.d(TAG, "Reference time (" + statTimeRef + ": " + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeRef));
+	        if (CommonLogSettings.DEBUG)
+	        {	
+	        	Log.d(TAG, "Reference time (" + statTimeRef + ": " + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeRef));
+	        }
 	        // statTimeLast stores the timestamp of the last sample
 	        Long statTimeLast = Long.valueOf(0);
 	        
@@ -1864,7 +1906,6 @@ public class BatteryStatsProxy
 							}
 							
 					        myStats.add(myItem);
-					        Log.d(TAG, "Added HistoryItem " + myItem.toString());
 
 				        }
 					    // overwrite the time of the last sample
@@ -1884,11 +1925,16 @@ public class BatteryStatsProxy
 				// the stats is being collected
 				// the ref time is a full plain time (with date)
 				Long offset = statTimeRef - statTimeLast;
-				Log.d(TAG, "Reference time (" + statTimeRef + ")" + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeRef));
 				
-				Log.d(TAG, "Last sample (" + statTimeLast + ")" + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeLast));
+				if (CommonLogSettings.DEBUG)
+				{
+					Log.d(TAG, "Reference time (" + statTimeRef + ")" + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeRef));
+					
+					Log.d(TAG, "Last sample (" + statTimeLast + ")" + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeLast));
+					
+					Log.d(TAG, "Correcting all HistoryItem times by an offset of (" + offset + ")" + DateUtils.formatDuration(offset * 1000));
+				}
 				
-				Log.d(TAG, "Correcting all HistoryItem times by an offset of (" + offset + ")" + DateUtils.formatDuration(offset * 1000));
 				for (int i=0; i < myStats.size(); i++)
 				{
 					myStats.get(i).setOffset(offset);

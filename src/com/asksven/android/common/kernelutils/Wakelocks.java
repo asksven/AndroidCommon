@@ -50,7 +50,11 @@ public class Wakelocks
     
     public static ArrayList<StatElement> parseProcWakelocks(Context context)
     {
-       	Log.i(TAG, "Parsing " + FILE_PATH);
+    	if (CommonLogSettings.DEBUG)
+    	{
+    		Log.i(TAG, "Parsing " + FILE_PATH);
+    	}
+    	
     	String delimiter = String.valueOf('\t');
     	ArrayList<StatElement> myRet = new ArrayList<StatElement>();
     	// format 
