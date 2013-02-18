@@ -33,7 +33,7 @@ public class AlarmsDumpsys
 	{
 		String release = Build.VERSION.RELEASE;
 		int sdk = Build.VERSION.SDK_INT;
-		
+		Log.i(TAG, "getAlarms: SDK=" + sdk + ", RELEASE=" + release);
 		if (sdk < 17) // Build.VERSION_CODES.JELLY_BEAN_MR1)
 		{
 			return getAlarmsPriorTo_4_2_2();
@@ -84,7 +84,7 @@ public class AlarmsDumpsys
 				// '  <number> alarms: act=<intent name> flg=<flag> (repeating 1..n times)
 				Pattern packagePattern 	= Pattern.compile("\\s\\s([a-z][a-zA-Z0-9\\.]+)");
 				Pattern timePattern 	= Pattern.compile("\\s\\s(\\d+)ms running, (\\d+) wakeups");
-				Pattern numberPattern	= Pattern.compile("\\s\\s(\\d+) alarms: act=([A-Za-z0-9\\-\\_\\.]+)");
+				Pattern numberPattern	= Pattern.compile("\\s\\s(\\d+) alarms: (act|cmp)=([A-Za-z0-9\\-\\_\\.\\{\\}\\/\\{\\}\\$]+)");
 				
 				myAlarms = new ArrayList<StatElement>();
 				Alarm myAlarm = null;
@@ -153,7 +153,7 @@ public class AlarmsDumpsys
 							{
 								// we are interested in the first and second token
 								String strNumber = mNumber.group(1);
-								String strIntent = mNumber.group(2);
+								String strIntent = mNumber.group(3);
 								long nNumber = Long.parseLong(strNumber);
 	
 								if (myAlarm == null)
@@ -226,7 +226,7 @@ public class AlarmsDumpsys
 			// ' <package name> +<time>ms running, <number> wakeups
 			// '  +<time>ms <number> wakes <number> alarms: act=<intern> (repeating 1..n times)
 			Pattern packagePattern 	= Pattern.compile("\\s\\s([a-z][a-zA-Z0-9\\.]+)\\s\\+(.*), (\\d+) wakeups:");
-			Pattern numberPattern	= Pattern.compile("\\s\\s\\s\\s\\+(\\d+)ms (\\d+) wakes (\\d+) alarms: act=([A-Za-z0-9\\-\\_\\.]+)");
+			Pattern numberPattern	= Pattern.compile("\\s\\s\\s\\s\\+([0-9a-z]+)ms (\\d+) wakes (\\d+) alarms: (act|cmp)=([A-Za-z0-9\\-\\_\\.\\$\\{\\}]+)");
 			
 			myAlarms = new ArrayList<StatElement>();
 			Alarm myAlarm = null;
@@ -275,7 +275,7 @@ public class AlarmsDumpsys
 						{
 							// we are interested in the first and second token
 							String strNumber = mNumber.group(2);
-							String strIntent = mNumber.group(4);
+							String strIntent = mNumber.group(5);
 							long nNumber = Long.parseLong(strNumber);
 
 							if (myAlarm == null)
