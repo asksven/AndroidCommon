@@ -80,8 +80,7 @@ public class Netstats
 //		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "cat /proc/net/xt_qtaguid/stats"});
 		List<String> res = Shell.SU.run("cat /proc/net/xt_qtaguid/stats");
 				//Util.run("su", "cat /proc/net/xt_qtaguid/stats");
-//		if (res.getSuccess())
-		if (res.size() != 0)
+		if ((res != null) && (res.size() != 0))
 		{
 //			String strRes = res.getResultLine(); 
 			if (true) //(!strRes.contains("Permission Denial"))
@@ -117,15 +116,6 @@ public class Netstats
 							parsed.get(KEY_IFACE),
 							StringUtils.getParsedLong(parsed, KEY_RX_BYTES),
 							StringUtils.getParsedLong(parsed, KEY_TX_BYTES));
-					
-//					entry.iface = parsed.get(KEY_IFACE);
-//					entry.setUid(getParsedInt(parsed, KEY_UID));
-//					entry.set = getParsedInt(parsed, KEY_COUNTER_SET);
-//					
-//					entry.rxBytes 	= getParsedLong(parsed, KEY_RX_BYTES);
-//					entry.rxPackets	= getParsedLong(parsed, KEY_RX_PACKETS);
-//					entry.txBytes 	= getParsedLong(parsed, KEY_TX_BYTES);
-//					entry.txPackets = getParsedLong(parsed, KEY_TX_PACKETS);
 					
 					myStats = addToStats(myStats, entry);
 					totalBytes += entry.getTotalBytes();
