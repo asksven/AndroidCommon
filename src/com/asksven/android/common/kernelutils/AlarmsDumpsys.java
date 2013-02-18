@@ -84,7 +84,7 @@ public class AlarmsDumpsys
 				// '  <number> alarms: act=<intent name> flg=<flag> (repeating 1..n times)
 				Pattern packagePattern 	= Pattern.compile("\\s\\s([a-z][a-zA-Z0-9\\.]+)");
 				Pattern timePattern 	= Pattern.compile("\\s\\s(\\d+)ms running, (\\d+) wakeups");
-				Pattern numberPattern	= Pattern.compile("\\s\\s(\\d+) alarms: (act|cmp)=([A-Za-z0-9\\-\\_\\.\\{\\}\\/\\{\\}\\$]+)");
+				Pattern numberPattern	= Pattern.compile("\\s\\s(\\d+) alarms: (flg=[a-z0-9]+\\s){0,1}(act|cmp)=([A-Za-z0-9\\-\\_\\.\\{\\}\\/\\{\\}\\$]+)");
 				
 				myAlarms = new ArrayList<StatElement>();
 				Alarm myAlarm = null;
@@ -153,7 +153,7 @@ public class AlarmsDumpsys
 							{
 								// we are interested in the first and second token
 								String strNumber = mNumber.group(1);
-								String strIntent = mNumber.group(3);
+								String strIntent = mNumber.group(4);
 								long nNumber = Long.parseLong(strNumber);
 	
 								if (myAlarm == null)
