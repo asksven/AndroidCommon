@@ -19,6 +19,8 @@ package com.asksven.andoid.common.contrib;
  * limitations under the License.
  */
 
+import com.asksven.android.common.CommonLogSettings;
+
 import android.util.Log;
 
 /**
@@ -30,6 +32,9 @@ public class Debug {
 	 * @param message The message to log
 	 */
 	public static void log(String message) {
+		if (CommonLogSettings.DEBUG)
+		{
 			Log.d("libsuperuser", "[libsuperuser]" + (!message.startsWith("[") && !message.startsWith(" ") ? " " : "") + message);
+		}
 	}
 }
