@@ -36,7 +36,8 @@ public class DateUtils
 	public static String now()
 	{
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
-		return sdf.format(m_cal.getTime());
+		long now = System.currentTimeMillis();
+		return sdf.format(new Date(now));
 	}
 	
 	/**
@@ -51,7 +52,8 @@ public class DateUtils
 	public static String now(String dateFormat)
 	{
 		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
-		return sdf.format(m_cal.getTime());
+		long now = System.currentTimeMillis();
+		return sdf.format(new Date(now));
 	}
 	
 	public static String format(String dateFormat, Date time)
@@ -190,6 +192,123 @@ public class DateUtils
         if (ret.equals(""))
         {
         	ret = "0 s";
+        }
+        return ret;
+	}
+
+	/**
+	 * Formats milliseconds to a friendly non abbreviated form (days, hrs, min, sec) 
+	 * @param millis
+	 * @return the formated string
+	 */
+	public static String formatDurationLong(long millis)
+	{
+		String ret = "";
+		
+        int seconds = (int) Math.floor(millis / 1000);
+        
+        int days = 0, hours = 0, minutes = 0;
+        if (seconds > (60*60*24)) {
+            days = seconds / (60*60*24);
+            seconds -= days * (60*60*24);
+        }
+        if (seconds > (60 * 60)) {
+            hours = seconds / (60 * 60);
+            seconds -= hours * (60 * 60);
+        }
+        if (seconds > 60) {
+            minutes = seconds / 60;
+            seconds -= minutes * 60;
+        }
+        ret = "";
+        if (days > 0)
+        {
+        	if (days <= 1)
+        	{
+        		ret += days + " day ";
+        	}
+        	else
+        	{
+        		ret += days + " days ";
+        	}
+        }
+        
+        if (hours > 0)
+        {
+        	if (hours <= 1)
+        	{
+        		ret += hours + " hr ";
+        	}
+        	else
+        	{
+        		ret += hours + " hrs ";
+        	}
+        }
+        
+        if (minutes > 0)
+        { 
+        	ret += minutes + " min. ";
+        }
+        if ( (seconds > 0) && (days == 0) )
+        {
+        	// only show seconds when value < 1 day
+        	ret += seconds + " sec. ";
+        }
+        
+        if (ret.equals(""))
+        {
+        	ret = "0 sec.";
+        }
+        return ret;
+	}
+	/**
+	 * Formats milliseconds to a friendly form. Compressed means that seconds are truncated if value > 1 Hour 
+	 * @param millis
+	 * @return the formated string
+	 */
+	public static String formatDurationCompressed(long millis)
+	{
+		String ret = "";
+		
+        int seconds = (int) Math.floor(millis / 1000);
+        
+        int days = 0, hours = 0, minutes = 0;
+        if (seconds > (60*60*24)) {
+            days = seconds / (60*60*24);
+            seconds -= days * (60*60*24);
+        }
+        if (seconds > (60 * 60)) {
+            hours = seconds / (60 * 60);
+            seconds -= hours * (60 * 60);
+        }
+        if (seconds > 60) {
+            minutes = seconds / 60;
+            seconds -= minutes * 60;
+        }
+        ret = "";
+        if (days > 0)
+        {
+            ret += days + "d";
+        }
+        
+        if (hours > 0)
+        {
+        	ret += hours + "h";
+        }
+        
+        if (minutes > 0)
+        { 
+        	ret += minutes + "m";
+        }
+        if ( (seconds > 0) && (hours == 0) )
+        {
+        	// only show seconds when value < 1 day
+        	ret += seconds + "s";
+        }
+        
+        if (ret.equals(""))
+        {
+        	ret = "0s";
         }
         return ret;
 	}
