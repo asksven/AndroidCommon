@@ -68,7 +68,7 @@ public class AlarmsDumpsys
 //		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "dumpsys alarm"});
 		List<String> res = Shell.SU.run("dumpsys alarm");
 //		if (res.getSuccess())
-		if (res.size() != 0)
+		if ((res != null) && (res.size() != 0))
 
 		{
 //			String strRes = res.getResultLine(); 
@@ -216,7 +216,7 @@ public class AlarmsDumpsys
 		long nTotalCount = 0;
 		List<String> res = Shell.SU.run("dumpsys alarm");
 
-		if (res.size() != 0)
+		if ((res != null) && (res.size() != 0))
 
 		{
 			Pattern begin = Pattern.compile("Alarm Stats");
@@ -319,7 +319,11 @@ public class AlarmsDumpsys
 		
 		for (int i=0; i < myAlarms.size(); i++)
 		{
-			((Alarm)myAlarms.get(i)).setTotalCount(nTotalCount);
+			Alarm myAlarm = (Alarm)myAlarms.get(i);
+			if (myAlarm != null)
+			{
+				myAlarm.setTotalCount(nTotalCount);
+			}
 		}
 		return myAlarms;
 	}
