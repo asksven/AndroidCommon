@@ -21,13 +21,17 @@ import com.asksven.android.common.nameutils.UidNameResolver;
 public abstract class StatElement implements Serializable
 {
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
 	 * The process uid
 	 */
 	private int m_uid = -1;
 	/**
 	 * The resolved name info
 	 */
-	protected transient UidInfo m_uidInfo;
+	protected UidInfo m_uidInfo;
 
 	/**
 	 * the battery realtime time
