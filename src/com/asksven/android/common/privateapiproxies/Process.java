@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -38,21 +40,25 @@ public class Process extends StatElement implements Comparable<Process>, Seriali
 	/**
 	 * the name of the process
 	 */
+	@SerializedName("name")
 	private String m_name;
 	
 	/**
 	 * the system time in ms
 	 */
+	@SerializedName("system_time")
 	private long m_systemTime;
 	
 	/**
 	 * the user time in ms
 	 */
+	@SerializedName("user_time")
 	private long m_userTime;
 
 	/**
 	 * the number of starts
 	 */
+	@SerializedName("starts")
 	private int m_starts;
 
 	/**
@@ -74,6 +80,8 @@ public class Process extends StatElement implements Comparable<Process>, Seriali
 	public Process clone()
 	{
 		Process clone = new Process(m_name, m_userTime, m_systemTime, m_starts);
+		clone.setUid(getuid());
+		clone.setUidInfo(getUidInfo());
 		return clone;
 	}
 

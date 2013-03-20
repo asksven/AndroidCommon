@@ -23,6 +23,7 @@ import android.util.Log;
 
 import com.asksven.android.common.privateapiproxies.Process;
 import com.asksven.android.common.privateapiproxies.StatElement;
+import com.google.gson.annotations.SerializedName;
 
 
 /**
@@ -41,7 +42,10 @@ public class State extends StatElement implements Comparable<State>, Serializabl
 
 	private static final long serialVersionUID = 1L;
 	
+	
+	@SerializedName("freq")
 	public int m_freq = 0;
+	@SerializedName("duration_ms")
     public long m_duration = 0;
 
     public State(int freq, long duration)

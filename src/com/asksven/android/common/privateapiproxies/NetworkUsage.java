@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.asksven.android.common.nameutils.UidInfo;
+import com.google.gson.annotations.SerializedName;
 
 import android.app.Application;
 import android.content.Context;
@@ -39,16 +40,19 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	/**
 	 * tcpBytes received by the program
 	 */
+	@SerializedName("bytes_received")
 	private long m_bytesReceived=0;
 	
 	/**
 	 * tcpBytes sent by the program
 	 */
+	@SerializedName("bytes_sent")
 	private long m_bytesSent=0;
 
 	/**
 	 * the interface
 	 */
+	@SerializedName("iface")
 	private String m_iface = "";
 
 

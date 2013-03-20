@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 
 import com.asksven.android.common.nameutils.UidInfo;
 import com.asksven.android.common.nameutils.UidNameResolver;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * @author sven
@@ -27,15 +28,18 @@ public abstract class StatElement implements Serializable
 	/**
 	 * The process uid
 	 */
+	@SerializedName("uid")
 	private int m_uid = -1;
 	/**
 	 * The resolved name info
 	 */
+	@SerializedName("uid_info")
 	protected UidInfo m_uidInfo;
 
 	/**
 	 * the battery realtime time
 	 */
+	@SerializedName("total")
 	private long m_total;	
 	/**
 	 * Set the uid
@@ -106,7 +110,6 @@ public abstract class StatElement implements Serializable
 	{
 		return getFullQualifiedName(context);
 	}
-	
 	
 
 	/**

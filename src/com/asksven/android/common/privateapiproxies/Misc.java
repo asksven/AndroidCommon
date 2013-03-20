@@ -18,6 +18,8 @@ package com.asksven.android.common.privateapiproxies;
 import java.io.Serializable;
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 import android.util.Log;
 
 /**
@@ -26,6 +28,7 @@ import android.util.Log;
  */
 public class Misc extends StatElement implements Comparable<Misc>, Serializable
 {
+	
 	/** 
 	 * the tag for logging
 	 */
@@ -34,16 +37,19 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 	/**
 	 * the name of the object
 	 */
+	@SerializedName("name")
 	private String m_name;
 	
 	/**
 	 * the time on in ms
 	 */
+	@SerializedName("time_on_ms")
 	private long m_timeOn;
 	
 	/**
 	 * the time running in ms
 	 */
+	@SerializedName("time_runing_ms")
 	private long m_timeRunning;
 
 	/**

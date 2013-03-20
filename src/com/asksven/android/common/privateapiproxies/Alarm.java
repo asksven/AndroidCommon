@@ -27,6 +27,7 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.asksven.android.common.privateapiproxies.StatElement;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * @author sven
@@ -40,16 +41,20 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	private static transient final String TAG = "Alarm";
 	
 	/** The name of the app responsible for the alarm */
+	@SerializedName("package_name")
 	String m_strPackageName;
 	
 	/** The number od wakeups */
+	@SerializedName("wakeups")
 	long m_nWakeups;
 	
 	/** The total count */
+	@SerializedName("total_count")
 	long m_nTotalCount;
 	
 	
 	/** The details */
+	@SerializedName("items")
 	ArrayList<AlarmItem> m_items;
 	
 
@@ -274,7 +279,9 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	 */
 	public class AlarmItem implements Serializable
 	{
+		@SerializedName("number")
 		long m_nNumber;
+		@SerializedName("intent")
 		String m_strIntent;
 		
 		public AlarmItem clone()

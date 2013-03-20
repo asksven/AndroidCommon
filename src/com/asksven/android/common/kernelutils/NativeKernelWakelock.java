@@ -23,6 +23,7 @@ import java.lang.Math;
 
 import com.asksven.android.common.privateapiproxies.StatElement;
 import com.asksven.android.common.utils.StringUtils;
+import com.google.gson.annotations.SerializedName;
 
 import android.content.Context;
 import android.util.Log;
@@ -45,51 +46,61 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 	/**
 	 * the name of the wakelock holder
 	 */
+	@SerializedName("name")
 	private String m_name;
 	
 	/**
 	 * the details (packages) for that wakelock (if any
 	 */
+	@SerializedName("details")
 	private String m_details;
 
 	/**
 	 * the count
 	 */
+	@SerializedName("count")
 	private int m_count;
 
 	/**
 	 * the expire count
 	 */
+	@SerializedName("expire_count")
 	private int m_expireCount;
 
 	/**
 	 * the wake count
 	 */
+	@SerializedName("wake_count")
 	private int m_wakeCount;
 
 	/**
 	 * the active_since time
 	 */
+	@SerializedName("active_since")
 	private long m_activeSince;
 
 	/**
 	 * the total_time
 	 */
+	@SerializedName("total_time")
 	private long m_ttlTime;
 	
 	/**
 	 * the sleep time
 	 */
+	@SerializedName("sleep_time")
 	private long m_sleepTime;
 
 	/**
 	 * the max time
 	 */
+	@SerializedName("max_time")
 	private long m_maxTime;
 
 	/**
 	 * the last change
 	 */
+	@SerializedName("last_change")
 	private long m_lastChange;
 
 	/**

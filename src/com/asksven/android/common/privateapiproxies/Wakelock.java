@@ -20,6 +20,8 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -39,16 +41,19 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 	/**
 	 * the wakelock type
 	 */
+	@SerializedName("wake_type")
 	private int m_wakeType;
 	
 	/**
 	 * the name of the wakelock holder
 	 */
+	@SerializedName("name")
 	private String m_name;
 	
 	/**
 	 * the duration in ms
 	 */
+	@SerializedName("duration_ms")
 	private long m_duration;
 	
 
@@ -56,6 +61,7 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 	/**
 	 * the count
 	 */
+	@SerializedName("count")
 	private int m_count;
 	
 	/**

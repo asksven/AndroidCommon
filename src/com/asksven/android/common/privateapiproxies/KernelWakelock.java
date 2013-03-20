@@ -20,7 +20,10 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 import android.util.Log;
+
 
 /**
  * @author sven
@@ -36,16 +39,19 @@ public class KernelWakelock extends StatElement implements Comparable<KernelWake
 	/**
 	 * the name of the wakelock holder
 	 */
+	@SerializedName("name")
 	private String m_name;
 	
 	/**
 	 * the duration in ms
 	 */
+	@SerializedName("duration_ms")
 	private long m_duration;
 
 	/**
 	 * the count
 	 */
+	@SerializedName("count")
 	private int m_count;
 	
 	/**
