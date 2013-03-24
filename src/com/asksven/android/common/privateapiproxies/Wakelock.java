@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
+import com.asksven.android.common.utils.StringUtils;
 import com.google.gson.annotations.SerializedName;
 
 import android.content.Context;
@@ -75,7 +76,9 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 	public Wakelock(int wakeType, String name, long duration, long time, int count)
 	{
 		m_wakeType	= wakeType;
-		m_name		= name;
+		m_name		= StringUtils.maskAccountInfo(name);
+
+
 		m_duration	= duration;
 		setTotal(time);
 		m_count		= count;
