@@ -81,6 +81,17 @@ public class State extends StatElement implements Comparable<State>, Serializabl
     	return formatDuration(m_duration) + " " + this.formatRatio(m_duration, getTotal());
     }
 
+	/**
+	 * returns a string representation of the data
+	 */
+	public String getVals()
+	{
+		
+		return getName() + " " + this.formatDuration(m_duration) + " (" + m_duration/1000 + " s)"
+				+ " in " + this.formatDuration(getTotal()) + " (" + getTotal()/1000 + " s)"
+		+ " Ratio: " + formatRatio(m_duration, getTotal());
+	}
+
 	/** 
 	 * returns the values of the data
 	 */	

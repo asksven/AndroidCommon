@@ -172,18 +172,18 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 	{
 		
 		return this.formatDuration(getTimeOn()) + " (" + getTimeOn()/1000 + " s)"
-		+ " Ratio: " + formatRatio(getTimeOn()/1000, getTimeRunning()/1000);
+		+ " Ratio: " + formatRatio(getTimeOn(), getTimeRunning());
 	}
 	
 	/**
 	 * returns a string representation of the data
 	 */
-	String getVals()
+	public String getVals()
 	{
 		
-		return this.formatDuration(getTimeOn()) + " (" + getTimeOn()/1000 + " s)"
+		return m_name + " " + this.formatDuration(getTimeOn()) + " (" + getTimeOn()/1000 + " s)"
 				+ " in " + this.formatDuration(getTimeRunning()) + " (" + getTimeRunning()/1000 + " s)"
-		+ " Ratio: " + formatRatio(getTimeOn()/1000, getTimeRunning()/1000);
+		+ " Ratio: " + formatRatio(getTimeOn(), getTimeRunning());
 	}
 
 	/** 

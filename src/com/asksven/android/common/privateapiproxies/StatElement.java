@@ -255,5 +255,15 @@ public abstract class StatElement implements Serializable
 	{
 		return "";
 	}
+	
+	/**
+	 * returns a string representation of the data
+	 */
+	public String getVals()
+	{
+		
+		return getName() + this.formatDuration(m_total) + " (" + m_total/1000 + " s)";
+	}
+
 
 }
