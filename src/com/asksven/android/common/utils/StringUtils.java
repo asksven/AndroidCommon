@@ -16,6 +16,7 @@
 
 package com.asksven.android.common.utils;
 
+import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -24,6 +25,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.provider.Settings;
 import android.util.Log;
 
 /**
@@ -90,6 +92,16 @@ public class StringUtils
 		}
 	}
 
+	public static void splitLine(String line, ArrayList<String> outSplit, String sep)
+	{
+		outSplit.clear();
+		final StringTokenizer t = new StringTokenizer(line, sep);
+		while (t.hasMoreTokens())
+		{
+			outSplit.add(t.nextToken());
+		}
+	}
+
 	public static void parseLine(ArrayList<String> keys, ArrayList<String> values, HashMap<String, String> outParsed)
 	{
 		outParsed.clear();
@@ -128,18 +140,41 @@ public class StringUtils
 	public static String maskAccountInfo(String str)
 	{
 		String ret = str;
+		
+		String serial = ""; 
 
+		try
+		{
+		    Class<?> c = Class.forName("android.os.SystemProperties");
+		    Method get = c.getMethod("get", String.class);
+		    serial = (String) get.invoke(c, "ro.serialno");
+		}
+		catch (Exception ignored)
+		{
+		}
+		
 		Matcher email		 	= emailPattern.matcher(str);
 		if ( email.find() )
 		{
 			String strName = email.group(2);
 			try
 			{
-				byte[] bytesOfMessage = strName.getBytes("UTF-8");
+				// generate some long noise
+				byte[] bytesOfSerial = serial.getBytes("UTF-8");
+				MessageDigest mdSha = MessageDigest.getInstance("SHA-256");
+				byte[] theShaDigest = mdSha.digest(bytesOfSerial);
+				StringBuffer sb = new StringBuffer();
+		        for (int i = 0; i < theShaDigest.length; ++i)
+		        {
+		          sb.append(Integer.toHexString((theShaDigest[i] & 0xFF) | 0x100).substring(1,3));
+		        }
+		        serial = sb.toString();
+				
+				byte[] bytesOfMessage = strName.concat(serial).getBytes("UTF-8");
 	
 				MessageDigest md = MessageDigest.getInstance("MD5");
 				byte[] thedigest = md.digest(bytesOfMessage);
-				StringBuffer sb = new StringBuffer();
+				sb = new StringBuffer();
 		        for (int i = 0; i < thedigest.length; ++i)
 		        {
 		          sb.append(Integer.toHexString((thedigest[i] & 0xFF) | 0x100).substring(1,3));
