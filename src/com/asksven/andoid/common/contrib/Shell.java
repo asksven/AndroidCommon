@@ -63,17 +63,17 @@ public class Shell {
 	public static List<String> run(String shell, String[] commands, boolean wantSTDERR) {
 		String shellUpper = shell.toUpperCase();
 		
-		if (BuildConfig.DEBUG) {
-			// check if we're running in the main thread, and if so, crash if we're in debug mode,
-			// to let the developer know attention is needed here.
-			
-			if (Looper.myLooper() == Looper.getMainLooper()) {
-				Debug.log("Application attempted to run a shell command from the main thread");
-				throw new ShellOnMainThreadException();
-			}
-			
-			Debug.log(String.format("[%s%%] START", shellUpper));			
-		}
+//		if (BuildConfig.DEBUG) {
+//			// check if we're running in the main thread, and if so, crash if we're in debug mode,
+//			// to let the developer know attention is needed here.
+//			
+//			if (Looper.myLooper() == Looper.getMainLooper()) {
+//				Debug.log("Application attempted to run a shell command from the main thread");
+//				throw new ShellOnMainThreadException();
+//			}
+//			
+//			Debug.log(String.format("[%s%%] START", shellUpper));			
+//		}
 		
 		List<String> res = Collections.synchronizedList(new ArrayList<String>());
 		
