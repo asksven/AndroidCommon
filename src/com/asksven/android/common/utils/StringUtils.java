@@ -126,6 +126,11 @@ public class StringUtils
 
 	public static String stripLeadingAndTrailingQuotes(String str)
 	{
+		if (str == null)
+		{
+			return str;
+		}
+		
 		if (str.startsWith("\""))
 		{
 			str = str.substring(1, str.length());
