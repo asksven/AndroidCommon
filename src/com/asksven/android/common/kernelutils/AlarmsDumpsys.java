@@ -11,8 +11,9 @@ import java.util.regex.Pattern;
 import android.os.Build;
 import android.util.Log;
 
-import com.asksven.andoid.common.contrib.Shell;
+//import com.asksven.andoid.common.contrib.Shell;
 import com.asksven.andoid.common.contrib.Util;
+import com.asksven.android.common.RootShell;
 import com.asksven.android.common.privateapiproxies.Alarm;
 import com.asksven.android.common.privateapiproxies.StatElement;
 import com.asksven.android.common.shellutils.Exec;
@@ -66,7 +67,7 @@ public class AlarmsDumpsys
 		long nTotalCount = 0;
 		// ExecResult res = Exec.execPrint(new String[]{"/system/bin/su", "-c", "/system/bin/dumpsys alarm"});
 //		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "dumpsys alarm"});
-		List<String> res = Shell.SU.run("dumpsys alarm");
+		List<String> res = RootShell.getInstance().run("dumpsys alarm");
 //		if (res.getSuccess())
 		if ((res != null) && (res.size() != 0))
 
@@ -214,7 +215,7 @@ public class AlarmsDumpsys
 	{
 		ArrayList<StatElement> myAlarms = null;
 		long nTotalCount = 0;
-		List<String> res = Shell.SU.run("dumpsys alarm");
+		List<String> res = RootShell.getInstance().run("dumpsys alarm");
 
 		if ((res != null) && (res.size() != 0))
 
