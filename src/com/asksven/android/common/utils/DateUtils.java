@@ -171,27 +171,27 @@ public class DateUtils
         ret = "";
         if (days > 0)
         {
-            ret += days + " d ";
+            ret += days + "d ";
         }
         
         if (hours > 0)
         {
-        	ret += hours + " h ";
+        	ret += hours + "h ";
         }
         
         if (minutes > 0)
         { 
-        	ret += minutes + " m ";
+        	ret += minutes + "m ";
         }
         if ( (seconds > 0) && (days == 0) )
         {
         	// only show seconds when value < 1 day
-        	ret += seconds + " s ";
+        	ret += seconds + "s";
         }
         
         if (ret.equals(""))
         {
-        	ret = "0 s";
+        	ret = "0s";
         }
         return ret;
 	}
