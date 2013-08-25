@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
+import com.asksven.android.common.nameutils.UidInfo;
 import com.asksven.android.common.utils.StringUtils;
 import com.google.gson.annotations.SerializedName;
 
@@ -93,7 +94,7 @@ public class PackageElement extends StatElement implements Comparable<PackageEle
 		m_count		= count;
 		m_wakeups	= wakeups;
 		m_rxtx		= rxtx;
-		setUid(uid);
+		super.setUid(uid);
 	}
 	
 
@@ -188,6 +189,20 @@ public class PackageElement extends StatElement implements Comparable<PackageEle
 	 */
 	public long getDuration() {
 		return m_duration;
+	}
+
+	/**
+	 * @return the number of wakeups
+	 */
+	public long getWakeups() {
+		return m_wakeups;
+	}
+
+	/**
+	 * @return the data volume
+	 */
+	public long getDataVolume() {
+		return m_rxtx;
 	}
 
 	/**
@@ -306,6 +321,26 @@ public class PackageElement extends StatElement implements Comparable<PackageEle
 					
 				}
 			}
+			else
+			{
+				// retrieve and store the icon for that package
+				String myPackage = m_packageName;
+				if (!myPackage.equals(""))
+				{
+					PackageManager manager = ctx.getPackageManager();
+					try
+					{
+						m_icon = manager.getApplicationIcon(myPackage);
+					}
+					catch (Exception e)
+					{
+						// nop: no icon found
+						m_icon = null;
+					}
+					
+				}
+
+			}
 		}
 		return m_icon;
 	}
@@ -328,7 +363,7 @@ public class PackageElement extends StatElement implements Comparable<PackageEle
 	@Override
 	public String toString()
 	{
-		return "PackageElement [m_name=" + m_name + ", m_duration=" + m_duration
+		return "PackageElement [m_name=" + m_name + ", m_packageName=" + m_packageName + ", m_uid=" + getuid() + ", m_duration=" + m_duration
 				+ ", m_count=" + m_count + ", m_rxtx=" + m_rxtx + ", m_wakeups=" + m_wakeups  +"]";
 	}
 
