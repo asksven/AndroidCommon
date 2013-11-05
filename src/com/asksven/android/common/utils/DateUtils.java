@@ -197,6 +197,53 @@ public class DateUtils
 	}
 
 	/**
+	 * Parses  string of the format 26m 33s 343ms and returns the number of ms
+	 * @param duration
+	 * @return
+	 */
+	public static long durationToLong(String duration)
+	{
+		long time = 0;
+		
+		String[] parts = duration.split(" ");
+		for (int i=0; i < parts.length; i++)
+		{
+			if (parts[i].endsWith("ms"))
+			{
+				String val = parts[i].substring(0, parts[i].length()-2);
+				long dur = Long.valueOf(val);
+				time += dur * 1;
+			}
+			else if (parts[i].endsWith("s"))
+			{
+				String val = parts[i].substring(0, parts[i].length()-1);
+				long dur = Long.valueOf(val);
+				time += dur * 1000;
+			}
+			else if (parts[i].endsWith("m"))
+			{
+				String val = parts[i].substring(0, parts[i].length()-1);
+				long dur = Long.valueOf(val);
+				time += dur * 1000 * 60;
+			}
+			else if (parts[i].endsWith("h"))
+			{
+				String val = parts[i].substring(0, parts[i].length()-1);
+				long dur = Long.valueOf(val);
+				time += dur * 1000 * 60 * 60;
+			}
+			else if (parts[i].endsWith("d"))
+			{
+				String val = parts[i].substring(0, parts[i].length()-1);
+				long dur = Long.valueOf(val);
+				time += dur * 1000 * 60 * 60 * 24;
+			}
+		}
+		
+		
+		return time;
+	}
+	/**
 	 * Formats milliseconds to a friendly non abbreviated form (days, hrs, min, sec) 
 	 * @param millis
 	 * @return the formated string

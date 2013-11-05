@@ -31,6 +31,7 @@ import android.app.ActivityManager.RunningTaskInfo;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -147,9 +148,19 @@ public class BatteryStatsProxy
 	          @SuppressWarnings("unchecked")
 			  Method methodGetService = serviceManagerClass.getMethod("getService", paramTypesGetService);
 	          
+	          String service = "";
+	          if (Build.VERSION.SDK_INT == 19)
+	          {
+	        	  // kitkat
+	        	  service = "batterystats";
+	          }
+	          else
+	          {
+	        	  service = "batteryinfo";
+	          }
 	          // parameters
 	          Object[] paramsGetService= new Object[1];
-	          paramsGetService[0] = "batteryinfo";
+	          paramsGetService[0] = service;
 	          
 	          if (CommonLogSettings.DEBUG)
 	          {

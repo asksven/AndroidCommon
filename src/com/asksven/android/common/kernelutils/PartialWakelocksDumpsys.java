@@ -1,0 +1,166 @@
+/**
+ * 
+ */
+package com.asksven.android.common.kernelutils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import android.os.Build;
+import android.util.Log;
+
+
+
+//import com.asksven.andoid.common.contrib.Shell;
+import com.asksven.andoid.common.contrib.Util;
+import com.asksven.android.common.RootShell;
+import com.asksven.android.common.privateapiproxies.Alarm;
+import com.asksven.android.common.privateapiproxies.BatteryStatsTypes;
+import com.asksven.android.common.privateapiproxies.StatElement;
+import com.asksven.android.common.privateapiproxies.Wakelock;
+import com.asksven.android.common.shellutils.Exec;
+import com.asksven.android.common.shellutils.ExecResult;
+import com.asksven.android.common.utils.DateUtils;
+
+/**
+ * Parses the content of 'dumpsys battery'
+ * @author sven
+ */
+public class PartialWakelocksDumpsys
+{
+	static final String TAG = "PartialWakelocksDumpsys";
+	static final String PERMISSION_DENIED = "su rights required to access alarms are not available / were not granted";
+
+	/**
+	 * Returns a list of alarm value objects
+	 * @return
+	 * @throws Exception
+	 */
+	public static ArrayList<StatElement> getPartialWakelocks()
+	{
+		final String START_PATTERN = "  All partial wake locks";
+		
+		ArrayList<StatElement> myWakelocks = null;
+		long nTotalCount = 0;
+
+		List<String> res = RootShell.getInstance().run("dumpsys batterystats");
+		//List<String> res = getTestData();
+		
+		if ((res != null) && (res.size() != 0))
+
+		{
+			if (true) //strRes.contains("Permission Denial"))
+			{
+				Pattern begin = Pattern.compile(START_PATTERN);
+				boolean bParsing = false;
+
+				// we are looking for singlr line entries in the format
+				// Wake lock 1001 RILJ: 1h 8m 23s 575ms (930 times) realtime
+				// Wake lock 1013 AudioMix: 26m 33s 343ms (10 times) realtime
+//				' <package name>
+				// '  <time> ms running, <number> wakeups
+				// '  <number> alarms: act=<intent name> flg=<flag> (repeating 1..n times)
+				Pattern pattern	= Pattern.compile("\\s\\sWake lock\\s([a-z0-9]+)\\s(.*): ([a-z0-9\\s]+)ms \\((\\d+) times\\).*");
+				
+				myWakelocks = new ArrayList<StatElement>();
+				Wakelock myWl = null;
+				
+				// process the file
+				long total = 0;
+				for (int i=0; i < res.size(); i++)
+				{
+					// skip till start mark found
+					if (bParsing)
+					{
+						// parse the alarms by block 
+						String line = res.get(i);
+						Matcher mPackage 	= pattern.matcher(line);
+						
+						// first line
+						if ( mPackage.find() )
+						{
+							try
+							{
+								String id 		= mPackage.group(1);
+								String wakelock = mPackage.group(2);
+								long duration 	= DateUtils.durationToLong(mPackage.group(3));
+								int times 		= Integer.valueOf(mPackage.group(4));
+
+								myWl = new Wakelock(BatteryStatsTypes.WAKE_TYPE_PARTIAL, wakelock, duration, 0, times);
+								total += duration;
+								myWakelocks.add(myWl);
+								Log.i(TAG, "Adding partial wakelock: " + myWl.getData());
+							}
+							catch (Exception e)
+							{
+								Log.e(TAG, "Error: parsing error in package line (" + line + ")");
+							}
+						}
+					}
+					else
+					{
+						// look for beginning
+						Matcher line = begin.matcher(res.get(i));
+						if (line.find())
+						{
+							bParsing = true;
+						}
+					}
+				}
+				
+				// set the total
+				for (int i=0; i < myWakelocks.size(); i++)
+				{
+					myWakelocks.get(i).setTotal(total);
+				}
+			}
+			else
+			{
+				myWakelocks = new ArrayList<StatElement>();
+				Wakelock myWl = new Wakelock(0, PERMISSION_DENIED, 1, 1, 0);
+				myWakelocks.add(myWl);
+			}
+		}
+		else
+		{
+			myWakelocks = new ArrayList<StatElement>();
+			Wakelock myWl = new Wakelock(0, PERMISSION_DENIED, 1, 1, 0);
+			myWakelocks.add(myWl);
+
+		}
+		
+		return myWakelocks;
+	}
+
+
+	static ArrayList<String> getTestData()
+	{
+		ArrayList<String> myRet = new ArrayList<String>()
+				{{
+					add("Alarm Stats:");
+					add("  All partial wake locks:");
+					add("  Wake lock 1001 RILJ: 1h 8m 23s 575ms (930 times) realtime");
+					add("  Wake lock 1013 AudioMix: 26m 33s 343ms (10 times) realtime");
+					add("  Wake lock u0a203 android.media.MediaPlayer: 26m 20s 380ms (3 times) realtime");
+					add("  Wake lock u0a203 pocketcasts_wake_lock: 26m 19s 956ms (3 times) realtime");
+					add("  Wake lock u0a18 NlpCollectorWakeLock: 5m 1s 608ms (347 times) realtime");
+					add("  Wake lock u0a18 NlpWakeLock: 1m 58s 440ms (1473 times) realtime");
+					add("  Wake lock u0a18 Checkin Service: 1m 36s 820ms (47 times) realtime");
+					add("  Wake lock u0a203 pocketcasts_update_wake_lock: 44s 69ms (5 times) realtime");
+					add("  Wake lock 1000 ActivityManager-Launch: 27s 214ms (72 times) realtime");
+					add("  Wake lock u0a18 WakefulIntentService[GCoreUlr-LocationReportingService]: 27s 108ms (11 times) realtime");
+					add("  Wake lock u0a47 StartingAlertService: 23s 785ms (15 times) realtime");
+					add("  Wake lock u0a59 *sync*/gmail-ls/com.google/sven.knispel@gmail.com: 17s 777ms (6 times) realtime");
+					add("  Wake lock 1000 AlarmManager: 17s 235ms (193 times) realtime");
+					add("  Wake lock u0a18 Icing: 14s 250ms (45 times) realtime");
+					add("  Wake lock u0a18 GCM_CONN_ALARM: 13s 467ms (25 times) realtime");
+					add("  Wake lock u0a18 ezk: 11s 653ms (136 times) realtime");
+					add("  Wake lock u0a178 AlarmManager: 10s 671ms (162 times) realtime");
+
+				}};
+
+		return myRet;
+	}
+}
