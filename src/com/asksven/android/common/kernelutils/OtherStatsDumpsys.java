@@ -42,7 +42,7 @@ public class OtherStatsDumpsys
 	 * @return
 	 * @throws Exception
 	 */
-	public static ArrayList<StatElement> getOtherStats()
+	public static ArrayList<StatElement> getOtherStats(boolean showWifi, boolean showBt)
 	{
 		final String START_PATTERN = "Statistics since last charge";
 		final String STOP_PATTERN = "Statistics since last unplugged";
@@ -102,8 +102,7 @@ public class OtherStatsDumpsys
 							{
 								long durationScreenOn 	= DateUtils.durationToLong(screenOnMatcher.group(1));
 								long durationInCall 	= DateUtils.durationToLong(screenOnMatcher.group(2));
-								
-
+																
 								myMisc = new Misc("Screen On", durationScreenOn, SystemClock.elapsedRealtime());
 								myWakelocks.add(myMisc);
 
@@ -128,15 +127,20 @@ public class OtherStatsDumpsys
 								long durationBtRunning 		= DateUtils.durationToLong(wifiOnMatcher.group(3));
 								
 
-								myMisc = new Misc("Wifi On", durationWifiOn, SystemClock.elapsedRealtime());
-								myWakelocks.add(myMisc);
-
-								myMisc = new Misc("Wifi Running", durationWifiRunning, SystemClock.elapsedRealtime());
-								myWakelocks.add(myMisc);
-
-								myMisc = new Misc("Bluetooth On", durationBtRunning, SystemClock.elapsedRealtime());
-								myWakelocks.add(myMisc);
-
+								if (showWifi)
+								{
+									myMisc = new Misc("Wifi On", durationWifiOn, SystemClock.elapsedRealtime());
+									myWakelocks.add(myMisc);
+	
+									myMisc = new Misc("Wifi Running", durationWifiRunning, SystemClock.elapsedRealtime());
+									myWakelocks.add(myMisc);
+								}
+								
+								if (showBt)
+								{
+									myMisc = new Misc("Bluetooth On", durationBtRunning, SystemClock.elapsedRealtime());
+									myWakelocks.add(myMisc);
+								}
 								Log.i(TAG, "Adding partial wakelock: " + myMisc.getData());
 							}
 							catch (Exception e)
