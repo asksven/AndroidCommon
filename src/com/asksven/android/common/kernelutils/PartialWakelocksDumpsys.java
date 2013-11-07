@@ -40,7 +40,8 @@ public class PartialWakelocksDumpsys
 	 */
 	public static ArrayList<StatElement> getPartialWakelocks()
 	{
-		final String START_PATTERN = "  All partial wake locks";
+		final String START_PATTERN = "Statistics since last charge";
+		final String STOP_PATTERN = "Statistics since last unplugged";
 		
 		ArrayList<StatElement> myWakelocks = null;
 		long nTotalCount = 0;
@@ -54,6 +55,8 @@ public class PartialWakelocksDumpsys
 			if (true) //strRes.contains("Permission Denial"))
 			{
 				Pattern begin = Pattern.compile(START_PATTERN);
+				Pattern end = Pattern.compile(STOP_PATTERN);
+				
 				boolean bParsing = false;
 
 				// we are looking for singlr line entries in the format
@@ -74,6 +77,13 @@ public class PartialWakelocksDumpsys
 					// skip till start mark found
 					if (bParsing)
 					{
+						// look for end
+						Matcher endMatcher = end.matcher(res.get(i));
+						if (endMatcher.find())
+						{
+							break;
+						}
+						
 						// parse the alarms by block 
 						String line = res.get(i);
 						Matcher mPackage 	= pattern.matcher(line);
