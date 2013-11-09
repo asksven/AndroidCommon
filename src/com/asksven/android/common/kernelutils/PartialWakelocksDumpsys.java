@@ -4,12 +4,22 @@
 package com.asksven.android.common.kernelutils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
+
+
+
+
+
 
 
 
@@ -38,17 +48,31 @@ public class PartialWakelocksDumpsys
 	 * @return
 	 * @throws Exception
 	 */
-	public static ArrayList<StatElement> getPartialWakelocks()
+	public static ArrayList<StatElement> getPartialWakelocks(Context ctx)
 	{
+		
+		// get the list of all installed packages
+		PackageManager pm = ctx.getPackageManager();
+		List<ApplicationInfo> apps = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+//		List<PackageInfo> packages = pm.getInstalledPackages(PackageManager.GET_META_DATA);
+		
+		HashMap<String, Integer> xrefPackages = new HashMap<String, Integer>();
+		
+		for (int i=0; i < apps.size(); i++)
+		{
+			xrefPackages.put(apps.get(i).packageName, apps.get(i).uid);
+		}
+		
 		final String START_PATTERN = "Statistics since last charge";
 		final String STOP_PATTERN = "Statistics since last unplugged";
 		
 		ArrayList<StatElement> myWakelocks = null;
-		long nTotalCount = 0;
 
 		List<String> res = RootShell.getInstance().run("dumpsys batterystats");
 		//List<String> res = getTestData();
-		
+
+		HashMap<String, String> xrefUserNames = getPackages(res);
+
 		if ((res != null) && (res.size() != 0))
 
 		{
@@ -98,7 +122,14 @@ public class PartialWakelocksDumpsys
 								long duration 	= DateUtils.durationToLong(mPackage.group(3));
 								int times 		= Integer.valueOf(mPackage.group(4));
 
+								// get the package associated with id
+								String packageName = xrefUserNames.get(id);
+								// get the uid for that package
+								int uid = xrefPackages.get(packageName);
+								
 								myWl = new Wakelock(BatteryStatsTypes.WAKE_TYPE_PARTIAL, wakelock, duration, 0, times);
+								myWl.setUid(uid);
+								
 								total += duration;
 								myWakelocks.add(myWl);
 								Log.i(TAG, "Adding partial wakelock: " + myWl.getData());
@@ -172,5 +203,66 @@ public class PartialWakelocksDumpsys
 				}};
 
 		return myRet;
+	}
+	
+	private static HashMap<String, String> getPackages(List<String> res)
+	{
+		HashMap<String, String> xref = new HashMap<String, String>();
+				
+		final String START_PATTERN = "Statistics since last charge";
+		final String STOP_PATTERN = "Statistics since last unplugged";
+		
+		if ((res != null) && (res.size() != 0))
+
+		{
+			Pattern begin = Pattern.compile(START_PATTERN);
+			Pattern end = Pattern.compile(STOP_PATTERN);
+			
+			boolean bParsing = false;
+
+			Pattern patternUser	= Pattern.compile("\\s\\s(u0a\\d+):");
+			Pattern patternPackage	= Pattern.compile("\\s\\s\\s\\sApk\\s(.*):");
+
+			String user = "";
+			for (int i=0; i < res.size(); i++)
+			{
+				// skip till start mark found
+				if (bParsing)
+				{
+
+					// look for end
+					Matcher endMatcher = end.matcher(res.get(i));
+					if (endMatcher.find())
+					{
+						break;
+					}
+
+					String line = res.get(i);
+					Matcher mUser 	= patternUser.matcher(line);
+					Matcher mApk 	= patternPackage.matcher(line);
+					
+					if ( mUser.find() )
+					{
+						user = mUser.group(1);
+					}
+					if ( mApk.find() )
+					{
+						xref.put(user, mApk.group(1));
+					}
+				}
+				else
+				{
+					// look for beginning
+					Matcher line = begin.matcher(res.get(i));
+					if (line.find())
+					{
+						bParsing = true;
+					}
+				}
+					
+			}
+		}
+		
+		return xref;
 	}
 }
