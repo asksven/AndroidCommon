@@ -124,8 +124,13 @@ public class PartialWakelocksDumpsys
 
 								// get the package associated with id
 								String packageName = xrefUserNames.get(id);
-								// get the uid for that package
-								int uid = xrefPackages.get(packageName);
+								
+								int uid = 0;
+								if (packageName != null)
+								{
+									// get the uid for that package
+									uid = xrefPackages.get(packageName);
+								}
 								
 								myWl = new Wakelock(BatteryStatsTypes.WAKE_TYPE_PARTIAL, wakelock, duration, 0, times);
 								myWl.setUid(uid);
@@ -205,7 +210,7 @@ public class PartialWakelocksDumpsys
 		return myRet;
 	}
 	
-	private static HashMap<String, String> getPackages(List<String> res)
+	protected static HashMap<String, String> getPackages(List<String> res)
 	{
 		HashMap<String, String> xref = new HashMap<String, String>();
 				
