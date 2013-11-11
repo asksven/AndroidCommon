@@ -37,7 +37,7 @@ public class StringUtils
 	
 	private static String TAG = "StringUtils";
 
-	static Pattern emailPattern			= Pattern.compile("([A-Z_]+)([a-z0-9._%-]+)@([a-z0-9.-]+\\.[a-z]{2,4})(.*)");
+	static Pattern emailPattern			= Pattern.compile("(.*/)([A-Za-z0-9._%-+]+)@([a-z0-9.-]+\\.[a-z]{2,4})(.*)");
 	static Pattern accountnamePattern	= Pattern.compile("(.*\\{name\\=)(.*)(\\,.*)");
 	
 	public static final String formatRatio(long num, long den)
@@ -184,7 +184,7 @@ public class StringUtils
 		        {
 		          sb.append(Integer.toHexString((thedigest[i] & 0xFF) | 0x100).substring(1,3));
 		        }
-		        ret = email.group(1) + " " + sb.toString() + "@" + email.group(3) + email.group(4); 
+		        ret = email.group(1) + sb.toString() + "@" + email.group(3) + email.group(4); 
 			}
 			catch (Exception e)
 			{
