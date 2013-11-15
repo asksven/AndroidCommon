@@ -35,25 +35,28 @@ public class AlarmsDumpsys
 		String release = Build.VERSION.RELEASE;
 		int sdk = Build.VERSION.SDK_INT;
 		Log.i(TAG, "getAlarms: SDK=" + sdk + ", RELEASE=" + release);
+		
+		List<String> res = RootShell.getInstance().run("dumpsys alarm");
+
 		if (sdk < 17) // Build.VERSION_CODES.JELLY_BEAN_MR1)
 		{
-			return getAlarmsPriorTo_4_2_2();
+			return getAlarmsPriorTo_4_2_2(res);
 		}
-		else if (sdk == 17) // Build.VERSION_CODES.JELLY_BEAN_MR1)
+		else if (sdk == Build.VERSION_CODES.JELLY_BEAN_MR1)
 		{
 			if (release.equals("4.2.2"))
 			{
-				return getAlarmsFrom_4_2_2();
+				return getAlarmsFrom_4_2_2(res);
 			}
 			else
 			{
-				return getAlarmsPriorTo_4_2_2();
+				return getAlarmsPriorTo_4_2_2(res);
 			}
 		}
 
 		else
 		{
-			return getAlarmsFrom_4_2_2();
+			return getAlarmsFrom_4_3(res);
 		}
 	}
 	/**
@@ -61,13 +64,11 @@ public class AlarmsDumpsys
 	 * @return
 	 * @throws Exception
 	 */
-	private static ArrayList<StatElement> getAlarmsPriorTo_4_2_2()
+	protected static ArrayList<StatElement> getAlarmsPriorTo_4_2_2(List<String> res)
 	{
 		ArrayList<StatElement> myAlarms = null;
 		long nTotalCount = 0;
-		// ExecResult res = Exec.execPrint(new String[]{"/system/bin/su", "-c", "/system/bin/dumpsys alarm"});
-//		ExecResult res = Exec.execPrint(new String[]{"su", "-c", "dumpsys alarm"});
-		List<String> res = RootShell.getInstance().run("dumpsys alarm");
+
 //		if (res.getSuccess())
 		if ((res != null) && (res.size() != 0))
 
@@ -211,12 +212,11 @@ public class AlarmsDumpsys
 		return myAlarms;
 	}
 
-	private static ArrayList<StatElement> getAlarmsFrom_4_2_2()
+	protected static ArrayList<StatElement> getAlarmsFrom_4_2_2(List<String> res)
 	{
 		ArrayList<StatElement> myAlarms = null;
 		long nTotalCount = 0;
-		List<String> res = RootShell.getInstance().run("dumpsys alarm");
-
+		
 		if ((res != null) && (res.size() != 0))
 
 		{
@@ -328,60 +328,121 @@ public class AlarmsDumpsys
 		}
 		return myAlarms;
 	}
-
-	static ArrayList<String> getTestData()
+	protected static ArrayList<StatElement> getAlarmsFrom_4_3(List<String> res)
 	{
-		ArrayList<String> myRet = new ArrayList<String>()
-				{{
-					add("Alarm Stats:");
-					add("  com.google.android.gsf");
-					add("  8417ms running, 204 wakeups");
-					add("  17 alarms: act=com.google.android.intent.action.GTALK_RECONNECT flg=0x4");
-					add("  187 alarms: flg=0x4");
-//						  com.anod.calendar
-//						    311ms running, 0 wakeups
-//						    4 alarms: act=android.appwidget.action.APPWIDGET_UPDATE dat=com.anod.calendar://widget/id/45 flg=0x4
-//						  com.yahoo.mobile.client.android.mail
-//						    1248ms running, 96 wakeups
-//						    2 alarms: act=com.yahoo.android.push.Timer_VitalizeSessionybres89mail flg=0x4 cmp=com.yahoo.mobile.client.android.mail/com.yahoo.mobile.client.share.push.HTTPKeepAliveService
-//						    2 alarms: act=com.yahoo.android.push.Connection_Watchdogybres89mail flg=0x4 cmp=com.yahoo.mobile.client.android.mail/com.yahoo.mobile.client.share.push.HTTPKeepAliveService
-//						    92 alarms: act=com.yahoo.android.push.Connection_Recoveryybres89mail flg=0x4 cmp=com.yahoo.mobile.client.android.mail/com.yahoo.mobile.client.share.push.HTTPKeepAliveService
-//						  com.android.vending
-//						    6669ms running, 0 wakeups
-//						    12 alarms: act=com.android.vending.FORCE_UPDATE_CHECK flg=0x4
-//						  com.moctav.weather
-//						    3783ms running, 0 wakeups
-//						    94 alarms: act=Autoupdate flg=0x4 cmp=com.moctav.weather/.WeatherUpdateService
-//						  android
-//						    517606ms running, 137 wakeups
-//						    4 alarms: act=android.intent.action.DATE_CHANGED flg=0x30000004
-//						    70 alarms: act=com.android.internal.policy.impl.PhoneWindowManager.DELAYED_KEYGUARD flg=0x4
-//						    5599 alarms: act=android.intent.action.TIME_TICK flg=0x40000004
-//						    557 alarms: act=com.android.server.ThrottleManager.action.POLL flg=0x4
-//						    54 alarms: act=android.app.backup.intent.RUN flg=0x40000004
-//						    13 alarms: act=android.content.syncmanager.SYNC_ALARM flg=0x4
-//						  com.whatsapp
-//						    36757ms running, 11 wakeups
-//						    4 alarms: act=ALARM_REPORT_SYNCS flg=0x4
-//						    4 alarms: act=ALARM_MESSAGES_DB_BACKUP flg=0x4
-//						    4 alarms: act=ALARM_ROTATE_LOGS flg=0x4
-//						    2 alarms: act=ALARM_AVAILABLE_TIMEOUT flg=0x4
-//						    114 alarms: act=ALARM_ACTION flg=0x4
-//						    1 alarms: act=com.whatsapp.MessageService.RECONNECT flg=0x4 cmp=com.whatsapp/.messaging.MessageService
-//						  com.google.android.apps.maps
-//						    2238ms running, 93 wakeups
-//						    93 alarms: flg=0x4 cmp=com.google.android.apps.maps/com.google.googlenav.prefetch.android.PrefetcherService
-//						  com.android.providers.calendar
-//						    344ms running, 4 wakeups
-//						    4 alarms: act=com.android.providers.calendar.SCHEDULE_ALARM flg=0x4
-//						  com.android.deskclock
-//						    1219ms running, 4 wakeups
-//						    4 alarms: act=com.android.deskclock.ALARM_ALERT flg=0x4
-						add("  com.carl.trafficcounter");
-						add("  446486ms running, 5584 wakeups");
-						add("  5584 alarms: act=com.carl.trafficcounter.UPDATE_RUN flg=0x4");
-				}};
+		ArrayList<StatElement> myAlarms = null;
+		long nTotalCount = 0;
+		
+		if ((res != null) && (res.size() != 0))
 
-		return myRet;
+		{
+			Pattern begin = Pattern.compile("Alarm Stats");
+			boolean bParsing = false;
+
+			// we are looking for multiline entries in the format
+			// ' <package name> +<time>ms running, <number> wakeups
+			// '  +<time>ms <number> wakes <number> alarms: act=<intern> (repeating 1..n times)
+			Pattern packagePattern 	= Pattern.compile("\\s\\s([a-z][a-zA-Z0-9\\.]+)\\s\\+(.*), (\\d+) wakeups:");
+			Pattern numberPattern	= Pattern.compile("\\s\\s\\s\\s\\+([0-9a-z]+)ms (\\d+) wakes (\\d+) alarms: (act|cmp)=(.*)");
+			
+			myAlarms = new ArrayList<StatElement>();
+			Alarm myAlarm = null;
+			
+			// process the file
+			for (int i=0; i < res.size(); i++)
+			{
+				// skip till start mark found
+				if (bParsing)
+				{
+					// parse the alarms by block 
+					String line = res.get(i);
+					Matcher mPackage 	= packagePattern.matcher(line);
+					Matcher mNumber 	= numberPattern.matcher(line);
+					
+					// first line
+					if ( mPackage.find() )
+					{
+						try
+						{
+							// if there was a previous Alarm populated store it
+							if (myAlarm != null)
+							{
+								myAlarms.add(myAlarm);
+							}
+							// we are interested in the first token 
+							String strPackageName = mPackage.group(1);
+							myAlarm = new Alarm(strPackageName);
+
+							String strWakeups = mPackage.group(3);
+							long nWakeups = Long.parseLong(strWakeups);
+							myAlarm.setWakeups(nWakeups);
+							nTotalCount += nWakeups;
+
+						}
+						catch (Exception e)
+						{
+							Log.e(TAG, "Error: parsing error in package line (" + line + ")");
+						}
+					}
+
+					// second line (and following till next package)
+					if ( mNumber.find() )
+					{
+						try
+						{
+							// we are interested in the first and second token
+							String strNumber = mNumber.group(2);
+							String strIntent = mNumber.group(5);
+							long nNumber = Long.parseLong(strNumber);
+
+							if (myAlarm == null)
+							{
+								Log.e(TAG, "Error: number line found but without alarm object (" + line + ")");
+							}
+							else
+							{
+								myAlarm.addItem(nNumber, strIntent);
+							}
+						}
+						catch (Exception e)
+						{
+							Log.e(TAG, "Error: parsing error in number line (" + line + ")");
+						}
+					}
+				}
+				else
+				{
+					// look for beginning
+					Matcher line = begin.matcher(res.get(i));
+					if (line.find())
+					{
+						bParsing = true;
+					}
+				}
+			}
+			// the last populated alarms has not been added to the list yet
+			myAlarms.add(myAlarm);
+			
+		}
+		else
+		{
+			myAlarms = new ArrayList<StatElement>();
+			Alarm myAlarm = new Alarm(PERMISSION_DENIED);
+			myAlarm.setWakeups(1);
+			myAlarms.add(myAlarm);
+
+		}
+		
+		
+		for (int i=0; i < myAlarms.size(); i++)
+		{
+			Alarm myAlarm = (Alarm)myAlarms.get(i);
+			if (myAlarm != null)
+			{
+				myAlarm.setTotalCount(nTotalCount);
+			}
+		}
+		return myAlarms;
 	}
+
 }
