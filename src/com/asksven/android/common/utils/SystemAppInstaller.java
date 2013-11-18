@@ -26,7 +26,8 @@ public class SystemAppInstaller
 	static final String REMOUNT_SYSTEM_RW 	= "mount -o rw,remount /system";
 	static final String REMOUNT_SYSTEM_RO 	= "mount -o ro,remount /system";
 	// returns ro or rw
-	static final String CHECK_MOUNT_STATE 	= "mount | grep /system | awk '{print $4}' | awk -F\",\" '{print $1}'";
+//	static final String CHECK_MOUNT_STATE 	= "mount | grep /system | awk '{print $4}' | awk -F\",\" '{print $1}'";
+	static final String CHECK_MOUNT_STATE 	= "mount | grep /system";
 	
 	
 	public static boolean mountSystemRw()
@@ -58,8 +59,10 @@ public class SystemAppInstaller
 		List<String> res = RootShell.getInstance().run(CHECK_MOUNT_STATE);
 		if (res.size() > 0)
 		{
-			Log.i(TAG, "Mount status: " + res.get(0));
-			ret = res.get(0).equals("rw");
+			String[] tokens = res.get(0).split(" |,");
+			String mountState = tokens[3];
+			Log.i(TAG, "Mount status: " + mountState);
+			ret = (mountState.equals("rw"));
 		}
 		
 		return ret;
@@ -95,18 +98,38 @@ public class SystemAppInstaller
 	static boolean installAsSystemApp(String apk)
 	{
 		String command = "";
-		if (Build.VERSION.SDK_INT >= 19)
-		{
-			command = 	"cp /data/app/" + apk + "* " + SYSTEM_DIR_4_4 + " && chmod 644 " + SYSTEM_DIR_4_4 + "/" + apk + "*";
-		}
-		else
-		{
-			command = 	"cp /data/app/" + apk + "* " + SYSTEM_DIR + " && chmod 644 " + SYSTEM_DIR + "/" + apk + "*";
-		}
+		String commandTouch = "";
+		String commandCopyBack = "";
 		
-		Log.i(TAG, "Installing app as system app: " + command);
-		RootShell.getInstance().run(command);
+		// get the original filename
+		command = "ls /data/app/" + apk + "*";
+		List<String> res = RootShell.getInstance().run(command);
 		
+		for (int i=0; i < res.size(); i++)
+		{
+			String fileName = res.get(0).split("/")[3];
+			// remove the -1 from filename to make sure the target filename is different
+			String targetFilename = fileName.split("-")[0] + ".apk";
+			
+			if (Build.VERSION.SDK_INT >= 19)
+			{
+				// make the file old
+				commandTouch = "touch -t 20080801 " + SYSTEM_DIR_4_4 + "/" + targetFilename;
+				command = 	"cp -p /data/app/" + fileName + " " +SYSTEM_DIR_4_4 + "/" + targetFilename + " && chmod 644 " + SYSTEM_DIR_4_4 + "/" + targetFilename;
+				commandCopyBack = command = 	"cp  " + SYSTEM_DIR_4_4 + "/" + targetFilename + " /data/app/" + fileName;
+			}
+			else
+			{
+				commandTouch = "touch -t 20080801 " + SYSTEM_DIR + "/" + targetFilename;
+				command = 	"cp -p /data/app/" + fileName + " " + SYSTEM_DIR + "/" + targetFilename + " && chmod 644 " + SYSTEM_DIR + "/" + targetFilename;
+				commandCopyBack = command = 	"cp  " + SYSTEM_DIR + "/" + targetFilename + " /data/app/" + fileName;
+			}
+			
+			Log.i(TAG, "Installing app as system app: " + command);
+			RootShell.getInstance().run(command);
+			RootShell.getInstance().run(commandTouch);
+			RootShell.getInstance().run(commandCopyBack);
+		}		
 		return isSystemApp(apk);
 	}
 	
