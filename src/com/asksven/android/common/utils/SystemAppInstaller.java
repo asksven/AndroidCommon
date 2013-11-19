@@ -3,9 +3,15 @@
  */
 package com.asksven.android.common.utils;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
@@ -76,11 +82,11 @@ public class SystemAppInstaller
 		String command = "";
 		if (Build.VERSION.SDK_INT >= 19)
 		{
-			command = "ls " + SYSTEM_DIR_4_4 + "/" + apk + "*";
+			command = "ls " + SYSTEM_DIR_4_4 + "/" + apk;
 		}
 		else
 		{
-			command = "ls " + SYSTEM_DIR + "/" + apk + "*";
+			command = "ls " + SYSTEM_DIR + "/" + apk;
 		}
 
 		Log.i(TAG, "Checking if " + apk + " is a system app");
@@ -95,44 +101,86 @@ public class SystemAppInstaller
 		return ret;
 	}
 	
-	static boolean installAsSystemApp(String apk)
+//	static boolean installAsSystemApp(Context ctx, String apk)
+//	{
+//		String command = "";
+//		String commandCopyBack = "";
+//		String commandTouch = "";
+//		
+//		// get the original filename
+//		command = "ls /data/app/" + apk + "*";
+//		List<String> res = RootShell.getInstance().run(command);
+//
+//		// we copy all the instances of the file to /system (preserving timestamp)
+//		// at that point the APK will get deleted from /data/app (by the system) 
+//		// so we need to copy the APK back to /data/app (with a new timestamp)
+//		for (int i=0; i < res.size(); i++)
+//		{
+//			String fileName = res.get(0).split("/")[3];
+//			// remove the -1 from filename to make sure the target filename is different
+//			
+//			if (Build.VERSION.SDK_INT >= 19)
+//			{
+//				commandTouch	= "touch -t 20080801 " + SYSTEM_DIR_4_4 + "/" + fileName; 
+//				command 		= "cp -p /data/app/" + fileName + " " +SYSTEM_DIR_4_4  
+//						+ " && chmod 644 " + SYSTEM_DIR_4_4 + "/" + fileName 
+//						+ " && chown root:root " + SYSTEM_DIR_4_4 + "/" + fileName;
+//				commandCopyBack = "cp  " + SYSTEM_DIR_4_4 + "/" + fileName + " /data/app/"
+//						+ " && chmod 644 /data/app/" + fileName 
+//						+ " && chown system:system /data/app/" + fileName;
+//			}
+//			else
+//			{
+//				commandTouch	= "touch -t 20080801 " + SYSTEM_DIR + "/" + fileName;
+//				command 		= "cp -p /data/app/" + fileName + " " + SYSTEM_DIR 
+//						+ " && chmod 644 " + SYSTEM_DIR + "/" + fileName 
+//						+ " && chown root:root " + SYSTEM_DIR + "/" + fileName;
+//				commandCopyBack = "cp  " + SYSTEM_DIR + "/" + fileName + " /data/app/"
+//						+ " && chmod 644 /data/app/" + fileName 
+//						+ " && chown system:systems /data/app/" + fileName;
+//			}
+//
+//
+//			Log.i(TAG, "Installing app as system app: " + command);
+//			RootShell.getInstance().run(command);
+//
+//			Log.i(TAG, "Copy APK back to /data/app: " + commandCopyBack);
+//			RootShell.getInstance().run(commandCopyBack);
+//			
+//			Log.i(TAG, "Changing timestamp: " + commandTouch);
+//			RootShell.getInstance().run(commandTouch);
+//
+//		}		
+//		return isSystemApp(apk);
+//	}
+
+	static boolean installAsSystemApp(Context ctx, String apk)
 	{
-		String command = "";
-		String commandTouch = "";
-		String commandCopyBack = "";
+		String command 		= "";
+		String targetPath 	= "";
+		String tempPath 	= "/sdcard/";
 		
-		// get the original filename
-		command = "ls /data/app/" + apk + "*";
-		List<String> res = RootShell.getInstance().run(command);
-		
-		for (int i=0; i < res.size(); i++)
+		if (Build.VERSION.SDK_INT >= 19)
 		{
-			String fileName = res.get(0).split("/")[3];
-			// remove the -1 from filename to make sure the target filename is different
-			String targetFilename = fileName.split("-")[0] + ".apk";
-			
-			if (Build.VERSION.SDK_INT >= 19)
-			{
-				// make the file old
-				commandTouch = "touch -t 20080801 " + SYSTEM_DIR_4_4 + "/" + targetFilename;
-				command = 	"cp -p /data/app/" + fileName + " " +SYSTEM_DIR_4_4 + "/" + targetFilename + " && chmod 644 " + SYSTEM_DIR_4_4 + "/" + targetFilename;
-				commandCopyBack = command = 	"cp  " + SYSTEM_DIR_4_4 + "/" + targetFilename + " /data/app/" + fileName;
-			}
-			else
-			{
-				commandTouch = "touch -t 20080801 " + SYSTEM_DIR + "/" + targetFilename;
-				command = 	"cp -p /data/app/" + fileName + " " + SYSTEM_DIR + "/" + targetFilename + " && chmod 644 " + SYSTEM_DIR + "/" + targetFilename;
-				commandCopyBack = command = 	"cp  " + SYSTEM_DIR + "/" + targetFilename + " /data/app/" + fileName;
-			}
-			
-			Log.i(TAG, "Installing app as system app: " + command);
-			RootShell.getInstance().run(command);
-			RootShell.getInstance().run(commandTouch);
-			RootShell.getInstance().run(commandCopyBack);
-		}		
+			command = "cp " + tempPath + apk + " " + SYSTEM_DIR_4_4 + " && chmod 644 " + SYSTEM_DIR_4_4 + "/" + apk 
+					+ " && chown root:root " + SYSTEM_DIR_4_4 + "/" + apk + " && rm " + tempPath + apk;
+			targetPath = SYSTEM_DIR_4_4;
+		}
+		else
+		{
+			command = "cp " + tempPath + apk + " " + SYSTEM_DIR + " && chmod 644 " + SYSTEM_DIR + "/" + apk 
+					+ " && chown root:root " + SYSTEM_DIR + "/" + apk + " && rm " + tempPath + apk;
+			targetPath = SYSTEM_DIR_4_4;
+		}
+
+
+		copyAsset(ctx, apk, tempPath);
+		Log.i(TAG, "Copying, setting permissions and owner and cleaning up: " + command);
+		RootShell.getInstance().run(command);
+
 		return isSystemApp(apk);
 	}
-	
+
 	static boolean uninstallAsSystemApp(String apk)
 	{
 		String command = "";
@@ -152,7 +200,7 @@ public class SystemAppInstaller
 		return !isSystemApp(apk);
 	}
 
-	public static Status install(String apk)
+	public static Status install(Context ctx, String apk)
 	{
 		Status status = new Status();
 		
@@ -160,7 +208,7 @@ public class SystemAppInstaller
 		if (SystemAppInstaller.isSystemRw())
 		{
 			status.add("Mounted system rw");
-			SystemAppInstaller.installAsSystemApp(apk);
+			SystemAppInstaller.installAsSystemApp(ctx, apk);
 			status.add("Install as system app");
 			if (SystemAppInstaller.isSystemApp(apk))
 			{
@@ -190,7 +238,66 @@ public class SystemAppInstaller
 		
 		return status;
 	}
-	
+
+    private static void copyAsset(Context ctx, String assetName, String targetPath)
+    {
+        AssetManager assetManager = ctx.getAssets();
+        String[] files = null;
+        try
+        {
+            files = assetManager.list("");
+        }
+        catch (IOException e)
+        {
+            Log.e("tag", e.getMessage());
+        }
+        for(String filename : files)
+        {
+        	if (filename.equals(assetName))
+        	{
+	            InputStream in = null;
+	            OutputStream out = null;
+	            try
+	            {
+	              in = assetManager.open(filename);
+	              String strOutFile = targetPath + "/" + filename;
+	              out = new FileOutputStream(strOutFile);
+	              copyFile(in, out);
+	              in.close();
+	              in = null;
+	              out.flush();
+	              out.close();
+	              out = null;
+	            }
+	            catch(Exception e)
+	            {
+	                Log.e(TAG, "An error occured while reading " + filename);
+	            }
+        	}
+        }
+    }
+    
+    /**
+     * Write a single file
+     * @param in the source (in assets)
+     * @param out the target
+     * @throws IOException
+     */
+    private static void copyFile(InputStream in, OutputStream out) throws IOException
+    {
+        byte[] buffer = new byte[1024];
+        int read;
+        while((read = in.read(buffer)) != -1)
+        {
+          out.write(buffer, 0, read);
+        }
+    }
+
+    /**
+     * Value holder for status
+     * @param apk
+     * @return
+     */
 	public static Status uninstall(String apk)
 	{
 		Status status = new Status();
@@ -260,4 +367,7 @@ public class SystemAppInstaller
 			return ret;
 		}
 	}	
+	
+
+
 }
