@@ -1655,6 +1655,16 @@ public class BatteryStatsProxy
 							Long userTime = (Long) methodGetUserTime.invoke(ps, paramsGetXxxTime);
 							Long systemTime = (Long) methodGetSystemTime.invoke(ps, paramsGetXxxTime);
 							Integer starts = (Integer) methodGetStarts.invoke(ps, paramsGetXxxTime);
+
+							// starting in kitkat usertime and system time are expressed in 1/100s
+							// @see https://android.googlesource.com/platform/frameworks/base/+/android-4.4_r1.1/core/java/android/os/BatteryStats.java
+							// line 343ff
+							if (Build.VERSION.SDK_INT >= 19)
+							{
+								userTime 	*= 10;
+								systemTime 	*= 10;
+							}
+
 							
 							if (CommonLogSettings.TRACE)
 							{
@@ -1663,8 +1673,10 @@ public class BatteryStatsProxy
 								Log.d(TAG, "Starts = " + starts);
 							}
 							
+							boolean ignore = false;
+
 							// take only the processes with CPU time
-							if ((userTime + systemTime) > 1000)
+							if ((userTime + systemTime) > 100)
 							{
 								Process myPs = new Process(ent.getKey(), userTime, systemTime, starts);
 								// opt for lazy loading: do no populate UidInfo, just uid. UidInfo will be fetched on demand
