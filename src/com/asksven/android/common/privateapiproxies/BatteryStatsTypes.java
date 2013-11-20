@@ -94,7 +94,7 @@ public class BatteryStatsTypes
     /**
      * Include all of the data in the stats, including previously saved data.
      */
-//    public static final int STATS_SINCE_CHARGED = 0;
+    public static final int STATS_SINCE_CHARGED = 0;
 
     /**
      * Include only the last run in the stats.
@@ -104,7 +104,7 @@ public class BatteryStatsTypes
     /**
      * Include only the current run in the stats.
      */
-    public static final int STATS_CURRENT = 0;
+    public static final int STATS_CURRENT = 2;
 
     /**
      * Include only the run since the last time the device was unplugged in the stats.
@@ -119,9 +119,9 @@ public class BatteryStatsTypes
     	boolean ret = false;
     	switch (iStatType)
     	{
-//    		case STATS_SINCE_CHARGED:
-//    			ret = true;
-//    			break;
+    		case STATS_SINCE_CHARGED:
+    			ret = true;
+    			break;
     		case STATS_LAST:
     			ret = true;
     			break;
