@@ -27,6 +27,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
@@ -155,4 +157,13 @@ public class DataStorage
 		return myRet;
 	}
 	
+	/** forces the mediascanner to "see" a file that was just created
+	 * This is a workaround (see http://stackoverflow.com/questions/3300137/how-can-i-refresh-mediastore-on-android/14849652#14849652)
+	 * 
+	 * @param file the Uri of the newly created file
+	 */
+	public static void forceMediaScanner(Context context, Uri fileUri)
+	{
+		context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, fileUri));
+	}
 }
