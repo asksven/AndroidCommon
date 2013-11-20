@@ -1847,7 +1847,7 @@ public class BatteryStatsProxy
 			
 			// read the time of query for history
 	        Long statTimeRef = Long.valueOf(this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000,
-	                BatteryStatsTypes.STATS_SINCE_CHARGED));
+	                BatteryStatsTypes.STATS_CURRENT));
 	        statTimeRef = System.currentTimeMillis(); 
 	        
 	        if (CommonLogSettings.DEBUG)
