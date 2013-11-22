@@ -157,20 +157,21 @@ public class SystemAppInstaller
 	static boolean installAsSystemApp(Context ctx, String apk)
 	{
 		String command 		= "";
-		String targetPath 	= "";
 		String tempPath 	= "/sdcard/";
 		
+		// actions:
+		// copy apk from /sdcard to /system in order to be able to set ownership and perms
+		// then copy the file to the target. The sequence is important as copying first and setting perms and ownership
+		// afterward will cause PackageParser to fail parsing the package
 		if (Build.VERSION.SDK_INT >= 19)
 		{
-			command = "cp " + tempPath + apk + " " + SYSTEM_DIR_4_4 + " && chmod 644 " + SYSTEM_DIR_4_4 + "/" + apk 
-					+ " && chown root:root " + SYSTEM_DIR_4_4 + "/" + apk + " && rm " + tempPath + apk;
-			targetPath = SYSTEM_DIR_4_4;
+			command = "cp " + tempPath + apk + " /system" + " && chmod 644 " + "/system/" + apk 
+					+ " && chown root:root /system/" + apk + " && cp -p /system/" + apk + " " + SYSTEM_DIR_4_4 + " && rm " + tempPath + apk + " && rm /system/" + apk;
 		}
 		else
 		{
-			command = "cp " + tempPath + apk + " " + SYSTEM_DIR + " && chmod 644 " + SYSTEM_DIR + "/" + apk 
-					+ " && chown root:root " + SYSTEM_DIR + "/" + apk + " && rm " + tempPath + apk;
-			targetPath = SYSTEM_DIR_4_4;
+			command = "cp " + tempPath + apk + " /system" + " && chmod 644 " + "/system/" + apk 
+					+ " && chown root:root /system/" + apk + " && cp -p /system/" + apk + " " + SYSTEM_DIR + " && rm " + tempPath + apk + " && rm /system/" + apk;
 		}
 
 
