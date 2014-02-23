@@ -17,16 +17,25 @@
 package com.asksven.android.common.privateapiproxies;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonFilter;
+
+import com.asksven.android.common.dto.AlarmDto;
+import com.asksven.android.common.dto.NativeKernelWakelockDto;
+import com.asksven.android.common.dto.NetworkUsageDto;
 import com.asksven.android.common.nameutils.UidInfo;
+import com.asksven.android.common.nameutils.UidNameResolver;
 import com.google.gson.annotations.SerializedName;
 
 import android.app.Application;
-import android.content.Context;
+//import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
+//import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 public class NetworkUsage extends StatElement implements Comparable<NetworkUsage>, Serializable
@@ -41,21 +50,29 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	 * tcpBytes received by the program
 	 */
 	@SerializedName("bytes_received")
+	@JsonProperty("bytes_received")
 	private long m_bytesReceived=0;
 	
 	/**
 	 * tcpBytes sent by the program
 	 */
 	@SerializedName("bytes_sent")
+	@JsonProperty("bytes_sent")
 	private long m_bytesSent=0;
 
 	/**
 	 * the interface
 	 */
 	@SerializedName("iface")
+	@JsonProperty("iface")
 	private String m_iface = "";
 
 
+	public NetworkUsage()
+	{
+		
+	}
+	
 	/**
 	 * 
 	 * @param uid
@@ -75,6 +92,27 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	{
 		NetworkUsage clone = new NetworkUsage(getuid(), m_iface, m_bytesReceived, m_bytesSent);
 		return clone;
+	}
+
+	public NetworkUsage(NetworkUsageDto source)
+	{
+		
+		this.setUid(source.m_uid);
+		this.m_bytesReceived 	= source.m_bytesReceived;
+		this.m_bytesSent 		= source.m_bytesSent;
+		this.m_iface 		= source.m_iface;
+
+	}
+
+	public NetworkUsageDto toDto()
+	{
+		NetworkUsageDto ret = new NetworkUsageDto();
+		ret.m_uid			= this.getuid();
+		ret.m_bytesReceived 	= this.m_bytesReceived;
+		ret.m_bytesSent 		= this.m_bytesSent;
+		ret.m_iface 		= this.m_iface;
+	
+		return ret;
 	}
 
 	/**
@@ -149,6 +187,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	/**
 	 * @return the interface
 	 */
+	@JsonProperty("iface")
 	public String getInterface()
 	{
 		String ret = "";
@@ -176,6 +215,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	/**
 	 * @return the bytes received
 	 */
+	@JsonProperty("bytes_received")
 	public long getBytesReceived()
 	{
 		return m_bytesReceived;
@@ -193,6 +233,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	/**
 	 * @return the bytes sent
 	 */
+	@JsonProperty("bytes_sent")
 	public long getBytesSent()
 	{
 		return m_bytesSent;
@@ -201,6 +242,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	/**
 	 * @return the total bytes sent and received
 	 */
+	@JsonIgnore
 	public long getTotalBytes()
 	{
 		return m_bytesSent + m_bytesReceived;
@@ -230,6 +272,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	/**
 	 * Network Stats do not have a speaking name, just the UID
 	 */
+	@JsonIgnore
 	public String getName()
 	{
 		return String.valueOf(super.getuid() + " (" + getInterface() + ")");
@@ -238,6 +281,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	/**
 	 * returns a string representation of the data
 	 */
+	@JsonIgnore
 	public String getData()
 	{
 		return formatVolume(getTotalBytes()) + " " + this.formatRatio(getTotalBytes(), getTotal());
@@ -246,7 +290,8 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 
 	/** 
 	 * returns the values of the data
-	 */	
+	 */
+	@JsonIgnore
 	public double[] getValues()
 	{
 		double[] retVal = new double[2];
@@ -292,33 +337,7 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
         return ret;
 	}
 
-	public Drawable getIcon(Context ctx)
-	{
-		if (m_icon == null)
-		{
-			// retrieve and store the icon for that package
-			if (m_uidInfo != null)
-			{
-				String myPackage = m_uidInfo.getNamePackage();
-				if (!myPackage.equals(""))
-				{
-					PackageManager manager = ctx.getPackageManager();
-					try
-					{
-						m_icon = manager.getApplicationIcon(myPackage);
-					}
-					catch (Exception e)
-					{
-						// nop: no icon found
-						m_icon = null;
-					}
-					
-				}
-			}
-		}
-		return m_icon;
-	}
-
+	@JsonIgnore
 	public String getPackageName()
 	{
 		if (m_uidInfo != null)

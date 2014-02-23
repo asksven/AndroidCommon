@@ -21,11 +21,16 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import android.content.Context;
-import android.content.pm.PackageManager;
+
+//import android.content.Context;
+//import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.asksven.android.common.dto.AlarmDto;
+import com.asksven.android.common.dto.AlarmItemDto;
+import com.asksven.android.common.nameutils.UidInfo;
+import com.asksven.android.common.nameutils.UidNameResolver;
 import com.asksven.android.common.privateapiproxies.StatElement;
 import com.google.gson.annotations.SerializedName;
 
@@ -58,7 +63,6 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	ArrayList<AlarmItem> m_items;
 	
 
-
 	/**
 	 * The default cctor
 	 * @param strName
@@ -69,7 +73,41 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 		m_items = new ArrayList<AlarmItem>();
 		
 	}
+
+	/**
+	 * The default cctor
+	 * @param strName
+	 */
+	public Alarm(String strName, long lWakeups, long lCount, ArrayList<AlarmItem> items)
+	{
+		m_strPackageName = strName;
+		m_nWakeups = lWakeups;
+		m_nTotalCount = lCount;
+		m_items = items;
+		
+	}
+
+	public Alarm(AlarmDto source)
+	{
+		
+		this.setUid(source.m_uid);
+		this.m_strPackageName 	= source.m_strPackageName;
+		this.m_nWakeups 		= source.m_nWakeups;
+		this.m_nTotalCount 		= source.m_nTotalCount;
 	
+		if (source.m_items != null)
+		{
+			this.m_items = new ArrayList<AlarmItem>();
+			for (int i=0; i < source.m_items.size(); i++)
+			{
+				AlarmItem item = new AlarmItem();
+				item.m_nNumber = source.m_items.get(i).m_nNumber;
+				item.m_strIntent = source.m_items.get(i).m_strIntent;
+				this.m_items.add(item);
+			}
+		}
+	}
+
 	public Alarm clone()
 	{
 		Alarm clone = new Alarm(m_strPackageName);
@@ -183,9 +221,9 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	/** 
 	 * returns the representation of the data for file dump
 	 */	
-	public String getDumpData(Context context)
+	public String getDumpData(UidNameResolver nameResolver)
 	{
-		return this.getName() + " (" + this.getFqn(context) + "): " + this.getDetailedData();
+		return this.getName() + " (" + this.getFqn(nameResolver) + "): " + this.getDetailedData();
 	}
 
 	
@@ -208,6 +246,11 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 		return m_items;
 	}
 	
+	public void setItems(ArrayList<AlarmItem> items)
+	{
+		m_items = items;
+	}
+
 	/**
 	 * Substracts the values from a previous object
 	 * found in myList from the current Process
@@ -260,6 +303,37 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 		}
 	}
 	
+	public String getPackageName()
+	{
+		return m_strPackageName;
+	}
+
+	public Drawable getIcon(UidNameResolver resolver)
+	{
+		if (m_icon == null)
+		{
+			// retrieve and store the icon for that package
+			String myPackage = m_strPackageName;
+			if (!myPackage.equals(""))
+			{
+				m_icon = resolver.getIcon(myPackage);
+			}
+		}
+		return m_icon;
+	}
+
+	/**
+	 * Compare a given Wakelock with this object.
+	 * If the duration of this object is 
+	 * greater than the received object,
+	 * then this object is greater than the other.
+	 */
+	public int compareTo(Alarm o)
+	{
+		// we want to sort in descending order
+		return ((int)(o.getWakeups() - this.getWakeups()));
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -270,137 +344,32 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 				+ getData()
 				+ "]";
 	}
-
-
-	/**
-	 * Value holder for alarm items
-	 * @author sven
-	 *
-	 */
-	public class AlarmItem implements Serializable
+	
+	public AlarmDto toDto()
 	{
-		@SerializedName("number")
-		long m_nNumber;
-		@SerializedName("intent")
-		String m_strIntent;
+		AlarmDto ret = new AlarmDto();
 		
-		public AlarmItem clone()
+		ret.m_uid 				= this.getuid();
+		ret.m_strPackageName 	= this.m_strPackageName;
+		ret.m_nWakeups 			= this.m_nWakeups;
+		ret.m_nTotalCount 		= this.m_nTotalCount;
+	
+		if (m_items != null)
 		{
-			AlarmItem clone = new AlarmItem(m_nNumber, m_strIntent);
-			return clone;
-		}
-		/**
-		 * Default cctor
-		 * @param nCount
-		 * @param strIntent
-		 */
-		public AlarmItem(long nCount, String strIntent)
-		{
-			m_nNumber 	= nCount;
-			m_strIntent = strIntent;
-		}
-		
-		/**
-		 * Returns the intent name
-		 * @return
-		 */
-		public String getIntent()
-		{
-			return m_strIntent;
-		}
-		
-		/**
-		 * Returns the count
-		 * @return
-		 */
-		public long getCount()
-		{
-			return m_nNumber;
-		}
-		/**
-		 * Returns the data as a string
-		 * @return
-		 */
-		public String getData()
-		{
-			return "Alarms: " + m_nNumber + ", Intent: " + m_strIntent;
-		}
-		/**
-		 * Substracts the values from a previous object
-		 * found in myList from the current Process
-		 * in order to obtain an object containing only the data since a referenc
-		 * @param myList
-		 */
-		public void substractFromRef(List<AlarmItem> myList )
-		{
-			if (myList != null)
+			ret.m_items = new ArrayList<AlarmItemDto>();
+			for (int i=0; i < m_items.size(); i++)
 			{
-				for (int i = 0; i < myList.size(); i++)
-				{
-					try
-					{
-						AlarmItem myRef = (AlarmItem) myList.get(i);
-						if (this.getIntent().equals(myRef.getIntent()))
-						{
-							// process main values
-							this.m_nNumber		-= myRef.getCount();
-							Log.i(TAG, "Result: " + this.toString());
-						}
-					}
-					catch (ClassCastException e)
-					{
-						// just log as it is no error not to change the process
-						// being substracted from to do nothing
-						Log.e(TAG, "AlarmItem.substractFromRef was called with a wrong list type");
-					}
-				}
+				AlarmItemDto item = new AlarmItemDto();
+				item.m_nNumber = m_items.get(i).m_nNumber;
+				item.m_strIntent = m_items.get(i).m_strIntent;
+				ret.m_items.add(item);
 			}
 		}
-	}
-	
-	public Drawable getIcon(Context ctx)
-	{
-		if (m_icon == null)
-		{
-			// retrieve and store the icon for that package
-			String myPackage = m_strPackageName;
-			if (!myPackage.equals(""))
-			{
-				PackageManager manager = ctx.getPackageManager();
-				try
-				{
-					m_icon = manager.getApplicationIcon(myPackage);
-				}
-				catch (Exception e)
-				{
-					// nop: no icon found
-					m_icon = null;
-				}
-				
-			}
-		}
-		return m_icon;
-	}
-	
-	public String getPackageName()
-	{
-		return m_strPackageName;
+		return ret;
 	}
 
 
 	
-	 /**
-     * Compare a given Wakelock with this object.
-     * If the duration of this object is 
-     * greater than the received object,
-     * then this object is greater than the other.
-     */
-	public int compareTo(Alarm o)
-	{
-		// we want to sort in descending order
-		return ((int)(o.getWakeups() - this.getWakeups()));
-	}
-
 	public static class CountComparator implements Comparator<Alarm>
 	{
 		public int compare(Alarm a, Alarm b)

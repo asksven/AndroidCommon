@@ -21,6 +21,8 @@ import java.util.List;
 
 import android.util.Log;
 
+import com.asksven.android.common.dto.StateDto;
+import com.asksven.android.common.nameutils.UidInfo;
 import com.asksven.android.common.privateapiproxies.Process;
 import com.asksven.android.common.privateapiproxies.StatElement;
 import com.google.gson.annotations.SerializedName;
@@ -45,22 +47,48 @@ public class State extends StatElement implements Comparable<State>, Serializabl
 	
 	@SerializedName("freq")
 	public int m_freq = 0;
+	
 	@SerializedName("duration_ms")
     public long m_duration = 0;
 
+	public State()
+	{
+	
+	}
+	
     public State(int freq, long duration)
     {
     	m_freq 		= freq;
     	m_duration 	= duration;
     	
     }
-    
+
+    public State(StateDto source)
+    {
+		this.setUid(source.m_uid);
+		this.m_duration			= source.m_duration;
+		this.m_freq				= source.m_freq;
+		this.setTotal(source.m_total);
+    }
+
     public State clone()
     {
     	State clone = new State(m_freq, m_duration);
     	clone.setTotal(this.getTotal());
     	return clone;
     }
+    
+    public StateDto toDto()
+    {
+    	StateDto ret = new StateDto();
+		ret.m_uid 				= this.getuid();
+		ret.m_duration			= this.m_duration;
+		ret.m_freq				= this.m_freq;
+		ret.m_total				= this.getTotal();
+		
+    	return ret;
+    }
+    
     public String getName()
     {
     	String ret = formatFreq(m_freq);

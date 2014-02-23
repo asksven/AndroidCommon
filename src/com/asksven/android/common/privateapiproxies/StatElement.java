@@ -6,10 +6,12 @@ package com.asksven.android.common.privateapiproxies;
 import java.io.Serializable;
 import java.util.Formatter;
 
-import android.content.Context;
+
+//import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+
 
 import com.asksven.android.common.nameutils.UidInfo;
 import com.asksven.android.common.nameutils.UidNameResolver;
@@ -74,7 +76,7 @@ public abstract class StatElement implements Serializable
 	 * Returns the full qualified name
 	 * @return the full qualified name
 	 */
-	public String getFullQualifiedName(Context context)
+	private String getFullQualifiedName(UidNameResolver nameResolver)
 	{
 		String ret = "";
 		
@@ -83,8 +85,7 @@ public abstract class StatElement implements Serializable
 			// may have been left out for lazy loading
 			if (m_uid != -1)
 			{
-				UidNameResolver m_nameResolver = new UidNameResolver();
-				m_uidInfo = m_nameResolver.getNameForUid(context, m_uid);
+				m_uidInfo = nameResolver.getNameForUid(m_uid);
 			}
 			else
 			{
@@ -106,9 +107,9 @@ public abstract class StatElement implements Serializable
 	 * Returns the full qualified name (default, can be overwritten)
 	 * @return the full qualified name
 	 */
-	public String getFqn(Context context)
+	public String getFqn(UidNameResolver nameResolver)
 	{
-		return getFullQualifiedName(context);
+		return getFullQualifiedName(nameResolver);
 	}
 	
 
@@ -222,9 +223,9 @@ public abstract class StatElement implements Serializable
 	/** 
 	 * returns the representation of the data for file dimp
 	 */	
-	public String getDumpData(Context context)
+	public String getDumpData(UidNameResolver nameResolver)
 	{
-		return this.getName() + " (" + this.getFqn(context) + "): " + this.getData();
+		return this.getName() + " (" + this.getFqn(nameResolver) + "): " + this.getData();
 	}
 
 	/** 
@@ -246,7 +247,7 @@ public abstract class StatElement implements Serializable
 		return getValues()[0]; //m_totalTime;
 	}
 	
-	public Drawable getIcon(Context ctx)
+	public Drawable getIcon(UidNameResolver resolver)
 	{
 		return m_icon;
 	}
