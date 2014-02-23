@@ -18,6 +18,8 @@ package com.asksven.android.common.privateapiproxies;
 import java.io.Serializable;
 import java.util.List;
 
+import com.asksven.android.common.dto.MiscDto;
+import com.asksven.android.common.nameutils.UidInfo;
 import com.google.gson.annotations.SerializedName;
 
 import android.util.Log;
@@ -66,6 +68,27 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 		m_timeRunning	= timeRunning;
 	}
 	
+	public Misc(MiscDto source)
+	{
+		
+		this.setUid(source.m_uid);
+		this.m_name 		= source.m_name;
+		this.m_timeOn 		= source.m_timeOn;
+		this.m_timeRunning	= source.m_timeRunning;
+		this.setTotal(source.m_total);
+	}
+
+	public MiscDto toDto()
+	{
+		MiscDto ret = new MiscDto();
+		ret.m_uid			= this.getuid();
+		ret.m_timeOn 		= this.m_timeOn;
+		ret.m_timeRunning 	= this.m_timeRunning;
+		ret.m_total		 	= this.getTotal();
+	
+		return ret;
+	}
+
 	public Misc clone()
 	{
 		Misc clone = new Misc(m_name, m_timeOn, m_timeRunning);

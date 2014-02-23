@@ -72,7 +72,6 @@ public class BatteryStatsProxy
 	/** 
 	 * An instance to the UidNameResolver 
 	 */
-	private UidNameResolver m_nameResolver;
 	private static BatteryStatsProxy m_proxy = null;
 	
 	synchronized public static BatteryStatsProxy getInstance(Context ctx)
@@ -127,9 +126,7 @@ public class BatteryStatsProxy
          *  }
          * }
 		 */
-		
-		m_nameResolver = new UidNameResolver();
-		
+				
 		try
 		{
 	          ClassLoader cl = context.getClassLoader();
@@ -1765,7 +1762,7 @@ public class BatteryStatsProxy
 
 					NetworkUsage myData = new NetworkUsage(uid, tcpBytesReceived, tcpBytesSent);
 					// try resolving names
-					UidInfo myInfo = m_nameResolver.getNameForUid(context, uid);
+					UidInfo myInfo = UidNameResolver.getInstance(context).getNameForUid(uid);
 					myData.setUidInfo(myInfo);
 					myStats.add(myData);
 		        }

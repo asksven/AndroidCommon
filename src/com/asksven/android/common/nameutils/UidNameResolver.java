@@ -21,6 +21,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.drawable.Drawable;
 
 /**
  * @author sven
@@ -31,11 +32,49 @@ public class UidNameResolver
 	
 	protected String[] m_packages;
 	protected String[] m_packageNames;
+    private static Context m_context;
+    private static UidNameResolver m_instance;
     
-	public String getLabel(Context context, String packageName)
+	private UidNameResolver(Context ctx)
+	{
+		m_context = ctx;
+	}
+	
+	public static UidNameResolver getInstance(Context ctx)
+	{
+		if (m_instance == null)
+		{
+			m_instance = new UidNameResolver(ctx);
+		}
+		
+		return m_instance;
+	}
+	
+	public Drawable getIcon(String packageName)
+	{
+		Drawable icon = null;
+		// retrieve and store the icon for that package
+		String myPackage = packageName;
+		if (!myPackage.equals(""))
+		{
+			PackageManager manager = m_context.getPackageManager();
+			try
+			{
+				icon = manager.getApplicationIcon(myPackage);
+			}
+			catch (Exception e)
+			{
+				// nop: no icon found
+				icon = null;
+			}
+		}				
+		return icon;
+	}
+
+	public String getLabel(String packageName)
 	{
 		String ret = packageName;
-		PackageManager pm = context.getPackageManager();
+		PackageManager pm = m_context.getPackageManager();
         try
         {
             ApplicationInfo ai = pm.getApplicationInfo(packageName, 0);
@@ -55,7 +94,7 @@ public class UidNameResolver
 	
 	// Side effects: sets mName and mUniqueName
 	// Sets mNamePackage, mName and mUniqueName
-    public UidInfo getNameForUid(Context context, int uid)
+    public UidInfo getNameForUid(int uid)
     {
     	String uidName = "";
     	String uidNamePackage = "";
@@ -68,7 +107,7 @@ public class UidNameResolver
     	myInfo.setUniqueName(uidUniqueName);
 
         
-        PackageManager pm = context.getPackageManager();
+        PackageManager pm = m_context.getPackageManager();
         m_packages = pm.getPackagesForUid(uid);
         
         if (m_packages == null)
@@ -85,7 +124,7 @@ public class UidNameResolver
         // Convert package names to user-facing labels where possible
         for (int i = 0; i < m_packageNames.length; i++)
         {
-            m_packageNames[i] = getLabel(context, m_packageNames[i]);
+            m_packageNames[i] = getLabel(m_packageNames[i]);
         }
 
         if (m_packageNames.length == 1)

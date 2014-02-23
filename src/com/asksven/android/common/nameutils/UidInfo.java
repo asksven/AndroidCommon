@@ -16,6 +16,8 @@
 
 package com.asksven.android.common.nameutils;
 
+import com.asksven.android.common.dto.UidInfoDto;
+
 /**
  * @author sven
  *
@@ -26,11 +28,29 @@ public class UidInfo
 	private String m_uidName = "";
 	private String m_uidNamePackage = "";
 	private boolean m_uidUniqueName = false;
-	
-	public UidInfo()
-	{
+
+    public UidInfo()
+    {
+    }
+
+    public UidInfo(UidInfoDto source)
+    {
+		this.m_uid				= source.m_uid;
+		this.m_uidName 			= source.m_uidName;
+		this.m_uidNamePackage	= source.m_uidNamePackage;
+		this.m_uidUniqueName	= source.m_uidUniqueName;
+    }
+    
+    public UidInfoDto toDto()
+    {
+    	UidInfoDto ret = new UidInfoDto();
+		ret.m_uid 				= this.m_uid;
+		ret.m_uidName 			= this.m_uidName;
+		ret.m_uidNamePackage	= this.m_uidNamePackage;
+		ret.m_uidUniqueName		= this.m_uidUniqueName;
 		
-	}
+    	return ret;
+    }
 
 	/**
 	 * @return the m_uid
