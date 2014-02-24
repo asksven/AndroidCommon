@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.asksven.android.common.kernelutils;
+package com.asksven.android.common.privateapiproxies;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,10 +26,9 @@ import com.asksven.android.common.dto.AlarmDto;
 import com.asksven.android.common.dto.NativeKernelWakelockDto;
 import com.asksven.android.common.nameutils.UidInfo;
 import com.asksven.android.common.nameutils.UidNameResolver;
-import com.asksven.android.common.privateapiproxies.AlarmItem;
-import com.asksven.android.common.privateapiproxies.StatElement;
 import com.asksven.android.common.utils.StringUtils;
 import com.google.gson.annotations.SerializedName;
+
 
 
 
