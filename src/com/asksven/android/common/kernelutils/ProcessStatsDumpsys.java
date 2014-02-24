@@ -62,7 +62,7 @@ public class ProcessStatsDumpsys
 		
 		List<String> res = null;
 		
-		if (SysUtils.hasBatteryStatsPermission(ctx))
+		if (SysUtils.hasDumpsysPermission(ctx))
 		{
 			res = NonRootShell.getInstance().run("dumpsys batterystats");
 		}

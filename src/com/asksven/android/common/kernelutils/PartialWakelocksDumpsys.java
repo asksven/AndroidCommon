@@ -73,7 +73,7 @@ public class PartialWakelocksDumpsys
 		ArrayList<StatElement> myWakelocks = null;
 		List<String> res = null;
 		
-		if (SysUtils.hasBatteryStatsPermission(ctx))
+		if (SysUtils.hasDumpsysPermission(ctx))
 		{
 			res = NonRootShell.getInstance().run("dumpsys batterystats");
 		}
