@@ -11,13 +11,17 @@ import java.util.regex.Pattern;
 import android.os.Build;
 import android.util.Log;
 
+
+
 //import com.asksven.andoid.common.contrib.Shell;
 import com.asksven.andoid.common.contrib.Util;
+import com.asksven.android.common.NonRootShell;
 import com.asksven.android.common.RootShell;
 import com.asksven.android.common.privateapiproxies.Alarm;
 import com.asksven.android.common.privateapiproxies.StatElement;
 import com.asksven.android.common.shellutils.Exec;
 import com.asksven.android.common.shellutils.ExecResult;
+import com.asksven.android.common.utils.SysUtils;
 
 /**
  * Parses the content of 'dumpsys alarm'
@@ -30,13 +34,21 @@ public class AlarmsDumpsys
 	static final String TAG = "AlarmsDumpsys";
 	static final String PERMISSION_DENIED = "su rights required to access alarms are not available / were not granted";
 
-	public static ArrayList<StatElement> getAlarms()
+	public static ArrayList<StatElement> getAlarms(boolean useRoot)
 	{
 		String release = Build.VERSION.RELEASE;
 		int sdk = Build.VERSION.SDK_INT;
 		Log.i(TAG, "getAlarms: SDK=" + sdk + ", RELEASE=" + release);
 		
-		List<String> res = RootShell.getInstance().run("dumpsys alarm");
+		List<String> res = null;
+		if (useRoot)
+		{
+			res = RootShell.getInstance().run("dumpsys alarm");
+		}
+		else
+		{
+			res = NonRootShell.getInstance().run("dumpsys alarm");
+		}
 
 		if (sdk < 17) // Build.VERSION_CODES.JELLY_BEAN_MR1)
 		{

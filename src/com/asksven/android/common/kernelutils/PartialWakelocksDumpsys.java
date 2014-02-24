@@ -23,8 +23,11 @@ import android.util.Log;
 
 
 
+
+
 //import com.asksven.andoid.common.contrib.Shell;
 import com.asksven.andoid.common.contrib.Util;
+import com.asksven.android.common.NonRootShell;
 import com.asksven.android.common.RootShell;
 import com.asksven.android.common.privateapiproxies.Alarm;
 import com.asksven.android.common.privateapiproxies.BatteryStatsTypes;
@@ -33,6 +36,7 @@ import com.asksven.android.common.privateapiproxies.Wakelock;
 import com.asksven.android.common.shellutils.Exec;
 import com.asksven.android.common.shellutils.ExecResult;
 import com.asksven.android.common.utils.DateUtils;
+import com.asksven.android.common.utils.SysUtils;
 
 /**
  * Parses the content of 'dumpsys battery'
@@ -67,9 +71,17 @@ public class PartialWakelocksDumpsys
 		final String STOP_PATTERN = "Statistics since last unplugged";
 		
 		ArrayList<StatElement> myWakelocks = null;
-
-		List<String> res = RootShell.getInstance().run("dumpsys batterystats");
-		//List<String> res = getTestData();
+		List<String> res = null;
+		
+		if (SysUtils.hasBatteryStatsPermission(ctx))
+		{
+			res = NonRootShell.getInstance().run("dumpsys batterystats");
+		}
+		else
+		{
+			res = RootShell.getInstance().run("dumpsys batterystats");
+			
+		}
 
 		HashMap<String, String> xrefUserNames = getPackages(res);
 

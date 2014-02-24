@@ -18,6 +18,7 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.asksven.andoid.common.contrib.Util;
+import com.asksven.android.common.NonRootShell;
 import com.asksven.android.common.RootShell;
 import com.asksven.android.common.privateapiproxies.Alarm;
 import com.asksven.android.common.privateapiproxies.BatteryStatsTypes;
@@ -27,6 +28,7 @@ import com.asksven.android.common.privateapiproxies.Process;
 import com.asksven.android.common.shellutils.Exec;
 import com.asksven.android.common.shellutils.ExecResult;
 import com.asksven.android.common.utils.DateUtils;
+import com.asksven.android.common.utils.SysUtils;
 
 /**
  * Parses the content of 'dumpsys battery'
@@ -57,8 +59,18 @@ public class ProcessStatsDumpsys
 		{
 			xrefPackages.put(apps.get(i).packageName, apps.get(i).uid);
 		}
-				
-		List<String> res = RootShell.getInstance().run("dumpsys batterystats");
+		
+		List<String> res = null;
+		
+		if (SysUtils.hasBatteryStatsPermission(ctx))
+		{
+			res = NonRootShell.getInstance().run("dumpsys batterystats");
+		}
+		else
+		{
+			res = RootShell.getInstance().run("dumpsys batterystats");
+			
+		}
 
 		HashMap<String, List<Process>> xrefUserNames = getProcesses(res);
 

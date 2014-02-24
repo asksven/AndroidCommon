@@ -16,8 +16,10 @@ import android.util.Log;
 
 
 
+
 //import com.asksven.andoid.common.contrib.Shell;
 import com.asksven.andoid.common.contrib.Util;
+import com.asksven.android.common.NonRootShell;
 import com.asksven.android.common.RootShell;
 import com.asksven.android.common.privateapiproxies.Alarm;
 import com.asksven.android.common.privateapiproxies.BatteryStatsTypes;
@@ -42,15 +44,24 @@ public class OtherStatsDumpsys
 	 * @return
 	 * @throws Exception
 	 */
-	public static ArrayList<StatElement> getOtherStats(boolean showWifi, boolean showBt)
+	public static ArrayList<StatElement> getOtherStats(boolean showWifi, boolean showBt, boolean useRoot)
 	{
 		final String START_PATTERN = "Statistics since last charge";
 		final String STOP_PATTERN = "Statistics since last unplugged";
 		
 		ArrayList<StatElement> myWakelocks = null;
 		long nTotalCount = 0;
-
-		List<String> res = RootShell.getInstance().run("dumpsys batterystats");
+		List<String> res = null;
+		
+		if (useRoot)
+		{
+			res = RootShell.getInstance().run("dumpsys batterystats");
+		}
+		else
+		{
+			res = NonRootShell.getInstance().run("dumpsys batterystats");
+		}
+			
 		//List<String> res = getTestData();
 		
 		if ((res != null) && (res.size() != 0))
