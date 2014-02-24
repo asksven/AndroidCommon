@@ -1704,6 +1704,113 @@ public class BatteryStatsProxy
 	}
 
 	/**
+	 * Obtain the wakeup stats as a list of Alarms (@see com.asksven.android.common.privateapiproxies.Alarm}
+	 * @param context a Context
+	 * @param iStatType a type of stat @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes
+	 * @return a List of Process es
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	public ArrayList<StatElement> getWakeupStats(Context context, int iStatType) throws Exception
+	{
+		// type checks
+		boolean validTypes = BatteryStatsTypes.assertValidStatType(iStatType);
+		if (!validTypes)
+		{
+			Log.e(TAG, "Invalid WakeType or StatType");
+			throw new Exception("Invalid StatType");
+		}
+		
+		ArrayList<StatElement> myStats = new ArrayList<StatElement>();
+		
+		this.collectUidStats();
+		if (m_uidStats != null)
+		{
+            try
+            {			
+				ClassLoader cl = context.getClassLoader();
+				@SuppressWarnings("rawtypes")
+				Class iBatteryStatsUid = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid");
+				int NU = m_uidStats.size();
+		        for (int iu = 0; iu < NU; iu++)
+		        {
+		        	// Object is an instance of BatteryStats.Uid
+		            Object myUid = m_uidStats.valueAt(iu);
+	            
+	            	Method methodGetPackageStats = iBatteryStatsUid.getMethod("getPackageStats");
+	            	
+	            	Method methodGetUid	= iBatteryStatsUid.getMethod("getUid");
+					Integer uid 		= (Integer) methodGetUid.invoke(myUid);
+					
+					// Map of String, BatteryStats.Uid.Proc
+					Map<String, ? extends Object> packageStats = (Map<String, ? extends Object>)  methodGetPackageStats.invoke(myUid);
+					
+					if (packageStats.size() > 0)
+					{
+					    for (Map.Entry<String, ? extends Object> ent : packageStats.entrySet())
+					    {
+					    	if (CommonLogSettings.TRACE)
+					    	{
+					    		Log.d(TAG, "Package name = " + ent.getKey());
+					    	}
+						    // Object is a BatteryStatsTypes.Uid.Proc
+						    Object ps = ent.getValue();
+							@SuppressWarnings("rawtypes")
+							Class batteryStatsUidPkg = cl.loadClass("com.android.internal.os.BatteryStatsImpl$Uid$Pkg");
+
+							//Parameters Types
+							@SuppressWarnings("rawtypes")
+							Class[] paramTypesGetWakeups= new Class[1];
+							paramTypesGetWakeups[0]= int.class; 
+							
+							Method methodGetWakeups 	= batteryStatsUidPkg.getMethod("getWakeups", paramTypesGetWakeups);
+	
+							//Parameters
+							Object[] paramsGetWakeups= new Object[1];
+							paramsGetWakeups[0]= new Integer(iStatType);
+							
+							int wakeups = (Integer) methodGetWakeups.invoke(ps, paramsGetWakeups);
+							
+							if (CommonLogSettings.TRACE)
+							{
+								Log.d(TAG, "uid = " + uid);
+								Log.d(TAG, "wkeups = " + wakeups);
+							}
+							
+							boolean ignore = false;
+
+							if ((wakeups) > 0)
+							{
+								Alarm myWakeup = new Alarm(ent.getKey());
+								myWakeup.setWakeups(wakeups);
+								// opt for lazy loading: do no populate UidInfo, just uid. UidInfo will be fetched on demand
+								myWakeup.setUid(uid);
+								// try resolving names
+//								String myName = m_nameResolver.getLabel(context, ent.getKey());
+								
+								myStats.add(myWakeup);
+							}
+							else
+							{
+								if (CommonLogSettings.TRACE)
+								{
+									Log.d(TAG, "Process " + ent.getKey() + " was discarded (CPU time =0)");
+								}
+							}
+					    }		
+		            }
+		        }
+            }
+            catch( Exception e )
+            {
+            	Log.e(TAG, "An exception occured in getWakeupStats(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
+                throw e;
+            }
+		}	
+		return myStats;
+	}
+
+	/**
 	 * Obtain the network usage stats as a list of NetworkUsages (@see com.asksven.android.common.privateapiproxies.NetworkUsage}
 	 * @param context a Context
 	 * @param iStatType a type of stat @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes
