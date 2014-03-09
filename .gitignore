@@ -2,3 +2,6 @@ bin/**/*
 /gen
 gen/**/*
 /bin
+/local.properties
+/ant.properties
+/bin-ant
