@@ -67,7 +67,7 @@ public class OtherStatsDumpsys
 		if ((res != null) && (res.size() != 0))
 
 		{
-			if (true) //strRes.contains("Permission Denial"))
+			if (res.contains("Permission Denial"))
 			{
 				Pattern begin = Pattern.compile(START_PATTERN);
 				Pattern end = Pattern.compile(STOP_PATTERN);

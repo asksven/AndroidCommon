@@ -43,15 +43,16 @@ public class StringUtils
 	public static final String formatRatio(long num, long den)
 	{
 		StringBuilder mFormatBuilder = new StringBuilder(8);
-		Formatter mFormatter = new Formatter(mFormatBuilder);
 		if (den == 0L)
 		{
 			return "---%";
 		}
 
+		Formatter mFormatter = new Formatter(mFormatBuilder);
 		float perc = ((float) num) / ((float) den) * 100;
 		mFormatBuilder.setLength(0);
 		mFormatter.format("%.1f%%", perc);
+		mFormatter.close();
 		return mFormatBuilder.toString();
 	}
 

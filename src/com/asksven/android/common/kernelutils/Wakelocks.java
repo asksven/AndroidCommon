@@ -6,6 +6,7 @@ package com.asksven.android.common.kernelutils;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -183,14 +184,29 @@ public class Wakelocks
     public static boolean fileExists()
     {
     	boolean exists = false;
+    	FileReader fr = null;
     	try
     	{
-			FileReader fr = new FileReader(FILE_PATH);
+			fr = new FileReader(FILE_PATH);
 			exists = true;
     	}
     	catch (Exception e)
     	{
     		exists = false;
+    	}
+    	finally
+    	{
+    		if (exists)
+    		{
+    			try
+    			{
+					fr.close();
+				}
+    			catch (IOException e)
+    			{
+					// do nothing
+				}
+    		}
     	}
 		return exists;
     }
