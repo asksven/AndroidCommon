@@ -6,9 +6,11 @@ package com.asksven.android.common;
 import java.util.ArrayList;
 import java.util.List;
 
+
 //import com.asksven.andoid.common.contrib.Shell;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.execution.Command;
+import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
 
 /**
@@ -61,7 +63,8 @@ public class RootShell
 			// reopen if for whatever reason the shell got closed
 			RootShell.getInstance();
 		}
-		Command shellCommand = new Command(0, command)
+		
+		CommandCapture shellCommand = new CommandCapture(0, command)
 		{
 		        @Override
 		        public void output(int id, String line)
@@ -71,7 +74,13 @@ public class RootShell
 		};
 		try
 		{
-			RootTools.getShell(true).add(shellCommand).waitForFinish();
+			RootTools.getShell(true).add(shellCommand);
+			
+			// we need to make this synchronous
+			while (!shellCommand.isFinished())
+			{
+				Thread.sleep(100);
+			}
 		}
 		catch (Exception e)
 		{
