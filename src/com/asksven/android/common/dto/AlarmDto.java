@@ -16,6 +16,7 @@
 
 package com.asksven.android.common.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -27,7 +28,7 @@ import com.asksven.android.common.nameutils.UidInfo;
  * @author sven
  *
  */
-public class AlarmDto
+public class AlarmDto implements Serializable
 {
 
 	// from StatElement

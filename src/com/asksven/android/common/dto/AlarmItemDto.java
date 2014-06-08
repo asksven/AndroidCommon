@@ -16,6 +16,8 @@
 
 package com.asksven.android.common.dto;
 
+import java.io.Serializable;
+
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
@@ -23,7 +25,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author sven
  *
  */
-public class AlarmItemDto
+public class AlarmItemDto implements Serializable
 {
 	@JsonProperty("number") public long m_nNumber;
 	
