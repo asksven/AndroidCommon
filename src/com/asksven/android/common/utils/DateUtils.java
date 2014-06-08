@@ -21,6 +21,7 @@ package com.asksven.android.common.utils;
  */
 import java.util.Calendar;
 import java.util.Date;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 public class DateUtils
@@ -143,7 +144,34 @@ public class DateUtils
         }
         return ret;
 	}
-	
+
+	/**
+	 * Formats milliseconds to a friendly form 
+	 * @param millis
+	 * @return the formated string
+	 */
+	public static String formatFrequency(long occurences, long duration_ms)
+	{
+		String ret = "";
+		DecimalFormat f = new DecimalFormat("#0.0");
+        int minutes = (int) Math.floor(duration_ms / 1000 / 60);
+        
+        double perMinute = ((double) occurences) / ((double) minutes);
+        
+        if (perMinute >= 1)
+        {
+        	// we keep this value
+        	ret = f.format(perMinute) + " / min.";
+        }
+        else
+        {
+        	// we try to switch to hours
+        	ret = f.format(perMinute * 60) + " / hr.";
+        }
+        
+        return ret;
+	}
+
 	/**
 	 * Formats milliseconds to a friendly form. Short means that seconds are truncated if value > 1 Day 
 	 * @param millis

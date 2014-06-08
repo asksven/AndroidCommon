@@ -43,5 +43,7 @@ public class AlarmDto implements Serializable
 	
 	@JsonProperty("total_count") public long m_nTotalCount;
 	
+	@JsonProperty("time_running_ms") public long m_timeRunning;
+	
 	@JsonProperty("items") public ArrayList<AlarmItemDto> m_items;
 }
