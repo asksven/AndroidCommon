@@ -199,6 +199,10 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 		{
 			ret = "Mobile";
 		}
+		else if (m_iface.startsWith("lo"))
+		{
+			ret = "Mobile";
+		}
 		else if (m_iface.startsWith("bnep"))
 		{
 			ret = "Bluetooth";
