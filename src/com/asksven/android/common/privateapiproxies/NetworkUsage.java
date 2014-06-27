@@ -35,6 +35,7 @@ import com.google.gson.annotations.SerializedName;
 import android.app.Application;
 //import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 //import android.graphics.drawable.Drawable;
 import android.util.Log;
 
@@ -352,6 +353,20 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 		{
 			return "";
 		}
+	}
+	
+	public Drawable getIcon(UidNameResolver resolver)
+	{
+		if (m_icon == null)
+		{
+			// retrieve and store the icon for that package
+			String myPackage = m_uidInfo.getNamePackage();
+			if (!myPackage.equals(""))
+			{
+				m_icon = resolver.getIcon(myPackage);
+			}
+		}
+		return m_icon;
 	}
 
 }
