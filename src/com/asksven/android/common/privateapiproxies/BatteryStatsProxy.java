@@ -146,9 +146,9 @@ public class BatteryStatsProxy
 			  Method methodGetService = serviceManagerClass.getMethod("getService", paramTypesGetService);
 	          
 	          String service = "";
-	          if (Build.VERSION.SDK_INT == 19)
+	          if (Build.VERSION.SDK_INT >= 19)
 	          {
-	        	  // kitkat
+	        	  // kitkat and following
 	        	  service = "batterystats";
 	          }
 	          else
