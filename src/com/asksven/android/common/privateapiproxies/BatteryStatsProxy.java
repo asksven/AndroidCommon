@@ -1401,7 +1401,17 @@ public class BatteryStatsProxy
 								break;
 						}
 						
-						Wakelock myWl = new Wakelock(iWakeType, wakelockEntry.getKey(), wakelockTime, uSec / 1000, wakelockCount);
+						// On L Preview partial wakelocks are expressed in milliseconds
+						Wakelock myWl = null;
+						if (Build.VERSION.SDK_INT >= 20)
+						{
+							myWl = new Wakelock(iWakeType, wakelockEntry.getKey(), wakelockTime, uSec, wakelockCount);
+								
+						}
+						else
+						{
+							myWl = new Wakelock(iWakeType, wakelockEntry.getKey(), wakelockTime, uSec / 1000, wakelockCount);
+						}
 						
 						// opt for lazy loading: do no populate UidInfo, just uid. UidInfo will be fetched on demand
 						myWl.setUid(uid);
