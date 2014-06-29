@@ -208,7 +208,7 @@ public class State extends StatElement implements Comparable<State>, Serializabl
 	public int compareTo(State o)
 	{
 		// we want to sort in descending order
-		return ((int)( (o.m_duration) - (this.m_duration) ));
+		return ((int)( (o.m_freq) - (this.m_freq) ));
 	}
 
 
