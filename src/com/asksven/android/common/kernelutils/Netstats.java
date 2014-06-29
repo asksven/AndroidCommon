@@ -109,15 +109,22 @@ public class Netstats
 					StringUtils.splitLine(line, values);
 					StringUtils.parseLine(keys, values, parsed);
 					
-					//Netstat entry = new Netstat();
-					NetworkUsage entry = new NetworkUsage(
-							StringUtils.getParsedInt(parsed, KEY_UID),
-							parsed.get(KEY_IFACE),
-							StringUtils.getParsedLong(parsed, KEY_RX_BYTES),
-							StringUtils.getParsedLong(parsed, KEY_TX_BYTES));
-					
-					myStats = addToStats(myStats, entry);
-					totalBytes += entry.getTotalBytes();
+					try
+					{
+						//Netstat entry = new Netstat();
+						NetworkUsage entry = new NetworkUsage(
+								StringUtils.getParsedInt(parsed, KEY_UID),
+								parsed.get(KEY_IFACE),
+								StringUtils.getParsedLong(parsed, KEY_RX_BYTES),
+								StringUtils.getParsedLong(parsed, KEY_TX_BYTES));
+						
+						myStats = addToStats(myStats, entry);
+						totalBytes += entry.getTotalBytes();
+					}
+					catch (Exception e)
+					{
+						Log.e(TAG, "An error occured while parsing " + line + ": " + e.getMessage());
+					}
 				}
 				
 				// set the total so that we can calculate the ratio
