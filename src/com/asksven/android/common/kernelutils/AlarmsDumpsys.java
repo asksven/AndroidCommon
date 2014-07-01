@@ -90,7 +90,7 @@ public class AlarmsDumpsys
 
 		{
 //			String strRes = res.getResultLine(); 
-			if (res.contains("Permission Denial"))
+			if (!res.contains("Permission Denial"))
 			{
 				Pattern begin = Pattern.compile("Alarm Stats");
 				boolean bParsing = false;
