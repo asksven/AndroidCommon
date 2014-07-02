@@ -17,6 +17,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.asksven.android.common.RootShell;
+import com.stericson.RootTools.RootTools;
 
 /**
  * @author sven
@@ -62,14 +63,24 @@ public class SystemAppInstaller
 	{
 		boolean ret = false;
 		Log.i(TAG, "Checking if system is mounted rw");
-		List<String> res = RootShell.getInstance().run(CHECK_MOUNT_STATE);
-		if (res.size() > 0)
+		try
 		{
-			String[] tokens = res.get(0).split(" |,");
-			String mountState = tokens[3];
-			Log.i(TAG, "Mount status: " + mountState);
-			ret = (mountState.equals("rw"));
+			ret = RootTools.getMountedAs("/system").equals("rw");
 		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "isSystemRw failed: " + e.getMessage());
+			ret = false;
+		}
+				
+//		List<String> res = RootShell.getInstance().run(CHECK_MOUNT_STATE);
+//		if (res.size() > 0)
+//		{
+//			String[] tokens = res.get(0).split(" |,");
+//			String mountState = tokens[3];
+//			Log.i(TAG, "Mount status: " + mountState);
+//			ret = (mountState.equals("rw"));
+//		}
 		
 		return ret;
 	}
