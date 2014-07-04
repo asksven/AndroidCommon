@@ -31,6 +31,12 @@ public class AlarmDumpsysTests extends TestCase
 		assertNotNull(test2_3_7);
 		assertTrue(test2_3_7.size() > 1);
 		System.out.print(test2_3_7);
+
+		ArrayList<StatElement> test4_4_4 = AlarmsDumpsys.getAlarmsFrom_4_3(getTestData_4_4_4());
+		assertNotNull(test4_4_4);
+		assertTrue(test4_4_4.size() > 1);
+		System.out.print(test4_4_4);
+
 	}
 
 	static ArrayList<String> getTestData_4_3()
@@ -131,4 +137,40 @@ public class AlarmDumpsysTests extends TestCase
 				}};
 		return myRet;
 	}
+
+
+	static ArrayList<String> getTestData_4_4_4()
+	{
+		ArrayList<String> myRet = new ArrayList<String>()
+			{{
+				add("  Alarm Stats:");
+				add("  com.android.keyguard +246ms running, 6 wakeups:");
+				add("    +246ms 6 wakes 6 alarms: act=com.android.internal.policy.impl.PhoneWindowManager.DELAYED_KEYGUARD");
+				add("  com.cyanogenmod.lockclock +4ms running, 0 wakeups:");
+				add("    +4ms 0 wakes 2 alarms: act=com.cyanogenmod.lockclock.action.FORCE_WEATHER_UPDATE cmp={com.cyanogenmod.lockclock/com.cyanogenmod.lockclock.weather.WeatherUpdateService}");
+				add("  android +1m23s914ms running, 10 wakeups:");
+				add("    +1m21s585ms 0 wakes 446 alarms: act=android.intent.action.TIME_TICK");
+				add("    +7s372ms 0 wakes 38 alarms: act=com.android.server.action.NETWORK_STATS_POLL");
+				add("    +1s213ms 0 wakes 1 alarms: act=android.intent.action.DATE_CHANGED");
+				add("    +763ms 6 wakes 6 alarms: act=android.content.syncmanager.SYNC_ALARM");
+				add("    +205ms 3 wakes 3 alarms: act=com.android.server.IdleMaintenanceService.action.UPDATE_IDLE_MAINTENANCE_STATE");
+				add("    +135ms 0 wakes 1 alarms: act=com.android.server.NetworkTimeUpdateService.action.POLL");
+				add("    +134ms 1 wakes 1 alarms: act=android.net.ConnectivityService.action.PKT_CNT_SAMPLE_INTERVAL_ELAPSED");
+				add("  com.android.deskclock +24s199ms running, 0 wakeups:");
+				add("    +24s199ms 0 wakes 63 alarms: act=com.android.deskclock.ON_QUARTER_HOUR");
+				add("  com.google.android.gms +51s865ms running, 0 wakeups:");
+				add("    +34s205ms 0 wakes 2 alarms: cmp={com.google.android.gms/com.google.android.gms.playlog.uploader.UploaderAlarmReceiver}");
+				add("    +17s530ms 0 wakes 10 alarms: cmp={com.google.android.gms/com.google.android.gms.common.download.DownloadAlarmReceiver}");
+				add("    +88ms 0 wakes 2 alarms: cmp={com.google.android.gms/com.google.android.gms.security.snet.SnetService}");
+				add("    +42ms 0 wakes 1 alarms: act=com.google.android.gms.icing.INDEX_RECURRING_MAINTENANCE cmp={com.google.android.gms/com.google.android.gms.icing.service.IndexWorkerService}");
+				add("  com.touchtype.swiftkey +34s244ms running, 0 wakeups:");
+				add("    +32s314ms 0 wakes 1 alarms: act=com.touchtype.ACTION_SCHEDULED_JOB cmp={com.touchtype.swiftkey/com.touchtype.CustomUpdaterScheduledJob}");
+				add("    +1s855ms 0 wakes 3 alarms: act=com.touchtype.ACTION_SCHEDULED_JOB cmp={com.touchtype.swiftkey/com.touchtype.RefreshLanguageConfigurationScheduledJob}");
+				add("    +75ms 0 wakes 1 alarms: act=com.touchtype.ACTION_SCHEDULED_JOB cmp={com.touchtype.swiftkey/com.touchtype.KeyboardUsesDailyScheduledJob}");
+				add("    +2ms 0 wakes 1 alarms: cmp={com.touchtype.swiftkey/com.touchtype.ReferrerRegistrationService}");
+				add("  com.android.phone +189ms running, 0 wakeups:");
+				add("    +189ms 0 wakes 2 alarms: act=com.android.phone.UPDATE_CALLER_INFO_CACHE cmp={com.android.phone/com.android.phone.CallerInfoCacheUpdateReceiver}");
+			}};
+			return myRet;
+	}	
 }
