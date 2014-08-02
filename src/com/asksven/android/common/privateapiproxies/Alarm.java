@@ -90,6 +90,7 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 		m_nWakeups 			= lWakeups;
 		m_nTotalCount 		= lCount;
 		m_timeRunning		= timeRunning;
+		setTotal(m_timeRunning);
 		m_items = items;
 		
 	}
@@ -217,18 +218,19 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	/**
 	 * returns a string representation of the data
 	 */
-	public String getData()
+	public String getData(long totalTime)
 	{
 		String strRet = "";
 		strRet = "Wakeups: " + getCount();
 		if ((getCount() > 0) && (getTimeRunning() > 0))
 		{
-			strRet += " (" + DateUtils.formatFrequency(getCount(), getTimeRunning()) + ")";
+			strRet += " (" + DateUtils.formatFrequency(getCount(), totalTime) + ")";
 		}
 		
 		return strRet;
 	}
 
+	
 	/**
 	 * returns a string representation of the detailed data (including children)  
 	 */
@@ -376,7 +378,7 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	public String toString() 
 	{
 		return getName() + " ["
-				+ getData()
+				+ getData(0)
 				+ "]";
 	}
 	
@@ -389,6 +391,8 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 		ret.m_nWakeups 			= this.m_nWakeups;
 		ret.m_nTotalCount 		= this.m_nTotalCount;
 		ret.m_timeRunning 		= this.m_timeRunning;
+		ret.m_total		 	= this.getTotal();
+
 	
 		if (m_items != null)
 		{

@@ -211,10 +211,8 @@ public class Process extends StatElement implements Comparable<Process>, Seriali
 	/**
 	 * returns a string representation of the data
 	 */
-
-	public String getData()
+	public String getData(long totalTime)
 	{
-		
 		return "Uid: " + this.getuid() + " Sys: " + this.formatDuration(getSystemTime()) + " (" + getSystemTime()/1000 + " s)"
 		+ " Us: " + this.formatDuration(getUserTime()) + " (" + getUserTime()/1000 + " s)"
 		+ " Starts: " + String.valueOf(getStarts());
@@ -254,8 +252,15 @@ public class Process extends StatElement implements Comparable<Process>, Seriali
 		if (m_icon == null)
 		{
 			// retrieve and store the icon for that package
-			String myPackage = m_uidInfo.getNamePackage();
-			m_icon = resolver.getIcon(myPackage);
+			try
+			{
+				String myPackage = m_uidInfo.getNamePackage();
+				m_icon = resolver.getIcon(myPackage);
+			}
+			catch (Exception e)
+			{
+				Log.e(TAG, "Icon for process could not be retrieved");
+			}
 		}
 		return m_icon;
 	}

@@ -1236,6 +1236,37 @@ public class BatteryStatsProxy
 	
 	}
     
+    /**
+     * Initalizes the collection of history items
+     */
+    public boolean finishIteratingHistoryLocked() throws BatteryInfoUnavailableException
+	{
+    	Boolean ret = false;
+
+        try
+        {
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("finishIteratingHistoryLocked");
+
+          ret= (Boolean) method.invoke(m_Instance);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+        	Log.e(TAG, "An exception occured in finishIteratingHistoryLocked(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = false;
+            throw new BatteryInfoUnavailableException();
+        }
+
+        return ret;
+
+	
+	}
+    
 	/**
 	 * Collect the UidStats using reflection and store them  
 	 */
@@ -1992,6 +2023,14 @@ public class BatteryStatsProxy
 					{
 						updateCmd = HistoryItemIcs.CMD_UPDATE;
 					}
+					else if (AndroidVersion.isKitKat())
+					{
+						updateCmd = HistoryItemKitKat.CMD_UPDATE;
+					}
+					else if (AndroidVersion.isLPreview())
+					{
+						updateCmd = HistoryItemLPreview.CMD_UPDATE;
+					}
 					else
 					{
 						updateCmd = HistoryItem.CMD_UPDATE;
@@ -2086,6 +2125,179 @@ public class BatteryStatsProxy
 			
 		return myStats;
 	}
+	
+
+	@SuppressWarnings("unchecked")
+	public ArrayList<HistoryItem> dumpHistory(Context context) throws Exception
+	{
+		
+		ArrayList<HistoryItem> myStats = new ArrayList<HistoryItem>();
+	        	 
+        try
+        {			
+			ClassLoader cl = context.getClassLoader();
+			@SuppressWarnings("rawtypes")
+			Class classHistoryItem = cl.loadClass("android.os.BatteryStats$HistoryItem");
+												   
+			
+			// get constructor
+			Constructor cctor = classHistoryItem.getConstructor();
+			
+			Object myHistoryItem = cctor.newInstance();
+
+			// prepare the method call for getNextHistoryItem
+			//Parameters Types
+			@SuppressWarnings("rawtypes")
+			Class[] paramTypes= new Class[1];
+			paramTypes[0]= classHistoryItem;
+
+
+			@SuppressWarnings("unchecked")
+			Method methodNext = m_ClassDefinition.getMethod("getNextHistoryLocked", paramTypes);
+
+			//Parameters
+			Object[] params= new Object[1];
+
+			// initalize hist and iterate like this
+			// if (stats.startIteratingHistoryLocked()) {
+            // final HistoryItem rec = new HistoryItem();
+            // while (stats.getNextHistoryLocked(rec)) {
+			
+			// read the time of query for history
+	        Long statTimeRef = Long.valueOf(this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000,
+	                BatteryStatsTypes.STATS_SINCE_CHARGED));
+	        statTimeRef = System.currentTimeMillis(); 
+	        
+	        if (CommonLogSettings.DEBUG)
+	        {	
+	        	Log.d(TAG, "Reference time (" + statTimeRef + ": " + DateUtils.format(DateUtils.DATE_FORMAT_NOW, statTimeRef));
+	        }
+	        // statTimeLast stores the timestamp of the last sample
+	        Long statTimeLast = Long.valueOf(0);
+	        
+			if (this.startIteratingHistoryLocked())
+			{
+				params[0]= myHistoryItem;
+				Boolean bNext = (Boolean) methodNext.invoke(m_Instance, params);
+				while (bNext)
+				{
+					// process stats: create HistoryItems from params
+					Field timeField 				= classHistoryItem.getField("time"); 			// long
+					
+					
+					Field cmdField 					= classHistoryItem.getField("cmd"); 			// byte
+					Byte cmdValue = (Byte) cmdField.get(params[0]);
+					
+					// process only valid items
+					byte updateCmd = 0;
+					
+					// ICS has a different implementation of HistoryItems constants
+					if (AndroidVersion.isIcs())
+					{
+						updateCmd = HistoryItemIcs.CMD_UPDATE;
+					}
+					else
+					{
+						updateCmd = HistoryItem.CMD_UPDATE;
+					}
+					
+					if (true) //(cmdValue == updateCmd)
+					{
+				        Field batteryLevelField 		= classHistoryItem.getField("batteryLevel"); 	// byte
+				        Field batteryStatusField 		= classHistoryItem.getField("batteryStatus"); 	// byte
+				        Field batteryHealthField 		= classHistoryItem.getField("batteryHealth"); 	// byte
+				        Field batteryPlugTypeField 		= classHistoryItem.getField("batteryPlugType"); // byte
+				        
+				        Field batteryTemperatureField 	= classHistoryItem.getField("batteryTemperature"); // char
+				        Field batteryVoltageField 		= classHistoryItem.getField("batteryVoltage"); 	// char
+				        
+				        Field statesField 				= classHistoryItem.getField("states"); 			// int
+				        
+				        // retrieve all values
+				        @SuppressWarnings("rawtypes")
+				        Long timeValue = (Long) timeField.get(params[0]);
+				        
+				        Byte batteryLevelValue = (Byte) batteryLevelField.get(params[0]);
+				        Byte batteryStatusValue = (Byte) batteryStatusField.get(params[0]);
+				        Byte batteryHealthValue = (Byte) batteryHealthField.get(params[0]);
+				        Byte batteryPlugTypeValue = (Byte) batteryPlugTypeField.get(params[0]);
+				        
+				        String batteryTemperatureValue = String.valueOf(batteryTemperatureField.get(params[0]));
+				        String batteryVoltageValue = String.valueOf(batteryVoltageField.get(params[0]));
+				        
+				        Integer statesValue = (Integer) statesField.get(params[0]);
+
+				        HistoryItem myItem = null;
+				        
+				        // There different implementation of HistoryItems constants
+				        if (AndroidVersion.isLPreview())
+						{
+							myItem = new HistoryItemLPreview(timeValue, cmdValue, batteryLevelValue,
+					        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
+					        		batteryTemperatureValue, batteryVoltageValue, statesValue);
+						}
+				        if (AndroidVersion.isKitKat())
+						{
+							myItem = new HistoryItemKitKat(timeValue, cmdValue, batteryLevelValue,
+					        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
+					        		batteryTemperatureValue, batteryVoltageValue, statesValue);
+						}
+				        else if (AndroidVersion.isIcs())
+						{
+							myItem = new HistoryItemIcs(timeValue, cmdValue, batteryLevelValue,
+					        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
+					        		batteryTemperatureValue, batteryVoltageValue, statesValue);
+						}
+						else
+						{
+							myItem = new HistoryItem(timeValue, cmdValue, batteryLevelValue,
+					        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
+					        		batteryTemperatureValue, batteryVoltageValue, statesValue);
+						}
+						
+				        myStats.add(myItem);
+					}
+					else
+					{
+						Log.d(TAG, "Skipped item");
+					}
+					
+					bNext = (Boolean) methodNext.invoke(m_Instance, params);
+				}
+				
+				// norm the time of each sample
+				// stat time last is the number of millis since
+				// the stats is being collected
+				// the ref time is a full plain time (with date)
+				Long offset = statTimeRef - statTimeLast;
+				
+				// be sure to release 
+//				this.finishIteratingHistoryLocked();
+				
+				for (int i=0; i < myStats.size(); i++)
+				{
+					myStats.get(i).setOffset(offset);
+				}
+				
+			}
+        }
+        catch( Exception e )
+        {
+        	Log.e(TAG, "An exception occured in dumpHistory(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
+            throw e;
+        }
+			
+        int oldVal = 0;
+        // iterate over myStats
+        for (int i=0; i < myStats.size(); i++)
+        {
+        	HistoryItem myItem = myStats.get(i);
+        	Log.i(TAG, myItem.toString() + " " + myItem.printBitDescriptions(oldVal, myItem.m_statesValue));
+        	oldVal = myItem.m_statesValue;
+        }
+        	return myStats;
+	}
+
 
 }
 

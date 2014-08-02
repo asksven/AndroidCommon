@@ -287,10 +287,9 @@ public class NetworkUsage extends StatElement implements Comparable<NetworkUsage
 	 * returns a string representation of the data
 	 */
 	@JsonIgnore
-	public String getData()
+	public String getData(long totalTime)
 	{
 		return formatVolume(getTotalBytes()) + " " + this.formatRatio(getTotalBytes(), getTotal());
-		//"RX Bytes: " + String.valueOf(m_bytesReceived) + ", TX Bytes: " + String.valueOf(m_bytesSent);
 	}
 
 	/** 

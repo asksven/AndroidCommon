@@ -101,12 +101,12 @@ public class State extends StatElement implements Comparable<State>, Serializabl
     
     public String toString()
     {
-    	return getName() + " " + getData();
+    	return getName() + " " + m_duration;
     }
 
-    public String getData()
+    public String getData(long totalTime)
     {
-    	return formatDuration(m_duration) + " " + this.formatRatio(m_duration, getTotal());
+    	return formatDuration(m_duration) + " " + this.formatRatio(m_duration, totalTime);
     }
 
 	/**

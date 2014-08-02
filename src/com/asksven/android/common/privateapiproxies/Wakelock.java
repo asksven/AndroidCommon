@@ -104,6 +104,7 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 		this.m_count 		= source.m_count;
 		this.m_duration		= source.m_duration;
 		this.m_wakeType		= source.m_wakeType;
+		this.setTotal(source.m_total);
 	}
 
 	public WakelockDto toDto()
@@ -114,6 +115,8 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 		ret.m_count 		= this.m_count;
 		ret.m_duration 		= this.m_duration;
 		ret.m_wakeType		= this.m_wakeType;
+		ret.m_total		 	= this.getTotal();
+
 	
 		return ret;
 	}
@@ -206,7 +209,7 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 	@Override
 	public String toString() {
 		return "Wakelock [m_wakeType=" + m_wakeType + ", m_name=" + m_name
-				+ ", m_duration=" + m_duration + "]";
+				+ ", m_duration=" + m_duration + ", m_total=" + getTotal() + "]";
 	}
 	
 	 /**
@@ -224,14 +227,14 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 	/**
 	 * returns a string representation of the data
 	 */
-	public String getData()
+	public String getData(long totalTime)
 	{
 		return this.formatDuration(getDuration()) 
 			+ " (" + getDuration()/1000 + " s)"
 			+ " Count:" + getCount()
-			+ " " + this.formatRatio(getDuration(), getTotal());
+			+ " " + this.formatRatio(getDuration(), totalTime);
 	}
-	
+
 	/** 
 	 * returns the values of the data
 	 */

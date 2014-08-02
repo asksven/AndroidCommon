@@ -120,7 +120,7 @@ public class OtherStatsDumpsys
 								myMisc = new Misc("Phone On", durationInCall, SystemClock.elapsedRealtime());
 								myOther.add(myMisc);
 
-								Log.i(TAG, "Adding partial wakelock: " + myMisc.getData());
+								Log.i(TAG, "Adding partial wakelock: " + myMisc.toString());
 							}
 							catch (Exception e)
 							{
@@ -152,7 +152,7 @@ public class OtherStatsDumpsys
 									myMisc = new Misc("Bluetooth On", durationBtRunning, SystemClock.elapsedRealtime());
 									myOther.add(myMisc);
 								}
-								Log.i(TAG, "Adding partial wakelock: " + myMisc.getData());
+								Log.i(TAG, "Adding partial wakelock: " + myMisc.toString());
 							}
 							catch (Exception e)
 							{

@@ -165,6 +165,7 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 		this.m_sleepTime 	= source.m_sleepTime;
 		this.m_ttlTime 		= source.m_ttlTime;
 		this.m_wakeCount 	= source.m_wakeCount;
+		setTotal(source.m_total);
 	
 	}
 
@@ -182,7 +183,7 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 		ret.m_sleepTime 	= this.m_sleepTime;
 		ret.m_ttlTime 		= this.m_ttlTime;
 		ret.m_wakeCount 	= this.m_wakeCount;
-	
+		ret.m_total			= this.getTotal();
 		return ret;
 	}
 
@@ -353,17 +354,16 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 	public String toString() 
 	{
 		return getName() + " ["
-//				+ "m_name=" + m_name + ", "
-//				+ "m_count=" + m_count + ", "
-//				+ "m_expire_count=" + m_expireCount + ", "
-//				+ "m_wake_count=" + m_wakeCount + ", "
-//				+ "m_active_since="+ m_activeSince + ", "
-//				+ "m_total_time="+ m_ttlTime + ", "
-//				+ "m_sleep_time=" + m_sleepTime + ", "
-//				+ "m_max_time=" + m_maxTime + ", "
-//				+ "m_last_change=" + m_lastChange + ", "
-//				+ "m_total_time=" + m_totalTime
-				+ getData()
+				+ "m_name=" + m_name + ", "
+				+ "m_count=" + m_count + ", "
+				+ "m_expire_count=" + m_expireCount + ", "
+				+ "m_wake_count=" + m_wakeCount + ", "
+				+ "m_active_since="+ m_activeSince + ", "
+				+ "m_total_time="+ m_ttlTime + ", "
+				+ "m_sleep_time=" + m_sleepTime + ", "
+				+ "m_max_time=" + m_maxTime + ", "
+				+ "m_last_change=" + m_lastChange + ", "
+
 				+ "]";
 	}
 	
@@ -408,14 +408,14 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 	/**
 	 * returns a string representation of the data
 	 */
-	public String getData()
+	public String getData(long totalTime)
 	{
 		return this.formatDuration(getDuration()) 
 			+ " (" + getDuration()/1000 + " s)"
 			+ " Cnt:(c/wc/ec)" + getCount() + "/" + m_wakeCount + "/" + m_expireCount
-			+ " " + this.formatRatio(getDuration(), getTotal());
+			+ " " + this.formatRatio(getDuration(), totalTime);
 	}
-	
+
 	/** 
 	 * returns the values of the data
 	 */	

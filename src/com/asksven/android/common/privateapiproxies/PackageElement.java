@@ -229,14 +229,14 @@ public class PackageElement extends StatElement implements Comparable<PackageEle
 	/**
 	 * returns a string representation of the data
 	 */
-	public String getData()
+	public String getData(long totalTime)
 	{
 		return this.formatDuration(getDuration()) 
 			+ " Wakeups:" + m_wakeups
 			+ " Data:" + formatVolume(m_rxtx)
-			+ " " + this.formatRatio(getDuration(), getTotal());
+			+ " " + this.formatRatio(getDuration(), totalTime);
 	}
-	
+
 	/**
 	 * Formats data volumes 
 	 * @param bytes

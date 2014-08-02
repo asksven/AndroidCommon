@@ -93,6 +93,7 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 	public Misc clone()
 	{
 		Misc clone = new Misc(m_name, m_timeOn, m_timeRunning);
+		clone.setTotal(this.getTotal());
 		return clone;
 	}
 
@@ -118,6 +119,7 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 						
 						this.m_timeOn		-= myRef.getTimeOn();
 						this.m_timeRunning	-= myRef.getTimeRunning();
+						this.setTotal(this.m_timeRunning);
 						
 						if (this.m_timeOn > this.m_timeRunning)
 						{
@@ -192,13 +194,17 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 	/**
 	 * returns a string representation of the data
 	 */
-	public String getData()
+	public String getData(long totalTime)
 	{
 		
+		if (totalTime < getTimeOn())
+		{
+			totalTime = getTimeOn();
+		}
 		return this.formatDuration(getTimeOn()) + " (" + getTimeOn()/1000 + " s)"
-		+ " Ratio: " + formatRatio(getTimeOn(), getTimeRunning());
+		+ " Ratio: " + formatRatio(getTimeOn(), totalTime);
 	}
-	
+
 	/**
 	 * returns a string representation of the data
 	 */

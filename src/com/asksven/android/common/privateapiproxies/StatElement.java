@@ -140,8 +140,8 @@ public abstract class StatElement implements Serializable
 	 * Returns data as displayable string
 	 * @return the data
 	 */
-	public abstract String getData();
-	
+	public abstract String getData(long totalTime);
+
 	/**
 	 * @return the m_totalTime
 	 */
@@ -224,9 +224,9 @@ public abstract class StatElement implements Serializable
 	/** 
 	 * returns the representation of the data for file dimp
 	 */	
-	public String getDumpData(UidNameResolver nameResolver)
+	public String getDumpData(UidNameResolver nameResolver, long totalTime)
 	{
-		return this.getName() + " (" + this.getFqn(nameResolver) + "): " + this.getData();
+		return this.getName() + " (" + this.getFqn(nameResolver) + "): " + this.getData(totalTime);
 	}
 
 	/** 
