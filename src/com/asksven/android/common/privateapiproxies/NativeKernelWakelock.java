@@ -410,7 +410,6 @@ public class NativeKernelWakelock extends StatElement implements Comparable<Nati
 	public String getData(long totalTime)
 	{
 		return this.formatDuration(getDuration()) 
-			+ " (" + getDuration()/1000 + " s)"
 			+ " Cnt:(c/wc/ec)" + getCount() + "/" + m_wakeCount + "/" + m_expireCount
 			+ " " + this.formatRatio(getDuration(), totalTime);
 	}

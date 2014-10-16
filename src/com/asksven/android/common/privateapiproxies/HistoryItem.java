@@ -432,4 +432,47 @@ public class HistoryItem implements Serializable, Parcelable
 	    dest.writeString(m_batteryVoltageValue);
 	    dest.writeInt(m_statesValue);
 	}
+	
+	public static final class  BitDescription
+	{
+		public final int mask;
+		public final int shift;
+		public final String name;
+		public final String[] values;
+		
+        public BitDescription(int mask, String name)
+        {
+        	this.mask = mask;
+        	this.shift = -1;
+        	this.name = name;
+        	this.values = null;
+        }
+  
+		public BitDescription(int mask, int shift, String name, String[] values)
+		{
+			this.mask = mask;
+			this.shift = shift;
+			this.name = name;
+			this.values = values;
+		}
+	}
+	
+	 static final String[] SCREEN_BRIGHTNESS_NAMES = {"dark", "dim", "medium", "light", "bright"};
+	 
+	 public static final String[] SIGNAL_STRENGTH_NAMES = {"none", "poor", "moderate", "good", "great"};
+	 
+	static final String[] DATA_CONNECTION_NAMES = {
+		"none", "gprs", "edge", "umts", "cdma", "evdo_0", "evdo_A",
+		"1xrtt", "hsdpa", "hsupa", "hspa", "iden", "evdo_b", "lte",
+		"ehrpd", "hspap", "other"};
+	
+
+	
+	String printBitDescriptions(int oldval, int newval)
+	{
+		String ret = "";
+
+		
+		return ret;
+	}
 }

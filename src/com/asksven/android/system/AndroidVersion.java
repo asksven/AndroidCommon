@@ -48,7 +48,7 @@ public class AndroidVersion
 	public static boolean isIcs()
 	{
 		boolean bRet = false;
-		if (Build.VERSION.SDK_INT >= 14) // Build.VERSION_ICE_CREAM_SANDWICH
+		if (Build.VERSION.SDK_INT == Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 		{
 			bRet = true;
 		}
@@ -56,4 +56,25 @@ public class AndroidVersion
 		return bRet;
 	}
 	
+	public static boolean isKitKat()
+	{
+		boolean bRet = false;
+		if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
+		{
+			bRet = true;
+		}
+		
+		return bRet;
+	}
+	
+	public static boolean isLPreview()
+	{
+		boolean bRet = false;
+		if (Build.VERSION.SDK_INT == 20)
+		{
+			bRet = true;
+		}
+		
+		return bRet;
+	}
 }

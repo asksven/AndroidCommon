@@ -201,8 +201,8 @@ public class Misc extends StatElement implements Comparable<Misc>, Serializable
 		{
 			totalTime = getTimeOn();
 		}
-		return this.formatDuration(getTimeOn()) + " (" + getTimeOn()/1000 + " s)"
-		+ " Ratio: " + formatRatio(getTimeOn(), totalTime);
+		return this.formatDuration(getTimeOn())
+		+ " " + formatRatio(getTimeOn(), totalTime);
 	}
 
 	/**

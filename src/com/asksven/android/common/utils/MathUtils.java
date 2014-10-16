@@ -15,6 +15,8 @@
  */
 package com.asksven.android.common.utils;
 
+import java.util.Formatter;
+
 import android.location.Location;
 
 /**
@@ -50,5 +52,37 @@ public class MathUtils
 
 	    return dist * meterConversion;
 	}
+	
+	public static String formatRatio(long num, long den)
+	{
+		StringBuilder mFormatBuilder = new StringBuilder(8);
+        if (den == 0L)
+        {
+            return "---%";
+        }
+        
+	    Formatter mFormatter = new Formatter(mFormatBuilder);        
+        float perc = ((float)num) / ((float)den) * 100;
+        mFormatBuilder.setLength(0);
+        mFormatter.format("%.1f%%", perc);
+        mFormatter.close();
+        return mFormatBuilder.toString();
+    }
+
+	public static String formatRatio(double num, double den)
+	{
+		StringBuilder mFormatBuilder = new StringBuilder(8);
+        if (den == 0L)
+        {
+            return "---%";
+        }
+        
+	    Formatter mFormatter = new Formatter(mFormatBuilder);        
+        float perc = ((float)num) / ((float)den) * 100;
+        mFormatBuilder.setLength(0);
+        mFormatter.format("%.1f%%", perc);
+        mFormatter.close();
+        return mFormatBuilder.toString();
+    }
 
 }

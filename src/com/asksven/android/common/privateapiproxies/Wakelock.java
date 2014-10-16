@@ -230,7 +230,6 @@ public class Wakelock extends StatElement implements Comparable<Wakelock>, Seria
 	public String getData(long totalTime)
 	{
 		return this.formatDuration(getDuration()) 
-			+ " (" + getDuration()/1000 + " s)"
 			+ " Count:" + getCount()
 			+ " " + this.formatRatio(getDuration(), totalTime);
 	}
