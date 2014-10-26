@@ -143,6 +143,7 @@ public abstract class StatElement implements Serializable
 	public abstract String getData(long totalTime);
 
 	/**
+	 * 
 	 * @return the m_totalTime
 	 */
 	public long getTotal()
@@ -222,7 +223,7 @@ public abstract class StatElement implements Serializable
     }
 	
 	/** 
-	 * returns the representation of the data for file dimp
+	 * returns the representation of the data for file dump
 	 */	
 	public String getDumpData(UidNameResolver nameResolver, long totalTime)
 	{

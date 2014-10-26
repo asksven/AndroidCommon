@@ -257,7 +257,7 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	/** 
 	 * returns the representation of the data for file dump
 	 */	
-	public String getDumpData(UidNameResolver nameResolver)
+	public String getDumpData(UidNameResolver nameResolver, long totalTime)
 	{
 		return this.getName() + " (" + this.getFqn(nameResolver) + "): " + this.getDetailedData();
 	}
