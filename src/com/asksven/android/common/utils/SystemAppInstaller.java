@@ -231,8 +231,8 @@ public class SystemAppInstaller
 				}
 				else
 				{
-					status.add("An error while remounting system to ro. Aborted");
-					status.m_success = false;
+					status.add("An error while remounting system to ro. Warning!");
+					status.m_success = true;
 				}
 			}
 			else
