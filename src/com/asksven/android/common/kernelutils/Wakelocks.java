@@ -176,7 +176,7 @@ public class Wakelocks
     	}
     	catch (Exception e)
     	{
-    		
+    		Log.e(TAG, "An error occured while parsing " + filePath + ": " + e.getMessage());
     	}
 		return rows;
     }
