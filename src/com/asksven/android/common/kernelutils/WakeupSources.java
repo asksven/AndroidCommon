@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.asksven.andoid.common.contrib.Shell;
 import com.asksven.andoid.common.contrib.Util;
 import com.asksven.android.common.CommonLogSettings;
 import com.asksven.android.common.privateapiproxies.NativeKernelWakelock;
@@ -197,7 +198,16 @@ public class WakeupSources extends Wakelocks
     	}
     	catch (Exception e)
     	{
-    		exists = false;
+    		List<String> res = Shell.SU.run("cat " + FILE_PATH);
+    		
+    		if ((res == null)||(res.size()==0))
+    		{
+    			exists = false;
+    		}
+    		else
+    		{
+    			exists = true;
+    		}
     	}
     	finally
     	{

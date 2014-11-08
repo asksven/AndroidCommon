@@ -13,8 +13,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.asksven.andoid.common.contrib.Shell;
 import com.asksven.andoid.common.contrib.Util;
 import com.asksven.android.common.CommonLogSettings;
+import com.asksven.android.common.RootShell;
 import com.asksven.android.common.privateapiproxies.NativeKernelWakelock;
 import com.asksven.android.common.privateapiproxies.NetworkUsage;
 import com.asksven.android.common.privateapiproxies.StatElement;
@@ -177,6 +179,14 @@ public class Wakelocks
     	catch (Exception e)
     	{
     		Log.e(TAG, "An error occured while parsing " + filePath + ": " + e.getMessage());
+    		
+    		// retry with root
+
+			List<String> res = Shell.SU.run("cat " + filePath);
+			for (int i=0; i < res.size(); i++)
+			{
+				rows.add(res.get(i).split(delimiter));
+    		}
     	}
 		return rows;
     }
