@@ -1146,34 +1146,34 @@ public class BatteryStatsProxy
 	
 	}
 
-    /**
-     * Return whether we are currently running on battery.
-     */	    
-	public boolean getIsOnBattery(Context context) throws BatteryInfoUnavailableException
-	{
-    	boolean ret = false;
-
-        try
-        { 
-	    	@SuppressWarnings("unchecked")	
-	    	Method method = m_ClassDefinition.getMethod("getIsOnBattery");
-
-        	Boolean oRet = (Boolean) method.invoke(m_Instance);
-        	ret = oRet.booleanValue();
-
-        }
-        catch( IllegalArgumentException e )
-        {
-            throw e;
-        }
-        catch( Exception e )
-        {
-            ret = false;
-            throw new BatteryInfoUnavailableException();
-        }    
-        
-        return ret;
-	}
+//    /**
+//     * Return whether we are currently running on battery.
+//     */	    
+//	public boolean getIsOnBattery(Context context) throws BatteryInfoUnavailableException
+//	{
+//    	boolean ret = false;
+//
+//        try
+//        { 
+//	    	@SuppressWarnings("unchecked")	
+//	    	Method method = m_ClassDefinition.getMethod("getIsOnBattery");
+//
+//        	Boolean oRet = (Boolean) method.invoke(m_Instance);
+//        	ret = oRet.booleanValue();
+//
+//        }
+//        catch( IllegalArgumentException e )
+//        {
+//            throw e;
+//        }
+//        catch( Exception e )
+//        {
+//            ret = false;
+//            throw new BatteryInfoUnavailableException();
+//        }    
+//        
+//        return ret;
+//	}
     
     /**
      * Returns the current battery percentage level if we are in a discharge cycle, otherwise
