@@ -13,6 +13,8 @@ import android.util.Log;
 
 
 
+
+import com.asksven.andoid.common.contrib.Shell;
 //import com.asksven.andoid.common.contrib.Shell;
 import com.asksven.andoid.common.contrib.Util;
 import com.asksven.android.common.NonRootShell;
@@ -33,6 +35,7 @@ public class AlarmsDumpsys
 {
 	static final String TAG = "AlarmsDumpsys";
 	static final String PERMISSION_DENIED = "su rights required to access alarms are not available / were not granted";
+	static final String SERVICE_NOT_ACCESSIBLE = "Can't find service: alarm";
 
 	public static ArrayList<StatElement> getAlarms(boolean useRoot)
 	{
@@ -576,6 +579,28 @@ public class AlarmsDumpsys
 			}
 		}
 		return myAlarms;
+	}
+	
+	public static boolean alarmsAccessible()
+	{
+		List<String> res = RootShell.getInstance().run("dumpsys alarm");	
+		
+		if ((res == null) || (res.size() == 0))
+		{
+			return false;
+		}
+		else
+		{
+			String val = res.get(0);
+			if (val.equals(SERVICE_NOT_ACCESSIBLE))
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
 	}
 
 }
