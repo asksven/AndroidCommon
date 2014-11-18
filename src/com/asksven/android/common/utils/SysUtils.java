@@ -15,6 +15,12 @@
  */
 package com.asksven.android.common.utils;
 
+import java.util.List;
+
+import com.asksven.android.common.RootShell;
+import com.asksven.android.common.shellutils.Exec;
+import com.asksven.android.common.shellutils.ExecResult;
+
 import android.content.Context;
 import android.content.pm.PackageManager;
 
@@ -54,6 +60,25 @@ public class SysUtils
 		    permission, 
 		    context.getPackageName());
 		return (hasPerm == PackageManager.PERMISSION_GRANTED);
+	}
+	
+	/** 
+	 * Returns "n/a, Enforcing or Permissive", depending on the implemented policy
+	 * @return
+	 */
+	public static String getSELinuxPolicy()
+	{
+		String ret = "";
+		ExecResult res = Exec.execPrint(new String[]{"getenforce"});
+		if (res.getSuccess())
+		{
+			ret = res.getResultLine();
+		}
+		else
+		{
+			ret = "n/a";
+		}
+		return ret;
 	}
 
 }
