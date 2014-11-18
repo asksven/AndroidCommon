@@ -1470,7 +1470,7 @@ public class BatteryStatsProxy
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public ArrayList<KernelWakelock> getKernelWakelockStats(Context context, int iStatType, int iWlPctRef, boolean bAlternate) throws Exception
+	public ArrayList<StatElement> getKernelWakelockStats(Context context, int iStatType, int iWlPctRef, boolean bAlternate) throws Exception
 	{
 		// type checks
 		boolean validTypes = (BatteryStatsTypes.assertValidStatType(iStatType)
@@ -1485,7 +1485,7 @@ public class BatteryStatsProxy
 				+"[iStatType] = " + iStatType
 				+ "[iWlPctRef] = " + iWlPctRef);
 		
-		ArrayList<KernelWakelock> myStats = new ArrayList<KernelWakelock>();
+		ArrayList<StatElement> myStats = new ArrayList<StatElement>();
 		
 		long uSecBatteryTime = this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000, iStatType);
 		long msSinceBoot = SystemClock.elapsedRealtime();
