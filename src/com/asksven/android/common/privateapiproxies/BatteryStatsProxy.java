@@ -1994,10 +1994,18 @@ public class BatteryStatsProxy
 			// if (stats.startIteratingHistoryLocked()) {
             // final HistoryItem rec = new HistoryItem();
             // while (stats.getNextHistoryLocked(rec)) {
-			
+			int statsType = 0;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+			{
+				statsType = BatteryStatsTypesLolipop.STATS_CURRENT;
+			}
+			else
+			{
+				statsType = BatteryStatsTypes.STATS_CURRENT;
+			}	
 			// read the time of query for history
 	        Long statTimeRef = Long.valueOf(this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000,
-	                BatteryStatsTypes.STATS_SINCE_CHARGED));
+	                statsType));
 	        statTimeRef = System.currentTimeMillis(); 
 	        
 	        if (CommonLogSettings.DEBUG)
@@ -2023,18 +2031,22 @@ public class BatteryStatsProxy
 					// process only valid items
 					byte updateCmd = 0;
 					
-					// ICS has a different implementation of HistoryItems constants
-					if (AndroidVersion.isIcs())
+					// different versions -> different HistoryItem constants
+					if ( (Build.VERSION.SDK_INT == Build.VERSION_CODES.ICE_CREAM_SANDWICH) || (Build.VERSION.SDK_INT == Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) )
 					{
 						updateCmd = HistoryItemIcs.CMD_UPDATE;
 					}
-					else if (AndroidVersion.isKitKat())
+					else if ( (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) || (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT_WATCH) )
 					{
 						updateCmd = HistoryItemKitKat.CMD_UPDATE;
 					}
-					else if (AndroidVersion.isLPreview())
+					else if ( (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN) || (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN_MR1) || (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN_MR2))
 					{
-						updateCmd = HistoryItemLPreview.CMD_UPDATE;
+						updateCmd = HistoryItemJellyBean.CMD_UPDATE;
+					}
+					else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP)
+					{
+						updateCmd = HistoryItemLolipop.CMD_UPDATE;
 					}
 					else
 					{
@@ -2072,10 +2084,28 @@ public class BatteryStatsProxy
 
 					        HistoryItem myItem = null;
 					        
-					        // ICS has a different implementation of HistoryItems constants
-							if (AndroidVersion.isIcs())
+							// different versions -> different HistoryItem constants
+							if ( (Build.VERSION.SDK_INT == Build.VERSION_CODES.ICE_CREAM_SANDWICH) || (Build.VERSION.SDK_INT == Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) )
 							{
 								myItem = new HistoryItemIcs(timeValue, cmdValue, batteryLevelValue,
+						        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
+						        		batteryTemperatureValue, batteryVoltageValue, statesValue);
+							}
+							else if ( (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) || (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT_WATCH) )
+							{
+								myItem = new HistoryItemKitKat(timeValue, cmdValue, batteryLevelValue,
+						        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
+						        		batteryTemperatureValue, batteryVoltageValue, statesValue);
+							}
+							else if ( (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN) || (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN_MR1) || (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN_MR2))
+							{
+								myItem = new HistoryItemJellyBean(timeValue, cmdValue, batteryLevelValue,
+						        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
+						        		batteryTemperatureValue, batteryVoltageValue, statesValue);
+							}
+							else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP)
+							{
+								myItem = new HistoryItemLolipop(timeValue, cmdValue, batteryLevelValue,
 						        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
 						        		batteryTemperatureValue, batteryVoltageValue, statesValue);
 							}
@@ -2167,10 +2197,19 @@ public class BatteryStatsProxy
 			// if (stats.startIteratingHistoryLocked()) {
             // final HistoryItem rec = new HistoryItem();
             // while (stats.getNextHistoryLocked(rec)) {
+			int statsType = 0;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+			{
+				statsType = BatteryStatsTypesLolipop.STATS_CURRENT;
+			}
+			else
+			{
+				statsType = BatteryStatsTypes.STATS_CURRENT;
+			}
 			
 			// read the time of query for history
 	        Long statTimeRef = Long.valueOf(this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000,
-	                BatteryStatsTypes.STATS_SINCE_CHARGED));
+	                statsType));
 	        statTimeRef = System.currentTimeMillis(); 
 	        
 	        if (CommonLogSettings.DEBUG)
@@ -2235,9 +2274,9 @@ public class BatteryStatsProxy
 				        HistoryItem myItem = null;
 				        
 				        // There different implementation of HistoryItems constants
-				        if (AndroidVersion.isLPreview())
+				        if (AndroidVersion.isLolipop())
 						{
-							myItem = new HistoryItemLPreview(timeValue, cmdValue, batteryLevelValue,
+							myItem = new HistoryItemLolipop(timeValue, cmdValue, batteryLevelValue,
 					        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
 					        		batteryTemperatureValue, batteryVoltageValue, statesValue);
 						}

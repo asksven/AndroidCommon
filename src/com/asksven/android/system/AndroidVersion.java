@@ -67,10 +67,10 @@ public class AndroidVersion
 		return bRet;
 	}
 	
-	public static boolean isLPreview()
+	public static boolean isLolipop()
 	{
 		boolean bRet = false;
-		if (Build.VERSION.SDK_INT == 20)
+		if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP)
 		{
 			bRet = true;
 		}
