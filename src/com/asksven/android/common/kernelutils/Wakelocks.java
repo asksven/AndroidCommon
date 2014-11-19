@@ -178,7 +178,7 @@ public class Wakelocks
     	}
     	catch (Exception e)
     	{
-    		Log.e(TAG, "An error occured while parsing " + filePath + ": " + e.getMessage());
+    		Log.i(TAG, "An error occured while parsing " + filePath + ": " + e.getMessage() + ". Retrying with root");
     		
     		// retry with root
 
@@ -187,6 +187,11 @@ public class Wakelocks
 			{
 				rows.add(res.get(i).split(delimiter));
     		}
+			
+			if (res.isEmpty())
+			{
+				Log.i(TAG, "Wakelocks could not be read from " + filePath + ", even with root");
+			}
     	}
 		return rows;
     }
