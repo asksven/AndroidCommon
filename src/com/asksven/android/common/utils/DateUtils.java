@@ -161,12 +161,12 @@ public class DateUtils
         if (perMinute >= 1)
         {
         	// we keep this value
-        	ret = f.format(perMinute) + " / min.";
+        	ret = f.format(perMinute) + " / min";
         }
         else
         {
         	// we try to switch to hours
-        	ret = f.format(perMinute * 60) + " / hr.";
+        	ret = f.format(perMinute * 60) + " / h";
         }
         
         return ret;
@@ -322,17 +322,17 @@ public class DateUtils
         
         if (minutes > 0)
         { 
-        	ret += minutes + " min. ";
+        	ret += minutes + " min ";
         }
         if ( (seconds > 0) && (days == 0) )
         {
         	// only show seconds when value < 1 day
-        	ret += seconds + " sec. ";
+        	ret += seconds + " s ";
         }
         
         if (ret.equals(""))
         {
-        	ret = "0 sec.";
+        	ret = "0 s";
         }
         return ret;
 	}
@@ -373,7 +373,7 @@ public class DateUtils
         
         if (minutes > 0)
         { 
-        	ret += minutes + "m";
+        	ret += minutes + "min";
         }
         if ( (seconds > 0) && (hours == 0) )
         {
