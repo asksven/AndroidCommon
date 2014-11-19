@@ -1505,14 +1505,14 @@ public class BatteryStatsProxy
 			Field currentReportedTotalTime  	= classSamplingTimer.getDeclaredField("mCurrentReportedTotalTime");
 			Field unpluggedReportedCount  		= classSamplingTimer.getDeclaredField("mUnpluggedReportedCount");
 			Field unpluggedReportedTotalTime  	= classSamplingTimer.getDeclaredField("mUnpluggedReportedTotalTime");
-			Field inDischarge  					= classSamplingTimer.getDeclaredField("mInDischarge");
+			//Field inDischarge  					= classSamplingTimer.getDeclaredField("mInDischarge");
 			Field trackingReportedValues  		= classSamplingTimer.getDeclaredField("mTrackingReportedValues");
 			
 			currentReportedCount.setAccessible(true);
 			currentReportedTotalTime.setAccessible(true);
 			unpluggedReportedCount.setAccessible(true);
 			unpluggedReportedTotalTime.setAccessible(true);
-			inDischarge.setAccessible(true);
+			//inDischarge.setAccessible(true);
 			trackingReportedValues.setAccessible(true);
 			
 			//Parameters
@@ -1539,7 +1539,7 @@ public class BatteryStatsProxy
             	Integer unpluggedReportedCountVal 	= (Integer) unpluggedReportedCount.get(params[0]);
             	Long unpluggedReportedTotalTimeVal 	= (Long) unpluggedReportedTotalTime.get(params[0]);
             	
-            	Boolean inDischargeVal 				= (Boolean) inDischarge.get(params[0]);
+            	//Boolean inDischargeVal 				= (Boolean) inDischarge.get(params[0]);
             	Boolean trackingReportedValuesVal 	= (Boolean) trackingReportedValues.get(params[0]);
             	
             	if (CommonLogSettings.DEBUG)
@@ -1550,7 +1550,7 @@ public class BatteryStatsProxy
 	            			+ " [currentReportedTotalTimeVal] = " + currentReportedTotalTimeVal
 	            			+ " [unpluggedReportedCountVal] = " + unpluggedReportedCountVal
 	            			+ " [mUnpluggedReportedTotalTimeVal] = " + unpluggedReportedTotalTimeVal
-	            			+ " [mInDischarge] = " + inDischargeVal
+	            			//+ " [mInDischarge] = " + inDischargeVal
 	            			+ " [mTrackingReportedValues] = " + trackingReportedValuesVal);
             	}
             	
@@ -1595,22 +1595,27 @@ public class BatteryStatsProxy
 					Log.d(TAG, "Kernel wakelock: " + wakelockEntry.getKey() + " wakelock [s] " + wake / 1000
 							+ " count " + count);
 				}
-
+				
+				// public NativeKernelWakelock(String name, String details, int count, int expire_count, int wake_count,
+				// long active_since, long total_time, long sleep_time, long max_time, long last_change, long time)
+				//public KernelWakelock(String name, long duration, long time, int count)
 				// return the data depending on the method 
-				if (!bAlternate)
-				{
-					KernelWakelock myWl = new KernelWakelock(wakelockEntry.getKey(), wake / 1000, uSecBatteryTime / 1000, count);
+				//if (!bAlternate)
+				//{
+					//KernelWakelock myWl = new KernelWakelock(wakelockEntry.getKey(), wake / 1000, uSecBatteryTime / 1000, count);
+					NativeKernelWakelock myWl = new NativeKernelWakelock(wakelockEntry.getKey(), "*api*", count.intValue(), 0, 0, 
+							0L, wake/1000, wake/1000, 0L, 0L, uSecBatteryTime / 1000);
 					myStats.add(myWl);	
-				}
-				else
-				{
-					KernelWakelock myWl = new KernelWakelock(
-							wakelockEntry.getKey(),
-							unpluggedReportedTotalTimeVal / 1000,
-							msSinceBoot,
-							unpluggedReportedCountVal);
-					myStats.add(myWl);
-				}	
+				//}
+//				else
+//				{
+//					KernelWakelock myWl = new KernelWakelock(
+//							wakelockEntry.getKey(),
+//							unpluggedReportedTotalTimeVal / 1000,
+//							msSinceBoot,
+//							unpluggedReportedCountVal);
+//					myStats.add(myWl);
+//				}	
             }
         }
         catch( Exception e )
