@@ -1603,7 +1603,7 @@ public class BatteryStatsProxy
 				//if (!bAlternate)
 				//{
 					//KernelWakelock myWl = new KernelWakelock(wakelockEntry.getKey(), wake / 1000, uSecBatteryTime / 1000, count);
-					NativeKernelWakelock myWl = new NativeKernelWakelock(wakelockEntry.getKey(), "*api*", count.intValue(), 0, 0, 
+					NativeKernelWakelock myWl = new NativeKernelWakelock(wakelockEntry.getKey() + " *api*", "", count.intValue(), 0, 0, 
 							0L, wake/1000, wake/1000, 0L, 0L, uSecBatteryTime / 1000);
 					myStats.add(myWl);	
 				//}
@@ -1827,7 +1827,7 @@ public class BatteryStatsProxy
 
 							if ((wakeups) > 0)
 							{
-								Alarm myWakeup = new Alarm(ent.getKey());
+								Alarm myWakeup = new Alarm(ent.getKey() + " *api*");
 								myWakeup.setWakeups(wakeups);
 								// opt for lazy loading: do no populate UidInfo, just uid. UidInfo will be fetched on demand
 								myWakeup.setUid(uid);
