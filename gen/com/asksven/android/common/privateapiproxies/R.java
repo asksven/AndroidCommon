@@ -30,7 +30,7 @@ public final class R {
         public static int dialog_dismiss=0x7f04000a;
         public static int dialog_follow_me=0x7f04000b;
         public static int hello=0x7f040000;
-        public static int label_button_no=0x7f040005;
+        public static int label_button_no_thanks=0x7f040005;
         public static int label_button_rate=0x7f040004;
         public static int label_button_remind=0x7f040003;
         public static int market_link=0x7f040008;

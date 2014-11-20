@@ -6,7 +6,7 @@
     <string name="app_pname">com.asksven.androidcommon</string>
     <string name="label_button_remind">Remind me later</string>
     <string name="label_button_rate">Rate</string>
-    <string name="label_button_no">No, thanks</string>
+    <string name="label_button_no_thanks">No, thanks</string>
     <string name="text_dialog_rate">If you enjoy using %s, please take a moment to rate it. Thanks for your support!</string>
     <string name="twitter_link">https://twitter.com/#!/asksven</string>
     <string name="market_link">market://search?q=com.asksven</string>

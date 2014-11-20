@@ -24,7 +24,7 @@ import android.widget.TextView;
  *    <string name="app_pname">com.asksven.androidcommon</string>
  *    <string name="label_button_remind">Remind me later</string>
  *    <string name="label_button_rate">Rate</string>
- *    <string name="label_button_no">No, thanks</string>
+ *    <string name="label_button_no<_thanks">No, thanks</string>
  *    <string name="text_dialog_rate">If you enjoy using %s, please take a moment to rate it. Thanks for your support!</string>
  * 
  * To test it and to tweak the dialog appearence, you can call AppRater.showRateDialog(this, null)
@@ -115,7 +115,7 @@ public class AppRater
 		ll.addView(b2);
 
 		Button b3 = new Button(ctx);
-		b3.setText(R.string.label_button_no);
+		b3.setText(R.string.label_button_no_thanks);
 		b3.setOnClickListener(new Button.OnClickListener()
 		{
 			public void onClick(View v)
