@@ -1470,11 +1470,10 @@ public class BatteryStatsProxy
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public ArrayList<StatElement> getKernelWakelockStats(Context context, int iStatType, int iWlPctRef, boolean bAlternate) throws Exception
+	public ArrayList<StatElement> getKernelWakelockStats(Context context, int iStatType, boolean bAlternate) throws Exception
 	{
 		// type checks
-		boolean validTypes = (BatteryStatsTypes.assertValidStatType(iStatType)
-				&& BatteryStatsTypes.assertValidWakelockPctRef(iWlPctRef));
+		boolean validTypes = BatteryStatsTypes.assertValidStatType(iStatType);
 		if (!validTypes)
 		{
 			Log.e(TAG, "Invalid WakeType or StatType");
@@ -1482,13 +1481,13 @@ public class BatteryStatsProxy
 		}
 		
 		Log.d(TAG, "getWakelockStats was called with params "
-				+"[iStatType] = " + iStatType
-				+ "[iWlPctRef] = " + iWlPctRef);
+				+"[iStatType] = " + iStatType);
 		
 		ArrayList<StatElement> myStats = new ArrayList<StatElement>();
 		
 		long uSecBatteryTime = this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000, iStatType);
-		long msSinceBoot = SystemClock.elapsedRealtime();
+		//long uSecBatteryTime = this.computeBatteryRealtime(SystemClock.elapsedRealtime() * 1000, iStatType);
+		//long msSinceBoot = SystemClock.elapsedRealtime();
 		 
         try
         {			
@@ -1603,18 +1602,18 @@ public class BatteryStatsProxy
 				//if (!bAlternate)
 				//{
 					//KernelWakelock myWl = new KernelWakelock(wakelockEntry.getKey(), wake / 1000, uSecBatteryTime / 1000, count);
-					NativeKernelWakelock myWl = new NativeKernelWakelock(wakelockEntry.getKey() + " *api*", "", count.intValue(), 0, 0, 
-							0L, wake/1000, wake/1000, 0L, 0L, uSecBatteryTime / 1000);
-					myStats.add(myWl);	
+				
+//					NativeKernelWakelock myWl = new NativeKernelWakelock(wakelockEntry.getKey() + " *api*", "", count.intValue(), 0, 0, 
+//							0L, wake/1000, wake/1000, 0L, 0L, uSecBatteryTime / 1000);
+//					myStats.add(myWl);	
 				//}
 //				else
 //				{
-//					KernelWakelock myWl = new KernelWakelock(
-//							wakelockEntry.getKey(),
-//							unpluggedReportedTotalTimeVal / 1000,
-//							msSinceBoot,
-//							unpluggedReportedCountVal);
-//					myStats.add(myWl);
+				NativeKernelWakelock myWl = new NativeKernelWakelock(
+							wakelockEntry.getKey() + " *api*", "", unpluggedReportedCountVal, 0, 0, 0L, 
+							unpluggedReportedTotalTimeVal / 1000, unpluggedReportedTotalTimeVal / 1000, 0L, 0L,
+							uSecBatteryTime / 1000);
+					myStats.add(myWl);
 //				}	
             }
         }
