@@ -101,14 +101,14 @@ public class Shell {
             boolean wantSTDERR) {
         String shellUpper = shell.toUpperCase(Locale.ENGLISH);
 
-        if (Debug.getSanityChecksEnabledEffective() && Debug.onMainThread()) {
-            // check if we're running in the main thread, and if so, crash if
-            // we're in debug mode, to let the developer know attention is
-            // needed here.
-
-            Debug.log(ShellOnMainThreadException.EXCEPTION_COMMAND);
-            throw new ShellOnMainThreadException(ShellOnMainThreadException.EXCEPTION_COMMAND);
-        }
+//        if (Debug.getSanityChecksEnabledEffective() && Debug.onMainThread()) {
+//            // check if we're running in the main thread, and if so, crash if
+//            // we're in debug mode, to let the developer know attention is
+//            // needed here.
+//
+//            Debug.log(ShellOnMainThreadException.EXCEPTION_COMMAND);
+//            throw new ShellOnMainThreadException(ShellOnMainThreadException.EXCEPTION_COMMAND);
+//        }
         Debug.logCommand(String.format("[%s%%] START", shellUpper));
 
         List<String> res = Collections.synchronizedList(new ArrayList<String>());

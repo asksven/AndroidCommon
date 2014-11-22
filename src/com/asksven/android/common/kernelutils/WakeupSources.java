@@ -238,7 +238,7 @@ public class WakeupSources extends Wakelocks
     	}
     	finally
     	{
-    		if (exists)
+    		if (fr != null && exists)
     		{
     			try
     			{
