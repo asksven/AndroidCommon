@@ -15,6 +15,7 @@ import android.util.Log;
 
 
 
+
 import com.asksven.andoid.common.contrib.Shell;
 //import com.asksven.andoid.common.contrib.Shell;
 import com.asksven.andoid.common.contrib.Util;
@@ -51,6 +52,11 @@ public class AlarmsDumpsys
 			{
 				//res = RootShell.getInstance().run("dumpsys alarm");
 				res = RootShell.getInstance().run("su --context u:r:untrusted_app:s0 -c 'dumpsys alarm'");
+				//String[] commands = {Shell.SU.shell(0, "u:r:system_app:s0"), "dumpsys alarm"};
+				//res = Shell.SU.run(commands);
+				
+				//res = Shell.SU.run("su --context u:r:untrusted_app:s0 -c 'dumpsys alarm' > /sdcard/alarms.txt");
+				//res = RootShell.getInstance().run("cat /sdcard/alarms.txt");
 			}
 			else
 			{
