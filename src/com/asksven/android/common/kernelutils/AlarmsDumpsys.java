@@ -14,6 +14,7 @@ import android.util.Log;
 
 
 
+
 import com.asksven.andoid.common.contrib.Shell;
 //import com.asksven.andoid.common.contrib.Shell;
 import com.asksven.andoid.common.contrib.Util;
@@ -37,7 +38,7 @@ public class AlarmsDumpsys
 	static final String PERMISSION_DENIED = "su rights required to access alarms are not available / were not granted";
 	static final String SERVICE_NOT_ACCESSIBLE = "Can't find service: alarm";
 
-	public static ArrayList<StatElement> getAlarms(boolean useRoot)
+	public static ArrayList<StatElement> getAlarms(boolean useRoot, boolean useContext)
 	{
 		String release = Build.VERSION.RELEASE;
 		int sdk = Build.VERSION.SDK_INT;
@@ -46,7 +47,15 @@ public class AlarmsDumpsys
 		List<String> res = null;
 		if (true) //(useRoot) // dumpsys seems to always require root, even if perm is available
 		{
-			res = RootShell.getInstance().run("dumpsys alarm");
+			if (useContext)
+			{
+				//res = RootShell.getInstance().run("dumpsys alarm");
+				res = RootShell.getInstance().run("su --context u:r:untrusted_app:s0 -c 'dumpsys alarm'");
+			}
+			else
+			{
+				res = RootShell.getInstance().run("dumpsys alarm");
+			}
 		}
 		else
 		{
