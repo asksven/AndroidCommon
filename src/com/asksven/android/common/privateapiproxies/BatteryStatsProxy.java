@@ -63,6 +63,19 @@ public class BatteryStatsProxy
 	private Class m_ClassDefinition = null;
 	
 	private static final String TAG = "BatteryStatsProxy";
+
+    /**
+     * Type to be passed to getNetworkActivityCount for different
+     * stats.
+     */
+    private static final int NETWORK_MOBILE_RX_BYTES = 0;   // received bytes using mobile data
+
+    private static final int NETWORK_MOBILE_TX_BYTES = 1;   // transmitted bytes using mobile data
+
+    private static final int NETWORK_WIFI_RX_BYTES = 2;     // received bytes using wifi
+
+    private static final int NETWORK_WIFI_TX_BYTES = 3;     // transmitted bytes using wifi
+
 	/*
 	 * The UID stats are kept here as their methods / data can not be accessed
 	 * outside of this class due to non-public types (Uid, Proc, etc.)
@@ -1464,7 +1477,7 @@ public class BatteryStatsProxy
 	/**
 	 * Obtain the wakelock stats as a list of Wakelocks (@see com.asksven.android.common.privateapiproxies.Wakelock}
 	 * @param context a Context
-	 * @param iWakeType a type of wakelock @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes 
+	 * @param iWakeType a type of wakelock @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes
 	 * @param iStatType a type of stat @see com.asksven.android.common.privateapiproxies.BatteryStatsTypes
 	 * @return a List of Wakelock s
 	 * @throws Exception
@@ -1889,30 +1902,56 @@ public class BatteryStatsProxy
 		        	// Object is an instance of BatteryStats.Uid
 		            Object myUid = m_uidStats.valueAt(iu);
 
-					//Parameters Types
-					@SuppressWarnings("rawtypes")
-					Class[] paramTypesGetTcpBytesXxx= new Class[1];
-					paramTypesGetTcpBytesXxx[0]= int.class; 
+                    Long bytesReceived;
+                    Long bytesSent;
 
-	            	Method methodGetTcpBytesReceived 	= iBatteryStatsUid.getMethod("getTcpBytesReceived", paramTypesGetTcpBytesXxx);
-	            	Method methodGetTcpBytesSent 		= iBatteryStatsUid.getMethod("getTcpBytesSent", paramTypesGetTcpBytesXxx);
+                    // getTcpBytesReceived and getTcpBytesSent are available in API level < 19.
+                    // They are replaced by getNetworkActivityCount in API level >= 19.
+                    if (Build.VERSION.SDK_INT < 19) {
+                        //Parameters Types
+                        @SuppressWarnings("rawtypes")
+                        Class[] paramTypesGetTcpBytesXxx = new Class[1];
+                        paramTypesGetTcpBytesXxx[0] = int.class;
 
-					//Parameters
-					Object[] paramGetTcpBytesXxx = new Object[1];
-					paramGetTcpBytesXxx[0]= new Integer(iStatType);
-					
-					Long tcpBytesReceived 	= (Long) methodGetTcpBytesReceived.invoke(myUid, paramGetTcpBytesXxx);
-					Long tcpBytesSent		= (Long) methodGetTcpBytesSent.invoke(myUid, paramGetTcpBytesXxx);
+                        Method methodGetTcpBytesReceived = iBatteryStatsUid.getMethod("getTcpBytesReceived", paramTypesGetTcpBytesXxx);
+                        Method methodGetTcpBytesSent = iBatteryStatsUid.getMethod("getTcpBytesSent", paramTypesGetTcpBytesXxx);
+
+                        //Parameters
+                        Object[] paramGetTcpBytesXxx = new Object[1];
+                        paramGetTcpBytesXxx[0] = new Integer(iStatType);
+
+                        bytesReceived = (Long) methodGetTcpBytesReceived.invoke(myUid, paramGetTcpBytesXxx);
+                        bytesSent = (Long) methodGetTcpBytesSent.invoke(myUid, paramGetTcpBytesXxx);
+                    } else {
+                        @SuppressWarnings("rawtypes")
+                        Class[] paramTypesGetNetworkActivity = new Class[] {int.class, int.class};
+                        Method methodGetNetworkActivity = iBatteryStatsUid.getMethod("getNetworkActivityCount",
+                                paramTypesGetNetworkActivity);
+                        // Parameters for getting received bytes from mobile
+                        Object paramGetNetworkActivityCount [] = {NETWORK_MOBILE_RX_BYTES,
+                                iStatType};
+                        bytesReceived = (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
+                        // change parameter to get received bytes from wifi
+                        paramGetNetworkActivityCount[0] = NETWORK_WIFI_RX_BYTES;
+                        // add together for now
+                        bytesReceived += (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
+
+                        // same for transmitted bytes
+                        paramGetNetworkActivityCount[0] = NETWORK_MOBILE_TX_BYTES;
+                        bytesSent = (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
+                        paramGetNetworkActivityCount[0] = NETWORK_WIFI_TX_BYTES;
+                        bytesSent += (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
+                    }
 
 					Method methodGetUid	= iBatteryStatsUid.getMethod("getUid");
 					Integer uid 		= (Integer) methodGetUid.invoke(myUid);
 				
 					if (CommonLogSettings.DEBUG)
 					{
-						Log.d(TAG, "Uid = " + uid + ": received:" + tcpBytesReceived + ", sent: " + tcpBytesSent);
+						Log.d(TAG, "Uid = " + uid + ": received:" + bytesReceived + ", sent: " + bytesSent);
 					}
 
-					NetworkUsage myData = new NetworkUsage(uid, tcpBytesReceived, tcpBytesSent);
+					NetworkUsage myData = new NetworkUsage(uid, bytesReceived, bytesSent);
 					// try resolving names
 					UidInfo myInfo = UidNameResolver.getInstance(context).getNameForUid(uid);
 					myData.setUidInfo(myInfo);
