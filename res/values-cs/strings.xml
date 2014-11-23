@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="hello">Zdravím!</string>
+
+    <string name="app_name">AndroidCommon</string>
+    <string name="app_pname">com.asksven.androidcommon</string>
+    <string name="label_button_remind">Připomenout později</string>
+    <string name="label_button_rate">Hodnotit</string>
+    <string name="label_button_no_thanks">Ne, děkuji</string>
+    <string name="text_dialog_rate">Pokud jste spokojeni s %s, věnujte prosím chvíli jejímu ohodnocení. Děkuji za vaši podporu!</string>
+    <string name="twitter_link">https://twitter.com/#!/asksven</string>
+    <string name="market_link">market://search?q=com.asksven</string>
+    <string name="dialog_apps">Ostatní Aplikace</string>
+    <string name="dialog_dismiss">Vynechat</string>
+    <string name="dialog_follow_me">Sledovat</string>
+
+</resources>
