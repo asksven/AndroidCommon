@@ -39,7 +39,7 @@ public class AlarmsDumpsys
 	static final String PERMISSION_DENIED = "su rights required to access alarms are not available / were not granted";
 	static final String SERVICE_NOT_ACCESSIBLE = "Can't find service: alarm";
 
-	public static ArrayList<StatElement> getAlarms(boolean useRoot, boolean useContext)
+	public static ArrayList<StatElement> getAlarms(boolean useRoot)
 	{
 		String release = Build.VERSION.RELEASE;
 		int sdk = Build.VERSION.SDK_INT;
@@ -48,20 +48,7 @@ public class AlarmsDumpsys
 		List<String> res = null;
 		if (true) //(useRoot) // dumpsys seems to always require root, even if perm is available
 		{
-			if (useContext)
-			{
-				//res = RootShell.getInstance().run("dumpsys alarm");
-				res = RootShell.getInstance().run("su --context u:r:untrusted_app:s0 -c 'dumpsys alarm'");
-				//String[] commands = {Shell.SU.shell(0, "u:r:system_app:s0"), "dumpsys alarm"};
-				//res = Shell.SU.run(commands);
-				
-				//res = Shell.SU.run("su --context u:r:untrusted_app:s0 -c 'dumpsys alarm' > /sdcard/alarms.txt");
-				//res = RootShell.getInstance().run("cat /sdcard/alarms.txt");
-			}
-			else
-			{
-				res = RootShell.getInstance().run("dumpsys alarm");
-			}
+			res = RootShell.getInstance().run("dumpsys alarm");
 		}
 		else
 		{
