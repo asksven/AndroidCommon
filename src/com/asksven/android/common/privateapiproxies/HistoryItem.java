@@ -137,7 +137,7 @@ public class HistoryItem implements Serializable, Parcelable
 	 */
 	public String getNormalizedTime()
 	{
-		return DateUtils.format("HH:mm:ss S", m_time + m_offset);
+		return DateUtils.format("dd.MM.yyyy HH:mm:ss S", m_time + m_offset);
 		
 	}
 
