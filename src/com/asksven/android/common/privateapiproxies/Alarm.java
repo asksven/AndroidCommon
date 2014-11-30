@@ -23,11 +23,14 @@ import java.util.List;
 
 
 
+
+
 //import android.content.Context;
 //import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.asksven.android.common.CommonLogSettings;
 import com.asksven.android.common.dto.AlarmDto;
 import com.asksven.android.common.dto.AlarmItemDto;
 import com.asksven.android.common.nameutils.UidInfo;
@@ -305,7 +308,9 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 					if (this.getName().equals(myRef.getName()))
 					{
 						// process main values
-						Log.i(TAG, "Substracting " + myRef.toString() + " from " + this.toString());
+						if (CommonLogSettings.DEBUG)
+							Log.i(TAG, "Substracting " + myRef.toString() + " from " + this.toString());
+						
 						this.m_nWakeups		-= myRef.getCount();
 						this.m_timeRunning	-= myRef.getTimeRunning();
 						this.m_nTotalCount  -= myRef.getMaxValue();
