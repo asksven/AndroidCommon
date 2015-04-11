@@ -373,7 +373,7 @@ public class DateUtils
         
         if (minutes > 0)
         { 
-        	ret += minutes + "min";
+        	ret += minutes + "m";
         }
         if ( (seconds > 0) && (hours == 0) )
         {
