@@ -2082,7 +2082,7 @@ public class BatteryStatsProxy
 					{
 						updateCmd = HistoryItemJellyBean.CMD_UPDATE;
 					}
-					else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP)
+					else if ( (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) )
 					{
 						updateCmd = HistoryItemLolipop.CMD_UPDATE;
 					}
