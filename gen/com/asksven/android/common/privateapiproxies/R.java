@@ -10,31 +10,45 @@ package com.asksven.android.common.privateapiproxies;
 public final class R {
     public static final class attr {
     }
+    public static final class color {
+        public static int color_accent=0x7f040000;
+    }
+    public static final class dimen {
+        public static int text_size_large=0x7f050000;
+        public static int text_size_medium=0x7f050001;
+        public static int text_size_tiny=0x7f050002;
+    }
     public static final class drawable {
         public static int icon=0x7f020000;
     }
     public static final class id {
-        public static int buttonClose=0x7f050001;
-        public static int buttonMarket=0x7f050003;
-        public static int buttonTwitter=0x7f050002;
-        public static int webview=0x7f050000;
+        public static int buttonClose=0x7f070006;
+        public static int buttonMarket=0x7f070008;
+        public static int buttonNoThanks=0x7f070004;
+        public static int buttonRate=0x7f070002;
+        public static int buttonRemind=0x7f070003;
+        public static int buttonTwitter=0x7f070007;
+        public static int dialog_title=0x7f070001;
+        public static int layout_root=0x7f070000;
+        public static int webview=0x7f070005;
     }
     public static final class layout {
-        public static int main=0x7f030000;
-        public static int readmewebview=0x7f030001;
+        public static int dialog_rate=0x7f030000;
+        public static int main=0x7f030001;
+        public static int readmewebview=0x7f030002;
     }
     public static final class string {
-        public static int app_name=0x7f040001;
-        public static int app_pname=0x7f040002;
-        public static int dialog_apps=0x7f040009;
-        public static int dialog_dismiss=0x7f04000a;
-        public static int dialog_follow_me=0x7f04000b;
-        public static int hello=0x7f040000;
-        public static int label_button_no_thanks=0x7f040005;
-        public static int label_button_rate=0x7f040004;
-        public static int label_button_remind=0x7f040003;
-        public static int market_link=0x7f040008;
-        public static int text_dialog_rate=0x7f040006;
-        public static int twitter_link=0x7f040007;
+        public static int app_name=0x7f060001;
+        public static int app_pname=0x7f060002;
+        public static int dialog_apps=0x7f060009;
+        public static int dialog_dismiss=0x7f06000a;
+        public static int dialog_follow_me=0x7f06000b;
+        public static int hello=0x7f060000;
+        public static int label_button_no_thanks=0x7f060005;
+        public static int label_button_rate=0x7f060004;
+        public static int label_button_remind=0x7f060003;
+        public static int market_link=0x7f060008;
+        public static int text_dialog_rate=0x7f060006;
+        public static int twitter_link=0x7f060007;
     }
 }

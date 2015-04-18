@@ -3,6 +3,7 @@
  */
 package com.asksven.android.common;
 
+
 import com.asksven.android.common.privateapiproxies.R;
 
 import android.app.Dialog;
@@ -11,14 +12,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
  * @author sven From
- *         http://www.androidsnippets.com/prompt-engaged-users-to-rate-
- *         your-app-in-the-android-market-appirater
+ *         http://www.androidsnippets.com/prompt-engaged-users-to-rate-your-app-in-the-android-market-appirater
  * Make sure to add following to strings.xml
  *    <string name="app_name">AndroidCommon</string>
  *    <string name="app_pname">com.asksven.androidcommon</string>
@@ -41,12 +42,15 @@ public class AppRater
 	public static void app_launched(Context ctx)
 	{
 		SharedPreferences prefs = ctx.getSharedPreferences("apprater", 0);
+		
+		SharedPreferences.Editor editor = prefs.edit();
+		
 		if (prefs.getBoolean("dontshowagain", false))
 		{
 			return;
 		}
 
-		SharedPreferences.Editor editor = prefs.edit();
+		
 
 		// Increment launch counter
 		long launch_count = prefs.getLong("launch_count", 0) + 1;
@@ -74,21 +78,17 @@ public class AppRater
 
 	public static void showRateDialog(final Context ctx, final SharedPreferences.Editor editor)
 	{
+		
 		final Dialog dialog = new Dialog(ctx);
-		dialog.setTitle(ctx.getString(R.string.label_button_rate) + " " + ctx.getString(R.string.app_name));
-
-		LinearLayout ll = new LinearLayout(ctx);
-		ll.setOrientation(LinearLayout.VERTICAL);
-
-		TextView tv = new TextView(ctx);
-		tv.setText(ctx.getString(R.string.text_dialog_rate, ctx.getString(R.string.app_name)));
-		tv.setWidth(240);
-		tv.setPadding(4, 0, 4, 10);
-		ll.addView(tv);
-
-		Button b1 = new Button(ctx);
-		b1.setText(ctx.getString(R.string.label_button_rate));
-		b1.setOnClickListener(new Button.OnClickListener()
+    	dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    	dialog.setContentView(R.layout.dialog_rate);
+    	
+    	TextView dialogTitle = (TextView) dialog.findViewById(R.id.dialog_title);
+    	dialogTitle.setText(ctx.getString(R.string.label_button_rate) + " " + ctx.getString(R.string.app_name));
+    	
+    	Button buttonRate = (Button) dialog.findViewById(R.id.buttonRate);
+    	buttonRate.setText(ctx.getString(R.string.label_button_rate));
+    	buttonRate.setOnClickListener(new Button.OnClickListener()
 		{
 			public void onClick(View v)
 			{
@@ -101,22 +101,20 @@ public class AppRater
 				dialog.dismiss();
 			}
 		});
-		ll.addView(b1);
-
-		Button b2 = new Button(ctx);
-		b2.setText(R.string.label_button_remind);
-		b2.setOnClickListener(new Button.OnClickListener()
+    	
+    	Button buttonRemind = (Button) dialog.findViewById(R.id.buttonRemind);
+    	buttonRemind.setText(R.string.label_button_remind);
+    	buttonRemind.setOnClickListener(new Button.OnClickListener()
 		{
 			public void onClick(View v)
 			{
 				dialog.dismiss();
 			}
 		});
-		ll.addView(b2);
-
-		Button b3 = new Button(ctx);
-		b3.setText(R.string.label_button_no_thanks);
-		b3.setOnClickListener(new Button.OnClickListener()
+    	
+    	Button buttonNoThanks = (Button) dialog.findViewById(R.id.buttonNoThanks);
+    	buttonNoThanks.setText(R.string.label_button_no_thanks);
+    	buttonNoThanks.setOnClickListener(new Button.OnClickListener()
 		{
 			public void onClick(View v)
 			{
@@ -128,9 +126,7 @@ public class AppRater
 				dialog.dismiss();
 			}
 		});
-		ll.addView(b3);
-
-		dialog.setContentView(ll);
+    	
 		dialog.show();
 	}
 }
