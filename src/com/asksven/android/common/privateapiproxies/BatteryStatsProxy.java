@@ -2141,7 +2141,7 @@ public class BatteryStatsProxy
 						        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
 						        		batteryTemperatureValue, batteryVoltageValue, statesValue);
 							}
-							else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP)
+							else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 							{
 								myItem = new HistoryItemLolipop(timeValue, cmdValue, batteryLevelValue,
 						        		batteryStatusValue, batteryHealthValue, batteryPlugTypeValue,
