@@ -75,9 +75,13 @@ public class AlarmsDumpsys
 		{
 			return getAlarmsFrom_4_3(res);
 		}
-		else
+		else if (sdk < 23 )
 		{
 			return getAlarmsFrom_5(res);
+		}
+		else
+		{
+			return getAlarmsFrom_6(res);
 		}
 	}
 	/**
@@ -583,6 +587,149 @@ public class AlarmsDumpsys
 		return myAlarms;
 	}
 	
+	protected static ArrayList<StatElement> getAlarmsFrom_6(List<String> res)
+	{
+		ArrayList<StatElement> myAlarms = null;
+		long nTotalCount = 0;
+		
+		if ((res != null) && (res.size() != 0))
+
+		{
+			Pattern begin = Pattern.compile("Alarm Stats");
+			boolean bParsing = false;
+
+			// we are looking for multiline entries in the format
+			// ' <package name> +<time>ms running, <number> wakeups
+			// '  +<time>ms <number> wakes <number> alarms: act=<intern> (repeating 1..n times)
+			Pattern packagePattern 	= Pattern.compile("\\s\\s.*:([a-z][a-zA-Z0-9\\.]+)\\s\\+(.*), (\\d+) wakeups:");
+			Pattern numberPattern	= Pattern.compile("\\s\\s\\s\\s\\+([0-9a-z]+)ms (\\d+) wakes (\\d+) alarms(.*)");
+			Pattern detailsPattern	= Pattern.compile("\\s\\s\\s\\s\\s\\s(\\*alarm\\*|\\*walarm\\*):(.*)");
+			
+			myAlarms = new ArrayList<StatElement>();
+			Alarm myAlarm = null;
+			long nNumber = 0;
+			
+			// process the file
+			for (int i=0; i < res.size(); i++)
+			{
+				// skip till start mark found
+				if (bParsing)
+				{
+					// parse the alarms by block 
+					String line = res.get(i);
+					
+					Matcher mPackage 	= packagePattern.matcher(line);
+					Matcher mNumber 	= numberPattern.matcher(line);
+					Matcher mDetails	= detailsPattern.matcher(line);
+					
+					// first line
+					if ( mPackage.find() )
+					{
+						try
+						{
+							// if there was a previous Alarm populated store it
+							if (myAlarm != null)
+							{
+								myAlarms.add(myAlarm);
+							}
+							// we are interested in the first token 
+							String strPackageName = mPackage.group(1);
+							myAlarm = new Alarm(strPackageName);
+
+							String strWakeups = mPackage.group(3);
+							long nWakeups = Long.parseLong(strWakeups);
+							myAlarm.setWakeups(nWakeups);
+							nTotalCount += nWakeups;
+
+						}
+						catch (Exception e)
+						{
+							Log.e(TAG, "Error: parsing error in package line (" + line + ")");
+						}
+					}
+
+					// second line
+					if ( mNumber.find() )
+					{
+						try
+						{
+							// we are interested in the first and second token
+							String strNumber = mNumber.group(2);
+							nNumber = Long.parseLong(strNumber);
+
+							if (myAlarm == null)
+							{
+								Log.e(TAG, "Error: number line found but without alarm object (" + line + ")");
+							}
+
+						}
+						catch (Exception e)
+						{
+							Log.e(TAG, "Error: parsing error in number line (" + line + ")");
+						}
+					}
+					// third line
+					if ( mDetails.find() )
+					{
+						try
+						{
+							// we are interested in the first and second token
+							String strIntent = mDetails.group(2);
+							
+							if (myAlarm == null)
+							{
+								Log.e(TAG, "Error: number line found but without alarm object (" + line + ")");
+							}
+							else
+							{
+								System.out.println("Added: " + strIntent + "(" + nNumber + ")");
+								myAlarm.addItem(nNumber, strIntent);
+							}
+						}
+						catch (Exception e)
+						{
+							Log.e(TAG, "Error: parsing error in number line (" + line + ")");
+						}
+					}
+
+				}
+				else
+				{
+					// look for beginning
+					Matcher line = begin.matcher(res.get(i));
+					if (line.find())
+					{
+						bParsing = true;
+					}
+				}
+			}
+			// the last populated alarms has not been added to the list yet
+			if (myAlarm != null)
+			{
+				myAlarms.add(myAlarm);
+			}
+			
+		}
+		else
+		{
+			myAlarms = new ArrayList<StatElement>();
+			Alarm myAlarm = new Alarm(PERMISSION_DENIED);
+			myAlarm.setWakeups(1);
+			myAlarms.add(myAlarm);
+
+		}
+		
+		
+		for (int i=0; i < myAlarms.size(); i++)
+		{
+			Alarm myAlarm = (Alarm)myAlarms.get(i);
+			if (myAlarm != null)
+			{
+				myAlarm.setTotalCount(nTotalCount);
+			}
+		}
+		return myAlarms;
+	}
 	public static boolean alarmsAccessible()
 	{
 		List<String> res = RootShell.getInstance().run("dumpsys alarm");	
