@@ -1210,34 +1210,183 @@ public class BatteryStatsProxy
 	
 	}
 
-//    /**
-//     * Return whether we are currently running on battery.
-//     */	    
-//	public boolean getIsOnBattery(Context context) throws BatteryInfoUnavailableException
-//	{
-//    	boolean ret = false;
-//
-//        try
-//        { 
-//	    	@SuppressWarnings("unchecked")	
-//	    	Method method = m_ClassDefinition.getMethod("getIsOnBattery");
-//
-//        	Boolean oRet = (Boolean) method.invoke(m_Instance);
-//        	ret = oRet.booleanValue();
-//
-//        }
-//        catch( IllegalArgumentException e )
-//        {
-//            throw e;
-//        }
-//        catch( Exception e )
-//        {
-//            ret = false;
-//            throw new BatteryInfoUnavailableException();
-//        }    
-//        
-//        return ret;
-//	}
+    /**
+     * Returns the time in doze mode POWERSAVE
+     * @param batteryRealtime
+     * @param iStatsType
+     * @return
+     */
+    public long getPowerSaveModeEnabledTime(long batteryRealtime, int iStatsType)  throws BatteryInfoUnavailableException
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[2];
+          paramTypes[0]= long.class;
+          paramTypes[1]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getPowerSaveModeEnabledTime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[2];
+          params[0]= new Long(batteryRealtime);
+          params[1]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
+        }
+
+        return ret;
+
+	
+	}
+
+    /**
+     * Returns the time in doze mode IDLE
+     * @param batteryRealtime
+     * @param iStatsType
+     * @return
+     */
+    public long getDeviceIdleModeEnabledTime(long batteryRealtime, int iStatsType)  throws BatteryInfoUnavailableException
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[2];
+          paramTypes[0]= long.class;
+          paramTypes[1]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getDeviceIdleModeEnabledTime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[2];
+          params[0]= new Long(batteryRealtime);
+          params[1]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
+        }
+
+        return ret;
+
+	
+	}
+
+    /**
+     * Returns the time in doze mode INTERACTIVE
+     * @param batteryRealtime
+     * @param iStatsType
+     * @return
+     */
+    public long getInteractiveTime(long batteryRealtime, int iStatsType)  throws BatteryInfoUnavailableException
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[2];
+          paramTypes[0]= long.class;
+          paramTypes[1]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getInteractiveTime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[2];
+          params[0]= new Long(batteryRealtime);
+          params[1]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
+        }
+
+        return ret;
+
+	
+	}
+
+    /**
+     * Returns the time in doze mode IDLING
+     * @param batteryRealtime
+     * @param iStatsType
+     * @return
+     */
+    public long getDeviceIdlingTime(long batteryRealtime, int iStatsType)  throws BatteryInfoUnavailableException
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[2];
+          paramTypes[0]= long.class;
+          paramTypes[1]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getDeviceIdlingTime", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[2];
+          params[0]= new Long(batteryRealtime);
+          params[1]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
+        }
+
+        return ret;
+
+	
+	}
+
+
     
     /**
      * Returns the current battery percentage level if we are in a discharge cycle, otherwise

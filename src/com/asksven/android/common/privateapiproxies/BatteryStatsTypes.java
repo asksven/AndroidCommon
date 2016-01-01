@@ -66,6 +66,14 @@ public class BatteryStatsTypes
 	public static final int SCREEN_BRIGHTNESS_LIGHT = 3;
 	public static final int SCREEN_BRIGHTNESS_BRIGHT = 4;
 	
+	/** 
+	 * Constants for BT and Wifi state
+	 */
+	
+	public static final int CONTROLLER_IDLE_TIME = 0;
+	public static final int CONTROLLER_RX_TIME = 1;
+	public static final int CONTROLLER_TX_TIME = 2;
+	public static final int CONTROLLER_ENERGY = 3;
     /**
      * Enum of valid wakelock types
      */
