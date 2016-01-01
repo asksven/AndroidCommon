@@ -74,6 +74,7 @@ public class BatteryStatsTypes
 	public static final int CONTROLLER_RX_TIME = 1;
 	public static final int CONTROLLER_TX_TIME = 2;
 	public static final int CONTROLLER_ENERGY = 3;
+
     /**
      * Enum of valid wakelock types
      */

@@ -1387,6 +1387,50 @@ public class BatteryStatsProxy
 	}
 
 
+    /**
+     * Returns the network activity
+     * @param batteryRealtime
+     * @param iStatsType
+     * @return
+     */
+    public long getNetworkActivityBytes(long batteryRealtime, int iStatsType)  throws BatteryInfoUnavailableException
+	{
+    	Long ret = new Long(0);
+
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[2];
+          paramTypes[0]= long.class;
+          paramTypes[1]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getNetworkActivityBytes", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[2];
+          params[0]= new Long(batteryRealtime);
+          params[1]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
+        }
+
+        return ret;
+
+	
+	}
+
     
     /**
      * Returns the current battery percentage level if we are in a discharge cycle, otherwise
@@ -2234,7 +2278,7 @@ public class BatteryStatsProxy
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public ArrayList<NetworkUsage> getNetworkUsageStats(Context context, int iStatType) throws Exception
+	public ArrayList<StatElement> getNetworkUsageStats(Context context, int iStatType) throws Exception
 	{
 		// type checks
 		boolean validTypes = BatteryStatsTypes.assertValidStatType(iStatType);
@@ -2244,7 +2288,7 @@ public class BatteryStatsProxy
 			throw new Exception("Invalid StatType");
 		}
 		
-		ArrayList<NetworkUsage> myStats = new ArrayList<NetworkUsage>();
+		ArrayList<StatElement> myStats = new ArrayList<StatElement>();
 		
 		this.collectUidStats();
 		if (m_uidStats != null)
@@ -2260,12 +2304,18 @@ public class BatteryStatsProxy
 		        	// Object is an instance of BatteryStats.Uid
 		            Object myUid = m_uidStats.valueAt(iu);
 
-                    Long bytesReceived;
-                    Long bytesSent;
+                    Long bytesReceived 			= 0L;
+                    Long bytesSent 				= 0L;
+                    Long bytesReceivedWifi 		= 0L;
+                    Long bytesReceivedMobile 	= 0L;
+                    Long bytesSentWifi 			= 0L;
+                    Long bytesSentMobile 		= 0L;
+                    
 
                     // getTcpBytesReceived and getTcpBytesSent are available in API level < 19.
                     // They are replaced by getNetworkActivityCount in API level >= 19.
-                    if (Build.VERSION.SDK_INT < 19) {
+                    if (Build.VERSION.SDK_INT < 19)
+                    {
                         //Parameters Types
                         @SuppressWarnings("rawtypes")
                         Class[] paramTypesGetTcpBytesXxx = new Class[1];
@@ -2280,7 +2330,9 @@ public class BatteryStatsProxy
 
                         bytesReceived = (Long) methodGetTcpBytesReceived.invoke(myUid, paramGetTcpBytesXxx);
                         bytesSent = (Long) methodGetTcpBytesSent.invoke(myUid, paramGetTcpBytesXxx);
-                    } else {
+                    }
+                    else if (Build.VERSION.SDK_INT <= 21)
+                    {
                         @SuppressWarnings("rawtypes")
                         Class[] paramTypesGetNetworkActivity = new Class[] {int.class, int.class};
                         Method methodGetNetworkActivity = iBatteryStatsUid.getMethod("getNetworkActivityCount",
@@ -2288,17 +2340,39 @@ public class BatteryStatsProxy
                         // Parameters for getting received bytes from mobile
                         Object paramGetNetworkActivityCount [] = {NETWORK_MOBILE_RX_BYTES,
                                 iStatType};
-                        bytesReceived = (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
+                        bytesReceivedMobile = (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
                         // change parameter to get received bytes from wifi
                         paramGetNetworkActivityCount[0] = NETWORK_WIFI_RX_BYTES;
                         // add together for now
-                        bytesReceived += (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
+                        bytesReceivedWifi = (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
 
                         // same for transmitted bytes
                         paramGetNetworkActivityCount[0] = NETWORK_MOBILE_TX_BYTES;
-                        bytesSent = (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
+                        bytesSentMobile = (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
                         paramGetNetworkActivityCount[0] = NETWORK_WIFI_TX_BYTES;
-                        bytesSent += (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
+                        bytesSentWifi = (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
+                    }
+                    else
+                    {
+                        @SuppressWarnings("rawtypes")
+                        Class[] paramTypesGetNetworkActivity = new Class[] {int.class, int.class};
+                        Method methodGetNetworkActivity = iBatteryStatsUid.getMethod("getNetworkActivityBytes",
+                                paramTypesGetNetworkActivity);
+                        
+                     // Parameters for getting received bytes from mobile
+                        Object paramGetNetworkActivityCount [] = {NETWORK_MOBILE_RX_BYTES,
+                                iStatType};
+                        bytesReceivedMobile = (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
+                        // change parameter to get received bytes from wifi
+                        paramGetNetworkActivityCount[0] = NETWORK_WIFI_RX_BYTES;
+                        // add together for now
+                        bytesReceivedWifi = (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
+
+                        // same for transmitted bytes
+                        paramGetNetworkActivityCount[0] = NETWORK_MOBILE_TX_BYTES;
+                        bytesSentMobile = (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
+                        paramGetNetworkActivityCount[0] = NETWORK_WIFI_TX_BYTES;
+                        bytesSentWifi = (Long) methodGetNetworkActivity.invoke(myUid, paramGetNetworkActivityCount);
                     }
 
 					Method methodGetUid	= iBatteryStatsUid.getMethod("getUid");
@@ -2308,12 +2382,30 @@ public class BatteryStatsProxy
 					{
 						Log.d(TAG, "Uid = " + uid + ": received:" + bytesReceived + ", sent: " + bytesSent);
 					}
+					
+					NetworkUsage myData = null;
+                    if (Build.VERSION.SDK_INT >= 19)
+                    {
+                    	// we have data separated for Wifi and Mobile
+						myData = new NetworkUsage(uid, "Wifi", bytesReceivedWifi, bytesSentWifi);
+						// try resolving names
+						UidInfo myInfo = UidNameResolver.getInstance(context).getNameForUid(uid);
+						myData.setUidInfo(myInfo);
+						myStats.add(myData);
 
-					NetworkUsage myData = new NetworkUsage(uid, bytesReceived, bytesSent);
-					// try resolving names
-					UidInfo myInfo = UidNameResolver.getInstance(context).getNameForUid(uid);
-					myData.setUidInfo(myInfo);
-					myStats.add(myData);
+						myData = new NetworkUsage(uid, "Mobile", bytesReceivedMobile, bytesSentMobile);
+						// try resolving names
+						myData.setUidInfo(myInfo);
+						myStats.add(myData);
+
+                    }
+                    {
+						myData = new NetworkUsage(uid, bytesReceived, bytesSent);
+						// try resolving names
+						UidInfo myInfo = UidNameResolver.getInstance(context).getNameForUid(uid);
+						myData.setUidInfo(myInfo);
+						myStats.add(myData);
+                    }
 		        }
             }
             catch( Exception e )
