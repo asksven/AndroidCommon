@@ -1161,6 +1161,55 @@ public class BatteryStatsProxy
 	
 	}
 
+    /**
+     * Returns the total, last, or current bluetooth on time in microseconds.
+     *
+     * @param batteryRealtime the battery realtime in microseconds (@see computeBatteryRealtime).
+     * @param iStatsType one of STATS_TOTAL, STATS_LAST, or STATS_CURRENT.
+     */
+    public Long getBluetoothInStateTime(int state, int iStatsType) throws BatteryInfoUnavailableException
+	{
+    	Long ret = new Long(0);
+
+    	if (Build.VERSION.SDK_INT < 6)
+    	{
+    		Log.e(TAG, "Bluetooth in state time is supported only from Marshmallow");
+    	}
+    	
+        try
+        {
+          //Parameters Types
+          @SuppressWarnings("rawtypes")
+          Class[] paramTypes= new Class[2];
+          paramTypes[0]= int.class;
+          paramTypes[1]= int.class;          
+
+          @SuppressWarnings("unchecked")
+		  Method method = m_ClassDefinition.getMethod("getBluetoothControllerActivity", paramTypes);
+
+          //Parameters
+          Object[] params= new Object[2];
+          params[0]= new Integer(state);
+          params[1]= new Integer(iStatsType);
+
+          ret= (Long) method.invoke(m_Instance, params);
+
+        }
+        catch( IllegalArgumentException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            ret = new Long(0);
+            throw new BatteryInfoUnavailableException();
+        }
+
+        return ret;
+
+	
+	}
+
 //    /**
 //     * Return whether we are currently running on battery.
 //     */	    
