@@ -91,9 +91,13 @@ public class RootShell
 		
 	}
 	
-	public boolean rooted()
+	public boolean phoneRooted()
 	{
 		return RootTools.isRootAvailable();
 	}
-	
+
+	public boolean hasRootPermissions()
+	{
+		return ((m_shell != null) && (RootTools.isRootAvailable()));
+	}
 }
