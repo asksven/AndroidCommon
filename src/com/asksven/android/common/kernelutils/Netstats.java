@@ -15,12 +15,16 @@
  */
 package com.asksven.android.common.kernelutils;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import android.util.Log;
+
+
 
 //import com.asksven.andoid.common.contrib.Shell;
 import com.asksven.andoid.common.contrib.Util;
@@ -56,7 +60,8 @@ import com.asksven.android.common.utils.StringUtils;
  */
 public class Netstats
 {
-	static final String TAG = "AlarmsDumpsys";
+	static final String TAG = "Netstats";
+	private static String FILE_PATH = "/proc/net/xt_qtaguid/stats";
 	static final String PERMISSION_DENIED = "su rights required to access alarms are not available / were not granted";
 
 	private static final String KEY_IDX = "idx";
@@ -176,4 +181,34 @@ public class Netstats
 		}
 		return stats;
 	}
+    public static boolean fileExists()
+    {
+    	boolean exists = false;
+    	FileReader fr = null;
+    	try
+    	{
+			fr = new FileReader(FILE_PATH);
+			exists = true;
+    	}
+    	catch (Exception e)
+    	{
+    		exists = false;
+    	}
+    	finally
+    	{
+    		if (exists)
+    		{
+    			try
+    			{
+					fr.close();
+				}
+    			catch (IOException e)
+    			{
+					// do nothing
+				}
+    		}
+    	}
+		return exists;
+    }	
+	
 }
