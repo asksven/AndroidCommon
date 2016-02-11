@@ -11,7 +11,11 @@
     <application
         android:icon="@drawable/icon"
         android:label="@string/app_name" >
-        <activity android:name="com.asksven.android.common.ReadmeActivity" />
+        <activity android:name=".ReadmeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
