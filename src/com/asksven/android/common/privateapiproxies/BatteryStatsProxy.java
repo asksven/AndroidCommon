@@ -1895,42 +1895,42 @@ public class BatteryStatsProxy
 //				Class batteryStatsSamplingTimerClass = cl.loadClass("com.android.internal.os.BatteryStatsImpl$SamplingTimer");
 
 				//Parameters Types
-				@SuppressWarnings("rawtypes")
-				Class[] paramTypesGetTotalTimeLocked= new Class[2];
-				paramTypesGetTotalTimeLocked[0]= long.class;
-				paramTypesGetTotalTimeLocked[1]= int.class;
-
-				//Parameters
-				Object[] paramGetTotalTimeLocked= new Object[2];
-				paramGetTotalTimeLocked[0]= new Long(uSecBatteryTime);
-				paramGetTotalTimeLocked[1]= new Integer(iStatType);
-				
-
-				Method methodGetTotalTimeLocked = classSamplingTimer
-						.getMethod("getTotalTimeLocked", paramTypesGetTotalTimeLocked);
-
-				//Parameters Types
-				@SuppressWarnings("rawtypes")
-				Class[] paramTypesGetCountLocked= new Class[1];
-				paramTypesGetCountLocked[0]= int.class;
-
-				//Parameters
-				Object[] paramGetCountLocked= new Object[1];
-				paramGetCountLocked[0]= new Integer(iStatType);
-
-				Method methodGetCountLocked = classSamplingTimer
-						.getMethod("getCountLocked", paramTypesGetCountLocked);
-					
-				
-				Long wake = (Long) methodGetTotalTimeLocked.invoke(samplingTimer, paramGetTotalTimeLocked);
-				
-				Integer count = (Integer) methodGetCountLocked.invoke(samplingTimer, paramGetCountLocked);
-				
-				if (CommonLogSettings.DEBUG)
-				{
-					Log.d(TAG, "Kernel wakelock: " + wakelockEntry.getKey() + " wakelock [s] " + wake / 1000
-							+ " count " + count);
-				}
+//				@SuppressWarnings("rawtypes")
+//				Class[] paramTypesGetTotalTimeLocked= new Class[2];
+//				paramTypesGetTotalTimeLocked[0]= long.class;
+//				paramTypesGetTotalTimeLocked[1]= int.class;
+//
+//				//Parameters
+//				Object[] paramGetTotalTimeLocked= new Object[2];
+//				paramGetTotalTimeLocked[0]= new Long(uSecBatteryTime);
+//				paramGetTotalTimeLocked[1]= new Integer(iStatType);
+//				
+//
+//				Method methodGetTotalTimeLocked = classSamplingTimer
+//						.getMethod("getTotalTimeLocked", paramTypesGetTotalTimeLocked);
+//
+//				//Parameters Types
+//				@SuppressWarnings("rawtypes")
+//				Class[] paramTypesGetCountLocked= new Class[1];
+//				paramTypesGetCountLocked[0]= int.class;
+//
+//				//Parameters
+//				Object[] paramGetCountLocked= new Object[1];
+//				paramGetCountLocked[0]= new Integer(iStatType);
+//
+//				Method methodGetCountLocked = classSamplingTimer
+//						.getMethod("getCountLocked", paramTypesGetCountLocked);
+//					
+//				
+//				Long wake = (Long) methodGetTotalTimeLocked.invoke(samplingTimer, paramGetTotalTimeLocked);
+//				
+//				Integer count = (Integer) methodGetCountLocked.invoke(samplingTimer, paramGetCountLocked);
+//				
+//				if (CommonLogSettings.DEBUG)
+//				{
+//					Log.d(TAG, "Kernel wakelock: " + wakelockEntry.getKey() + " wakelock [s] " + wake / 1000
+//							+ " count " + count);
+//				}
 				
 				// public NativeKernelWakelock(String name, String details, int count, int expire_count, int wake_count,
 				// long active_since, long total_time, long sleep_time, long max_time, long last_change, long time)
@@ -1946,9 +1946,15 @@ public class BatteryStatsProxy
 				//}
 //				else
 //				{
+				if (CommonLogSettings.DEBUG)
+				{
+					Log.d(TAG, "Kernel wakelock: " + wakelockEntry.getKey() + " wakelock [s] " + currentReportedTotalTimeVal / 1000
+							+ " count " + currentReportedCountVal);
+				}
+
 				NativeKernelWakelock myWl = new NativeKernelWakelock(
-							wakelockEntry.getKey(), "*api*", unpluggedReportedCountVal, 0, 0, 0L, 
-							unpluggedReportedTotalTimeVal / 1000, unpluggedReportedTotalTimeVal / 1000, 0L, 0L,
+							wakelockEntry.getKey(), "*api*", currentReportedCountVal, 0, 0, 0L, 
+							currentReportedTotalTimeVal / 1000, currentReportedTotalTimeVal / 1000, 0L, 0L,
 							uSecBatteryTime / 1000);
 					myStats.add(myWl);
 //				}	
