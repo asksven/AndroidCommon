@@ -45,7 +45,7 @@ import android.util.Log;
  * 
  *
  */
-public class WakeupSourcesLgG3 extends Wakelocks
+public class WakeupSourcesLg extends Wakelocks
 {
     private final static String TAG ="WakeupSourcesLgG3";
     private static String FILE_PATH = "/sys/kernel/debug/wakeup_sources";
