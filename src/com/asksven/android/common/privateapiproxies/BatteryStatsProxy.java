@@ -2183,7 +2183,7 @@ public class BatteryStatsProxy
 
 							if ((wakeups) > 0)
 							{
-								Alarm myWakeup = new Alarm(ent.getKey() + "*api*");
+								Alarm myWakeup = new Alarm(ent.getKey(), "*api*");
 								myWakeup.setWakeups(wakeups);
 								// opt for lazy loading: do no populate UidInfo, just uid. UidInfo will be fetched on demand
 								myWakeup.setUid(uid);
@@ -2286,7 +2286,7 @@ public class BatteryStatsProxy
 								
 								if ((wakeups) > 0)
 								{
-									Alarm myWakeup = new Alarm(ent.getKey() + "*api*");
+									Alarm myWakeup = new Alarm(ent.getKey(), "*api*");
 									myWakeup.setWakeups(wakeups);
 									// opt for lazy loading: do no populate UidInfo, just uid. UidInfo will be fetched on demand
 									myWakeup.setUid(uid);

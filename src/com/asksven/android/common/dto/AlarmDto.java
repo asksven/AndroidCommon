@@ -38,7 +38,10 @@ public class AlarmDto implements Serializable
 
 	// from Alarm
 	@JsonProperty("package_name") public String m_strPackageName;
-	
+
+	// from Alarm
+	@JsonProperty("details") public String m_details;
+
 	@JsonProperty("wakeups") public long m_nWakeups;
 	
 	@JsonProperty("total_count") public long m_nTotalCount;

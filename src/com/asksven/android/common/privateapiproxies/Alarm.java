@@ -25,6 +25,8 @@ import java.util.List;
 
 
 
+
+
 //import android.content.Context;
 //import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -37,6 +39,7 @@ import com.asksven.android.common.nameutils.UidInfo;
 import com.asksven.android.common.nameutils.UidNameResolver;
 import com.asksven.android.common.privateapiproxies.StatElement;
 import com.asksven.android.common.utils.DateUtils;
+import com.asksven.android.common.utils.StringUtils;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -53,6 +56,13 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	/** The name of the app responsible for the alarm */
 	@SerializedName("package_name")
 	String m_strPackageName;
+	
+	/**
+	 * the details, if any
+	 */
+	
+	@SerializedName("details")
+	String m_details;
 	
 	/** The number od wakeups */
 	@SerializedName("wakeups")
@@ -79,6 +89,15 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	public Alarm(String strName)
 	{
 		m_strPackageName = strName;
+		m_details = "";
+		m_items = new ArrayList<AlarmItem>();
+		
+	}
+
+	public Alarm(String strName, String strDetails)
+	{
+		m_strPackageName = strName;
+		m_details = strDetails;
 		m_items = new ArrayList<AlarmItem>();
 		
 	}
@@ -87,9 +106,10 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	 * The default cctor
 	 * @param strName
 	 */
-	public Alarm(String strName, long lWakeups, long lCount, long timeRunning, ArrayList<AlarmItem> items)
+	public Alarm(String strName, String strDetails, long lWakeups, long lCount, long timeRunning, ArrayList<AlarmItem> items)
 	{
 		m_strPackageName 	= strName;
+		m_details			= strDetails;
 		m_nWakeups 			= lWakeups;
 		m_nTotalCount 		= lCount;
 		m_timeRunning		= timeRunning;
@@ -103,6 +123,7 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 		
 		this.setUid(source.m_uid);
 		this.m_strPackageName 	= source.m_strPackageName;
+		this.m_details			= source.m_details;
 		this.m_nWakeups 		= source.m_nWakeups;
 		this.m_timeRunning	= source.m_timeRunning;
 		this.m_nTotalCount 		= source.m_nTotalCount;
@@ -122,7 +143,7 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 
 	public Alarm clone()
 	{
-		Alarm clone = new Alarm(m_strPackageName);
+		Alarm clone = new Alarm(m_strPackageName, m_details);
 		clone.setWakeups(getWakeups());
 		clone.setTimeRunning(getTimeRunning());
 		clone.setTotalCount(m_nTotalCount);
@@ -173,7 +194,12 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 	{
 		return m_strPackageName;
 	}
-	
+
+	public String getDetails()
+	{
+		return m_details;
+	}
+
 	/**
 	 * Returns the number of wakeups
 	 * @return
@@ -255,6 +281,15 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 		}
 		
 		return strRet;
+	}
+
+	/**
+	 * Returns the full qualified name (default, can be overwritten)
+	 * @return the full qualified name
+	 */
+	public String getFqn(UidNameResolver resolver)
+	{
+		return m_details;
 	}
 
 	/** 
@@ -393,6 +428,7 @@ public class Alarm extends StatElement implements Comparable<Alarm>, Serializabl
 		
 		ret.m_uid 				= this.getuid();
 		ret.m_strPackageName 	= this.m_strPackageName;
+		ret.m_details			= this.m_details;
 		ret.m_nWakeups 			= this.m_nWakeups;
 		ret.m_nTotalCount 		= this.m_nTotalCount;
 		ret.m_timeRunning 		= this.m_timeRunning;
