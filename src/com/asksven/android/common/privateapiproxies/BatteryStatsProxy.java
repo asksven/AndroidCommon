@@ -34,6 +34,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Parcel;
@@ -1134,7 +1135,7 @@ public class BatteryStatsProxy
     public Long getSensorOnTime(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
     	Long ret = new Long(0);
-
+    	
     	this.collectUidStats();
 		if (m_uidStats != null)
 		{
@@ -1252,6 +1253,53 @@ public class BatteryStatsProxy
     		
     		
     	}
+    }
+    
+    @SuppressLint("NewApi")
+	Sensor findSensor(Context ctx, int handle)
+    {
+    	String TAG = "BBS.Sensors";
+    	Sensor retVal = null;
+    	
+    	// Enumerate all sensors
+    	final SensorManager sensorManager = (SensorManager)ctx.getSystemService(Context.SENSOR_SERVICE);
+    	List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
+
+    	if ( (sensors == null) || (sensors.size() == 0)) return null;
+    	for (int i=0; i < sensors.size(); i++)
+    	{
+    		Sensor sensor = sensors.get(i);
+    		Method methodGetHandle;
+    		
+    		int hhandle = -1;
+			try
+			{
+				methodGetHandle = sensor.getClass().getDeclaredMethod("getHandle");
+	    		methodGetHandle.setAccessible(true);
+	    		hhandle = ((Integer) methodGetHandle.invoke(sensor)).intValue();
+
+			} catch (Exception e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		
+			if (hhandle == handle)
+			{
+				retVal = sensor;
+				return retVal;
+			}
+    		if (Build.VERSION.SDK_INT >= 21)
+    		{
+    			Log.i(TAG, "name=" + sensor.getName() + ", handle=" + handle+ ", wakeup=" + sensor.isWakeUpSensor() + ", type=" + sensor.getStringType());
+    		}
+    		else
+    		{
+    			Log.i(TAG, "name=" + sensor.getName()  + ", handle=" + handle);
+    		}
+    	}
+    	
+    	return null;
     }
 
     /**
@@ -2733,10 +2781,10 @@ public class BatteryStatsProxy
      * @return
      * @throws BatteryInfoUnavailableException
      */
-    public ArrayList<SensorUsage> getSensorStats(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
+    @SuppressLint("NewApi")
+	public ArrayList<SensorUsage> getSensorStats(Context context, long batteryRealtime, int iStatsType) throws BatteryInfoUnavailableException
 	{
 		ArrayList<SensorUsage> myRet = new ArrayList<SensorUsage>(); 
-
 
     	this.collectUidStats();
 		if (m_uidStats != null)
@@ -2805,7 +2853,30 @@ public class BatteryStatsProxy
 				        			"UID=" + uid 
 				        			+ ", Sensor=" +decodeSensor(handle) + " (" + handle + ") " 
 				        					+ ", time=" + DateUtils.formatDuration((long)value/1000) + " (" + value + ")");
-				        	SensorUsageItem myItem = new SensorUsageItem(value/1000, decodeSensor(handle), handle);
+				        	
+				        	Sensor lookup = findSensor(context, handle);
+				        	
+				        	String sensorText = "";
+				        	
+				        	if (lookup == null)
+				        	{
+				        		sensorText = "Unknown";
+				        	}
+				        	else
+				        	{
+				        		// we try to get the most info out of the API
+				        		if (Build.VERSION.SDK_INT >= 21)
+				        		{
+				        			sensorText = lookup.getName() + "(" + handle+ "), wakeup=" + lookup.isWakeUpSensor();
+				        		}
+				        		else
+				        		{
+				        			sensorText = lookup.getName();
+				        		}
+
+				        		
+				        	}
+				        	SensorUsageItem myItem = new SensorUsageItem(value/1000, sensorText, handle);
 				        	myItems.add(myItem);
 					    }
 					    SensorUsage myData = new SensorUsage(uidTotalSensorTime.longValue()/1000);
