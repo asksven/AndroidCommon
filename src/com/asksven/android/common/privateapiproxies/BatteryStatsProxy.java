@@ -2588,7 +2588,7 @@ public class BatteryStatsProxy
             }
             catch( Exception e )
             {
-            	Log.e(TAG, "An exception occured in getWakeupStats(). Message: " + e.getMessage() + ", cause: " + e.getCause().getMessage());
+            	Log.e(TAG, "An exception occured in getSyncOnTime(). Message: " + e.getMessage());
                 throw e;
             }
 		}	
